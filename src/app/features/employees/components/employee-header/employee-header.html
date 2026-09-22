@@ -86,12 +86,12 @@
     >
       <button
         type="button"
-        (click)="facade.setActiveFilter('all')"
+        (click)="facade.setActiveFilter(null)"
         class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-        [class.bg-surface]="facade.activeFilter() === 'all'"
-        [class.text-primary]="facade.activeFilter() === 'all'"
-        [class.shadow-xs]="facade.activeFilter() === 'all'"
-        [class.text-text-muted]="facade.activeFilter() !== 'all'"
+        [class.bg-surface]="facade.activeFilter() === null"
+        [class.text-primary]="facade.activeFilter() === null"
+        [class.shadow-xs]="facade.activeFilter() === null"
+        [class.text-text-muted]="facade.activeFilter() !== null"
       >
         <fa-icon [icon]="faUsers" class="text-[11px]"></fa-icon>
         <span>الكل ({{ facade.totalCount() }})</span>
