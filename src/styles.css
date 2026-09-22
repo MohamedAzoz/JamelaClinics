@@ -1,126 +1,4 @@
-/* @import 'tailwindcss';
-
-:root {
-  --raw-main-bg: #f6f8f7;
-  --raw-surface: #ffffff;
-  --raw-sidebar-bg: #10302d;
-  --raw-sidebar-text: #f6fbf9;
-  --raw-primary: #0f766e;
-  --raw-primary-dark: #0b5f59;
-  --raw-accent: #9a613a;
-  --raw-text: #172420;
-  --raw-text-muted: #667671;
-  --raw-success: #177a5a;
-  --raw-warning: #955b00;
-  --raw-danger: #b8324f;
-  --raw-font-main: 'Cairo', sans-serif;
-  color-scheme: light;
-}
-
-.dark {
-  --raw-main-bg: #0c1514;
-  --raw-surface: #14211f;
-  --raw-sidebar-bg: #07100f;
-  --raw-sidebar-text: #f4fbf8;
-  --raw-primary: #1e8178;
-  --raw-primary-dark: #146b64;
-  --raw-accent: #d6a06d;
-  --raw-text: #f3f8f6;
-  --raw-text-muted: #a8b8b3;
-  --raw-success: #5cc99e;
-  --raw-warning: #e8b45e;
-  --raw-danger: #f07a86;
-  color-scheme: dark;
-}
-
-@theme {
-  --color-main-bg: var(--raw-main-bg);
-  --color-surface: var(--raw-surface);
-  --color-sidebar-bg: var(--raw-sidebar-bg);
-  --color-sidebar-text: var(--raw-sidebar-text);
-  --color-primary: var(--raw-primary);
-  --color-primary-dark: var(--raw-primary-dark);
-  --color-accent: var(--raw-accent);
-  --color-text: var(--raw-text);
-  --color-text-muted: var(--raw-text-muted);
-  --color-success: var(--raw-success);
-  --color-warning: var(--raw-warning);
-  --color-danger: var(--raw-danger);
-  --font-main: var(--raw-font-main);
-}
-
-@font-face {
-  font-family: 'Cairo';
-  src: url('/fonts/cairo-v31-arabic_latin-700.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Cairo';
-  src: url('/fonts/cairo-v31-arabic_latin-regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  min-height: 100%;
-}
-
-body {
-  min-height: 100vh;
-
-  margin: 0;
-  padding: 0;
-
-  font-family: var(--raw-font-main);
-
-  color: var(--raw-text);
-  background-color: var(--raw-main-bg);
-
-  background-image:
-    radial-gradient(
-      circle at 8% 4%,
-      color-mix(in srgb, var(--raw-accent) 6%, transparent),
-      transparent 28rem
-    ),
-    radial-gradient(
-      circle at 92% 0%,
-      color-mix(in srgb, var(--raw-primary) 6%, transparent),
-      transparent 28rem
-    );
-
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-button,
-a {
-  @apply cursor-pointer;
-}
-
-@layer utilities {
-  .glass {
-    background: color-mix(in srgb, var(--raw-surface) 82%, transparent);
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-
-  .btn {
-    @apply cursor-pointer transition-all duration-300;
-  }
-} */
-
+/* 
 @import 'tailwindcss';
 
 :root {
@@ -276,5 +154,325 @@ a {
     @apply cursor-pointer
            transition-all
            duration-300;
+  }
+} */
+
+@import 'tailwindcss';
+
+/*
+ * Tailwind v4 manual dark mode
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
+   LIGHT THEME
+   Jamela — Azure Clinical Luxury
+   ========================================================= */
+
+:root {
+  /*
+   * MAIN BACKGROUND
+   *
+   * Very soft icy blue.
+   * Gives the application a clean clinical atmosphere
+   * without looking like a generic white hospital system.
+   */
+  --raw-main-bg: #f4f9ff;
+
+  /*
+   * SURFACE
+   *
+   * Cards / Tables / Forms / Modals / Dropdowns
+   *
+   * Almost pure white with a very subtle blue undertone.
+   */
+  --raw-surface: #ffffff;
+
+  /*
+   * SIDEBAR
+   *
+   * Deep medical navy.
+   *
+   * This is the strongest branding surface
+   * and visually connects directly with the dark
+   * sections of the new logo.
+   */
+  --raw-sidebar-bg: #071a3d;
+
+  --raw-sidebar-text: #f5faff;
+
+  /*
+   * PRIMARY
+   *
+   * Main Medical Azure.
+   *
+   * Used for:
+   * - Primary buttons
+   * - Active navigation
+   * - Links
+   * - Selected filters
+   * - Important interactive elements
+   */
+  --raw-primary: #0d63d4;
+
+  /*
+   * PRIMARY DARK
+   *
+   * Hover / pressed / active state.
+   */
+  --raw-primary-dark: #084ba7;
+
+  /*
+   * ACCENT
+   *
+   * Premium Cyan.
+   *
+   * Inspired by the cyan highlights of the logo.
+   *
+   * Use carefully for:
+   * - Icons
+   * - KPI highlights
+   * - Decorative lines
+   * - Selected statistics
+   * - Premium details
+   *
+   * It should NOT replace Primary.
+   */
+  --raw-accent: #089fbe;
+
+  /*
+   * TYPOGRAPHY
+   *
+   * Deep blue-black rather than pure black.
+   */
+  --raw-text: #10213d;
+
+  /*
+   * Secondary text / Metadata / Labels
+   */
+  --raw-text-muted: #62738b;
+
+  /*
+   * SEMANTIC COLORS
+   *
+   * These intentionally remain independent
+   * from branding colors.
+   */
+
+  /* Paid / Completed / Successful */
+  --raw-success: #187d67;
+
+  /* Pending / Requires attention */
+  --raw-warning: #a66a12;
+
+  /* Failed / Delete / Error / Critical */
+  --raw-danger: #c23e55;
+
+  /*
+   * FONT
+   */
+  --raw-font-main: 'Cairo', sans-serif;
+
+  color-scheme: light;
+}
+
+/* =========================================================
+   DARK THEME
+   Jamela — Midnight Azure
+   ========================================================= */
+
+.dark {
+  /*
+   * Main Dark Canvas
+   *
+   * Deep navy-black rather than generic gray.
+   */
+  --raw-main-bg: #07111f;
+
+  /*
+   * Elevated surfaces
+   *
+   * Cards remain clearly separated from the background.
+   */
+  --raw-surface: #0e1d2e;
+
+  /*
+   * Sidebar
+   *
+   * Almost-black navy.
+   */
+  --raw-sidebar-bg: #040b16;
+
+  --raw-sidebar-text: #f4f9ff;
+
+  /*
+   * Primary
+   *
+   * Slightly brighter for dark environments,
+   * while still supporting white text.
+   */
+  --raw-primary: #2f73d9;
+
+  --raw-primary-dark: #1d57b6;
+
+  /*
+   * Cyan brand highlight
+   */
+  --raw-accent: #39c4df;
+
+  /*
+   * Typography
+   */
+  --raw-text: #edf6ff;
+
+  --raw-text-muted: #9eafc2;
+
+  /*
+   * Semantic states
+   */
+  --raw-success: #5bc5a3;
+
+  --raw-warning: #e4ad54;
+
+  --raw-danger: #ed7484;
+
+  color-scheme: dark;
+}
+
+/* =========================================================
+   TAILWIND V4 DESIGN TOKENS
+   ========================================================= */
+
+@theme inline {
+  --color-main-bg: var(--raw-main-bg);
+
+  --color-surface: var(--raw-surface);
+
+  --color-sidebar-bg: var(--raw-sidebar-bg);
+  --color-sidebar-text: var(--raw-sidebar-text);
+
+  --color-primary: var(--raw-primary);
+  --color-primary-dark: var(--raw-primary-dark);
+
+  --color-accent: var(--raw-accent);
+
+  --color-text: var(--raw-text);
+  --color-text-muted: var(--raw-text-muted);
+
+  --color-success: var(--raw-success);
+  --color-warning: var(--raw-warning);
+  --color-danger: var(--raw-danger);
+
+  --font-main: var(--raw-font-main);
+}
+
+/* =========================================================
+   FONT
+   ========================================================= */
+
+@font-face {
+  font-family: 'Cairo';
+
+  src: url('/fonts/cairo-v31-arabic_latin-700.woff2') format('woff2');
+
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+
+  src: url('/fonts/cairo-v31-arabic_latin-regular.woff2') format('woff2');
+
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  font-family: var(--raw-font-main);
+
+  color: var(--raw-text);
+
+  background-color: var(--raw-main-bg);
+
+  /*
+   * PREMIUM AMBIENT BACKGROUND
+   *
+   * Extremely subtle.
+   *
+   * Cyan = technological / beauty identity
+   * Blue = clinical identity
+   */
+
+  background-image:
+    radial-gradient(
+      circle at 5% 0%,
+      color-mix(in srgb, var(--raw-accent) 8%, transparent),
+      transparent 30rem
+    ),
+    radial-gradient(
+      circle at 95% 3%,
+      color-mix(in srgb, var(--raw-primary) 7%, transparent),
+      transparent 34rem
+    );
+
+  background-attachment: fixed;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =========================================================
+   INTERACTIVE ELEMENTS
+   ========================================================= */
+
+button,
+a {
+  @apply cursor-pointer;
+}
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+@layer utilities {
+  /*
+   * Glass surfaces inherit the theme automatically.
+   */
+
+  .glass {
+    background: color-mix(in srgb, var(--raw-surface) 84%, transparent);
+
+    backdrop-filter: blur(16px);
+
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .btn {
+    @apply cursor-pointer
+      transition-all
+      duration-300;
   }
 }

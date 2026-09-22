@@ -29,7 +29,7 @@ export class AuthFacade {
       if (result.isSuccess && result.data?.token) {
         await this._identity.setAuth(result.data.token);
         this._messages.addSuccessMessage(`مرحبا ${result.data.fullName}`);
-        void this._router.navigate([`/${RoutesManagement.DASHBOARD.path}`]);
+        void this._router.navigate([`/${RoutesManagement.MAIN.path}`]);
       } else {
         const msg = result.message ?? 'فشل تسجيل الدخول. يرجى المحاولة مجدداً.';
         this._messages.addErrorMessage(msg);
@@ -40,5 +40,10 @@ export class AuthFacade {
     } finally {
       this.loading.set(false);
     }
+  }
+  logout() {
+    this._identity.clearAuth();
+    this._messages.addSuccessMessage('تم تسجيل الخروج بنجاح');
+    void this._router.navigate([`/${RoutesManagement.AUTH.path}`]);
   }
 }

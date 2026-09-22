@@ -10,6 +10,8 @@ import { LoginResponse } from '../models/LoginResponse';
 import { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import { ChangePasswordResponse } from '../models/ChangePasswordResponse';
 import { AdminChangePasswordRequest } from '../models/AdminChangePasswordRequest';
+import { RegisterDoctorRequest } from '../models/RegisterDoctorRequest';
+import { RegisterDoctorResponse } from '../models/RegisterDoctorResponse';
 
 @Service()
 export class AuthApiService {
@@ -21,6 +23,14 @@ export class AuthApiService {
     const url = `${this._baseUrl}/register-employee`;
     return this._httpClient.post<Result<RegisterEmployeeResponse>>(url, request);
   }
+
+  //   POST
+  // /api/Auth/register-doctor
+  RegisterDoctor(request: RegisterDoctorRequest) {
+    const url = `${this._baseUrl}/register-doctor`;
+    return this._httpClient.post<Result<RegisterDoctorResponse>>(url, request);
+  }
+
   //   /api/Auth/login
   login(request: LoginRequest) {
     const url = `${this._baseUrl}/login`;

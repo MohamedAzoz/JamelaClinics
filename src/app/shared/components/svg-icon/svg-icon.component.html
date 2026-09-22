@@ -1,0 +1,97 @@
+@switch (icon()) {
+  @case ('dashboard') {
+    @defer (when icon() === 'dashboard') {
+      <fa-icon [icon]="faDashboard"></fa-icon>
+    }
+  }
+  @case ('schedule') {
+    @defer (when icon() === 'schedule') {
+      <fa-icon [icon]="faSchedule"></fa-icon>
+    }
+  }
+  @case ('patients') {
+    @defer (when icon() === 'patients') {
+      <fa-icon [icon]="faPatients"></fa-icon>
+    }
+  }
+  @case ('inventory') {
+    @defer (when icon() === 'inventory') {
+      <fa-icon [icon]="faInventory"></fa-icon>
+    }
+  }
+    @case ('inventoryDamaged') {
+    @defer (when icon() === 'inventoryDamaged') {
+      <fa-icon [icon]="faInventoryDamaged"></fa-icon>
+    }
+  }
+  @case ('doctors') {
+    @defer (when icon() === 'doctors') {
+      <fa-icon [icon]="faDoctors"></fa-icon>
+    }
+  }
+  @case ('assistant') {
+    @defer (when icon() === 'assistant') {
+      <fa-icon [icon]="faAssistant"></fa-icon>
+    }
+  }
+  @case ('clinics') {
+    @defer (when icon() === 'clinics') {
+      <fa-icon [icon]="faClinics"></fa-icon>
+    }
+  }
+  @case ('appointments') {
+    @defer (when icon() === 'appointments') {
+      <fa-icon [icon]="faAppointments"></fa-icon>
+    }
+  }
+  @case ('queue') {
+    @defer (when icon() === 'queue') {
+      <fa-icon [icon]="faQueue"></fa-icon>
+    }
+  }
+  @case ('visits') {
+    @defer (when icon() === 'visits') {
+      <fa-icon [icon]="faVisits"></fa-icon>
+    }
+  }
+  @case ('lab') {
+    @defer (when icon() === 'lab') {
+      <fa-icon [icon]="faLab"></fa-icon>
+    }
+  }
+  @case ('radiology') {
+    @defer (when icon() === 'radiology') {
+      <fa-icon [icon]="faRadiology"></fa-icon>
+    }
+  }
+  @case ('payment') {
+    @defer (when icon() === 'payment') {
+      <fa-icon [icon]="faPayment"></fa-icon>
+    }
+  }
+  @case ('requests') {
+    @defer (when icon() === 'requests') {
+      <fa-icon [icon]="faRequests"></fa-icon>
+    }
+  }
+  @case ('users') {
+    @defer (when icon() === 'users') {
+      <fa-icon [icon]="faUsers"></fa-icon>
+    }
+  }
+  @case ('reports') {
+    @defer (when icon() === 'reports') {
+      <fa-icon [icon]="faReports"></fa-icon>
+    }
+  }
+  @case ('pharmacy') {
+    @defer (when icon() === 'pharmacy') {
+      <fa-icon [icon]="faPharmacy"></fa-icon>
+    }
+  }
+  @case ('settings') {
+    @defer (when icon() === 'settings') {
+      <fa-icon [icon]="faSettings"></fa-icon>
+    }
+  }
+}
