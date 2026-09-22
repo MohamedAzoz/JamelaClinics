@@ -15,8 +15,8 @@ export class DoctorApiService {
   // /api/Doctors/all
   //isActive
 
-  getAllDoctors(isActive: boolean) {
-    const url = `${this._baseUrl}/all?isActive=${isActive}`;
+  getAllDoctors(isActive?: boolean) {
+    const url = `${this._baseUrl}/all` + (isActive ? `?isActive=${isActive}` : '');
     return this._httpClient.get<Result<Doctor[]>>(url);
   }
 

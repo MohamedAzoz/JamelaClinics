@@ -10,6 +10,7 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { EmployeeFacade } from '../../services/employee.facade';
+import { Employee } from '@features/employees/models/Employee';
 
 @Component({
   selector: 'app-employee-table',
@@ -26,4 +27,7 @@ export class EmployeeTableComponent {
   readonly faCircleXmark = faCircleXmark;
   readonly faUserPlus = faUserPlus;
   readonly faHashtag = faHashtag;
+  toggleStatus(employee: Employee): void {
+    this.facade.toggleEmployeeStatus(employee.userId);
+  }
 }

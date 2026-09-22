@@ -47,7 +47,7 @@ const TOAST_ICONS: Record<string, IconDefinition> = {
   template: `
     <!-- الحاوية العلوية: مرنة وتدعم التموضع الذكي حسب لغة النظام (end-4) -->
     <div
-      class="fixed top-4 md:top-6 z-400 flex flex-col gap-3 w-full max-w-[calc(100vw-2rem)] sm:max-w-sm pointer-events-none"
+      class="fixed top-4 md:top-6 inset-e-4 z-400 flex flex-col gap-3 w-full max-w-[calc(100vw-2rem)] sm:max-w-sm pointer-events-none"
       role="live"
       aria-live="assertive"
     >

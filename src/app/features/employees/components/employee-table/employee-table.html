@@ -83,7 +83,9 @@
 
               <!-- Status -->
               <td class="px-4 sm:px-6 py-4 text-center">
-                <span
+                <button
+                  type="button"
+                  (click)="toggleStatus(employee)"
                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
                   [class.bg-success\/10]="employee.isActive"
                   [class.text-success]="employee.isActive"
@@ -97,7 +99,7 @@
                     class="text-[11px]"
                   ></fa-icon>
                   <span>{{ employee.isActive ? 'نشط' : 'معطل' }}</span>
-                </span>
+                </button>
               </td>
 
               <!-- Actions (Edit & Delete) -->

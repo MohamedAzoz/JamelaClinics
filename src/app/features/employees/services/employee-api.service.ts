@@ -13,8 +13,11 @@ export class EmployeeApiService {
 
   //     GET
   // /api/Employees/all
-  getAllEmployees(isActive: boolean = true) {
-    return this._httpClient.get<Result<Employee[]>>(`${this.baseUrl}/all?isActive=${isActive}`);
+  getAllEmployees(isActive?: boolean) {
+    if (isActive !== undefined) {
+      return this._httpClient.get<Result<Employee[]>>(`${this.baseUrl}/all?isActive=${isActive}`);
+    }
+    return this._httpClient.get<Result<Employee[]>>(`${this.baseUrl}/all`);
   }
   // GET
   // /api/Employees/{userId}

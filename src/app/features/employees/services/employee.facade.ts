@@ -6,19 +6,21 @@ import { UpdateEmployee } from '../models/UpdateEmployee';
 import { EmployeeApiService } from './employee-api.service';
 import { AuthApiService } from '../../auth/services/auth-api.service';
 import { RegisterEmployeeRequest } from '../../auth/models/RegisterEmployee';
+import { DoctorApiService } from '@features/doctors/services/doctor-api.service';
 
 @Service()
 export class EmployeeFacade {
   private _employeeApiService = inject(EmployeeApiService);
   private _authApiService = inject(AuthApiService);
   private _messageService = inject(AppMessageService);
+  private _doctorApiService = inject(DoctorApiService);
 
   // State Signals
   readonly employees = signal<Employee[]>([]);
   readonly loading = signal<boolean>(false);
   readonly actionLoading = signal<boolean>(false);
   readonly searchTerm = signal<string>('');
-  readonly activeFilter = signal<boolean | 'all'>('all');
+  readonly activeFilter = signal<boolean | null>(null);
   readonly selectedEmployee = signal<Employee | null>(null);
 
   // Modal Control Signals
@@ -32,7 +34,7 @@ export class EmployeeFacade {
     const status = this.activeFilter();
     let list = this.employees();
 
-    if (status !== 'all') {
+    if (status !== null) {
       list = list.filter((e) => e.isActive === status);
     }
 
@@ -40,8 +42,7 @@ export class EmployeeFacade {
 
     return list.filter(
       (emp) =>
-        emp.fullName.toLowerCase().includes(term) ||
-        emp.username.toLowerCase().includes(term)
+        emp.fullName.toLowerCase().includes(term) || emp.username.toLowerCase().includes(term),
     );
   });
 
@@ -52,10 +53,10 @@ export class EmployeeFacade {
   /**
    * 1. API Wrap: EmployeeApiService.getAllEmployees
    */
-  loadEmployees(isActive: boolean = true): void {
+  loadEmployees(isActive: boolean | null = null): void {
     this.loading.set(true);
     this._employeeApiService
-      .getAllEmployees(isActive)
+      .getAllEmployees(isActive ?? undefined)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
@@ -111,9 +112,7 @@ export class EmployeeFacade {
             this.closeFormModal();
             this.loadEmployees();
           } else {
-            this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تسجيل حساب الموظف'
-            );
+            this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تسجيل حساب الموظف');
           }
         },
         error: (err) => {
@@ -138,7 +137,7 @@ export class EmployeeFacade {
             this.loadEmployees();
           } else {
             this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تعديل بيانات الموظف'
+              res?.message || 'حدث خطأ أثناء تعديل بيانات الموظف',
             );
           }
         },
@@ -164,12 +163,35 @@ export class EmployeeFacade {
             this.loadEmployees();
           } else {
             this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تنفيذ عملية حذف الموظف'
+              res?.message || 'حدث خطأ أثناء تنفيذ عملية حذف الموظف',
             );
           }
         },
         error: (err) => {
           this._messageService.showHttpError(err, 'فشلت عملية حذف الموظف');
+        },
+      });
+  }
+
+  /**
+   * 6. API Wrap: DoctorApiService.toggleStatus
+   */
+  toggleEmployeeStatus(userId: string): void {
+    this.actionLoading.set(true);
+    this._doctorApiService
+      .toggleStatus(userId)
+      .pipe(finalize(() => this.actionLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            this._messageService.addSuccessMessage('تم تغيير حالة الموظف بنجاح');
+            this.loadEmployees();
+          } else {
+            this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تغيير حالة الموظف');
+          }
+        },
+        error: (err) => {
+          this._messageService.showHttpError(err, 'فشل تغيير حالة الموظف');
         },
       });
   }
@@ -203,8 +225,10 @@ export class EmployeeFacade {
 
   confirmDelete(): void {
     const emp = this.employeeToDelete();
-    if (emp) {
-      this.deleteEmployee(emp.userId);
+    if (confirm('هل انت متاكد من حذف حساب الموظف ' + emp?.fullName)) {
+      if (emp) {
+        this.deleteEmployee(emp.userId);
+      }
     }
   }
 
@@ -212,7 +236,7 @@ export class EmployeeFacade {
     this.searchTerm.set(term);
   }
 
-  setActiveFilter(filter: boolean | 'all'): void {
+  setActiveFilter(filter: boolean | null): void {
     this.activeFilter.set(filter);
   }
 }

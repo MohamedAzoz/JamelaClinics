@@ -22,7 +22,7 @@ export class DoctorFacade {
   readonly loading = signal<boolean>(false);
   readonly actionLoading = signal<boolean>(false);
   readonly searchTerm = signal<string>('');
-  readonly activeFilter = signal<boolean | 'all'>('all');
+  readonly activeFilter = signal<boolean | null>(null);
   readonly selectedDoctor = signal<Doctor | null>(null);
 
   // Modal State Signals
@@ -36,7 +36,7 @@ export class DoctorFacade {
     const status = this.activeFilter();
     let list = this.doctors();
 
-    if (status !== 'all') {
+    if (status !== null) {
       list = list.filter((d) => d.isActive === status);
     }
 
@@ -46,7 +46,7 @@ export class DoctorFacade {
       (doc) =>
         doc.fullName.toLowerCase().includes(term) ||
         doc.username.toLowerCase().includes(term) ||
-        (doc.clinicName && doc.clinicName.toLowerCase().includes(term))
+        (doc.clinicName && doc.clinicName.toLowerCase().includes(term)),
     );
   });
 
@@ -57,11 +57,11 @@ export class DoctorFacade {
   /**
    * 1. API Wrap: DoctorApiService.getAllDoctors
    */
-  loadDoctors(isActive: boolean = true): void {
+  loadDoctors(isActive: boolean | null = null): void {
     this.loading.set(true);
     // Fetch both active and inactive doctors by passing true/false or combining results if needed
     this._doctorApiService
-      .getAllDoctors(isActive)
+      .getAllDoctors(isActive ?? undefined)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
@@ -130,9 +130,7 @@ export class DoctorFacade {
             this.closeFormModal();
             this.loadDoctors();
           } else {
-            this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تسجيل حساب الطبيب'
-            );
+            this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تسجيل حساب الطبيب');
           }
         },
         error: (err) => {
@@ -157,7 +155,7 @@ export class DoctorFacade {
             this.loadDoctors();
           } else {
             this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تعديل بيانات الطبيب'
+              res?.message || 'حدث خطأ أثناء تعديل بيانات الطبيب',
             );
           }
         },
@@ -183,7 +181,7 @@ export class DoctorFacade {
             this.loadDoctors();
           } else {
             this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تنفيذ عملية حذف الطبيب'
+              res?.message || 'حدث خطأ أثناء تنفيذ عملية حذف الطبيب',
             );
           }
         },
@@ -207,9 +205,7 @@ export class DoctorFacade {
             this._messageService.addSuccessMessage('تم تغيير حالة الطبيب بنجاح');
             this.loadDoctors();
           } else {
-            this._messageService.addErrorMessage(
-              res?.message || 'حدث خطأ أثناء تغيير حالة الطبيب'
-            );
+            this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تغيير حالة الطبيب');
           }
         },
         error: (err) => {
@@ -247,8 +243,10 @@ export class DoctorFacade {
 
   confirmDelete(): void {
     const doctor = this.doctorToDelete();
-    if (doctor) {
-      this.deleteDoctor(doctor.userId);
+    if (confirm('هل انت متاكد من حذف حساب الطبيب ' + doctor?.fullName)) {
+      if (doctor) {
+        this.deleteDoctor(doctor.userId);
+      }
     }
   }
 
@@ -256,7 +254,7 @@ export class DoctorFacade {
     this.searchTerm.set(term);
   }
 
-  setActiveFilter(filter: boolean | 'all'): void {
+  setActiveFilter(filter: boolean | null): void {
     this.activeFilter.set(filter);
   }
 }
