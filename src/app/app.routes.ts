@@ -26,6 +26,27 @@ export const routes: Routes = [
         loadComponent: () =>
           import('@shared/components/dashboard/dashboard').then((m) => m.Dashboard),
       },
+      {
+        path: RoutesManagement.CLINICS.path,
+        loadComponent: () =>
+          import('./features/clinics/pages/clinics-management/clinics-management').then(
+            (m) => m.ClinicsManagementPage
+          ),
+      },
+      {
+        path: RoutesManagement.DOCTORS.path,
+        loadComponent: () =>
+          import('./features/doctors/pages/doctors-management/doctors-management').then(
+            (m) => m.DoctorsManagementPage
+          ),
+      },
+      {
+        path: RoutesManagement.EMPLOYEES.path,
+        loadComponent: () =>
+          import('./features/employees/pages/employees-management/employees-management').then(
+            (m) => m.EmployeesManagementPage
+          ),
+      },
     ],
   },
 

@@ -1,0 +1,74 @@
+@if (facade.isDeleteModalOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn"
+    dir="rtl"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-doctor-title"
+  >
+    <!-- Modal Container -->
+    <div
+      class="relative w-full max-w-md bg-surface rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-hidden animate-scaleUp p-6 flex flex-col gap-5"
+    >
+      <!-- Close icon -->
+      <button
+        type="button"
+        (click)="close()"
+        class="absolute top-4 inset-e-4 p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+        aria-label="إغلاق النافذة"
+      >
+        <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+      </button>
+
+      <!-- Danger Icon Header -->
+      <div class="flex flex-col items-center text-center gap-3 pt-2">
+        <div class="w-14 h-14 rounded-2xl bg-danger/10 text-danger flex items-center justify-center shadow-inner">
+          <fa-icon [icon]="faTriangleExclamation" size="2xl"></fa-icon>
+        </div>
+
+        <div>
+          <h2 id="delete-doctor-title" class="text-lg font-bold text-text">
+            تأكيد حذف حساب الطبيب
+          </h2>
+          <p class="text-xs sm:text-sm text-text-muted mt-1 max-w-xs">
+            هل أنت أصلًا متأكد من رغبتك في حذف حساب الطبيب
+            <strong class="text-danger font-bold">"{{ facade.doctorToDelete()?.fullName }}"</strong>؟
+          </p>
+        </div>
+      </div>
+
+      <!-- Warning Box -->
+      <div class="p-3.5 rounded-xl bg-danger/5 border border-danger/20 text-xs text-danger flex items-start gap-2">
+        <fa-icon [icon]="faTriangleExclamation" class="shrink-0 mt-0.5"></fa-icon>
+        <span>تحذير: سيتم حذف حساب الطبيب نهائياً ولا يمكن التراجع عن هذا الإجراء لاحقاً.</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="close()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-surface text-text hover:bg-slate-50 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium transition-colors cursor-pointer disabled:opacity-50"
+        >
+          إلغاء
+        </button>
+
+        <button
+          type="button"
+          (click)="confirm()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-danger hover:bg-danger/90 text-white font-medium text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+        >
+          @if (facade.actionLoading()) {
+            <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+            <span>جاري الحذف...</span>
+          } @else {
+            <fa-icon [icon]="faTrashCan"></fa-icon>
+            <span>حذف الطبيب</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

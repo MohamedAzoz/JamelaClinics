@@ -1,8 +1,7 @@
 export interface UpdateDoctorRequest {
-  Id: number;
-  FullName: string;
-  PictureFile: string;
-  ClinicId: number;
-  DoctorPercentage: number;
-  IsActive: boolean;
+  userId: string;
+  fullName: string;
+  clinicId: number;
+  doctorPercentage: number;
+  isActive: boolean;
 }
