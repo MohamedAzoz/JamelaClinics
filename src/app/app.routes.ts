@@ -48,6 +48,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.DOCTOR_SCHEDULES.path,
+        loadComponent: () =>
+          import(
+            './features/doctorSchedules/pages/doctor-schedule-management/doctor-schedule-management'
+          ).then((m) => m.DoctorScheduleManagementPage),
+      },
+      {
+        path: RoutesManagement.USER_LOGIN_LOGS.path,
+        loadComponent: () =>
+          import('./features/auth/pages/user-login-log/user-login-log').then(
+            (m) => m.UserLoginLogPage
+          ),
+      },
+      {
         path: RoutesManagement.CHANGE_PASSWORD.path,
         loadComponent: () =>
           import('./features/auth/pages/change-password/change-password').then(

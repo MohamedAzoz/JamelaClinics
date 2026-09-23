@@ -1,0 +1,75 @@
+@if (facade.isDeleteModalOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn"
+    dir="rtl"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-schedule-modal-title"
+  >
+    <!-- Modal Dialog Card -->
+    <div
+      class="relative w-full max-w-md bg-surface rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-hidden transform transition-all animate-scaleUp p-6 flex flex-col gap-5 text-center"
+    >
+      <!-- Close Button -->
+      <button
+        type="button"
+        (click)="close()"
+        class="absolute top-4 left-4 p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+        aria-label="إغلاق النافذة"
+      >
+        <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+      </button>
+
+      <!-- Warning Icon -->
+      <div class="mx-auto w-16 h-16 rounded-2xl bg-danger/10 text-danger flex items-center justify-center text-2xl shadow-inner">
+        <fa-icon [icon]="faTriangleExclamation" size="xl"></fa-icon>
+      </div>
+
+      <!-- Text & Confirmation Details -->
+      <div>
+        <h2 id="delete-schedule-modal-title" class="text-lg font-bold text-text">
+          حذف الموعد المتاح
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted mt-1">
+          هل أنت تأكيد على حذف هذا الموعد المتاح للطبيب؟
+        </p>
+
+        @if (facade.selectedScheduleToDelete()) {
+          <div class="mt-3 p-3 rounded-xl bg-danger/5 border border-danger/15 text-xs text-text font-semibold">
+            <span>تاريخ الموعد: </span>
+            <span class="text-danger">
+              {{ facade.selectedScheduleToDelete()?.dayName }} - {{ facade.selectedScheduleToDelete()?.date | date: 'yyyy/MM/dd' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button
+          type="button"
+          (click)="close()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-surface text-text hover:bg-slate-50 dark:hover:bg-slate-800 font-medium text-xs sm:text-sm transition-colors cursor-pointer disabled:opacity-50"
+        >
+          إلغاء
+        </button>
+
+        <button
+          type="button"
+          (click)="confirm()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-danger hover:bg-danger/90 text-white font-medium text-xs sm:text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+        >
+          @if (facade.actionLoading()) {
+            <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+            <span>جاري الحذف...</span>
+          } @else {
+            <fa-icon [icon]="faTrashCan"></fa-icon>
+            <span>حذف الموعد</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

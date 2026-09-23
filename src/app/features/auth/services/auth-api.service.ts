@@ -7,11 +7,14 @@ import { RegisterEmployeeResponse } from '../models/RegisterEmployeeResponse';
 import { Result } from '../../../core/models/Result';
 import { LoginRequest } from '../models/LoginRequest';
 import { LoginResponse } from '../models/LoginResponse';
+import { UserInfo } from '../models/UserInfo';
 import { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import { ChangePasswordResponse } from '../models/ChangePasswordResponse';
 import { AdminChangePasswordRequest } from '../models/AdminChangePasswordRequest';
 import { RegisterDoctorRequest } from '../models/RegisterDoctorRequest';
 import { RegisterDoctorResponse } from '../models/RegisterDoctorResponse';
+import { PaginatedResult } from '@core/models/PaginatedResult';
+import { UserProfile } from '../models/UserProfile';
 
 @Service()
 export class AuthApiService {
@@ -39,7 +42,7 @@ export class AuthApiService {
 
   getCurrentUser() {
     const url = `${this._baseUrl}/GetCurrentUser`;
-    return this._httpClient.get<Result<LoginResponse>>(url);
+    return this._httpClient.get<Result<UserProfile>>(url);
   }
 
   changePassword(request: ChangePasswordRequest) {
@@ -50,5 +53,12 @@ export class AuthApiService {
   adminChangePassword(request: AdminChangePasswordRequest) {
     const url = `${this._baseUrl}/admin-change-password`;
     return this._httpClient.post<Result<boolean>>(url, request);
+  }
+
+  //  رGET
+  // /api/Auth/UserLoginLog
+  userLoginLog(PageNumber: number, PageSize: number) {
+    const url = `${this._baseUrl}/UserLoginLog?PageNumber=${PageNumber}&PageSize=${PageSize}`;
+    return this._httpClient.get<Result<PaginatedResult<UserInfo[]>>>(url);
   }
 }
