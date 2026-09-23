@@ -47,6 +47,13 @@ export const routes: Routes = [
             (m) => m.EmployeesManagementPage
           ),
       },
+      {
+        path: RoutesManagement.CHANGE_PASSWORD.path,
+        loadComponent: () =>
+          import('./features/auth/pages/change-password/change-password').then(
+            (m) => m.ChangePasswordPage
+          ),
+      },
     ],
   },
 

@@ -1,5 +1,5 @@
-import { Component, effect, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, effect, inject, signal } from '@angular/core';
+import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faUserTie,
@@ -13,14 +13,20 @@ import { EmployeeFacade } from '../../services/employee.facade';
 import { UpdateEmployee } from '../../models/UpdateEmployee';
 import { RegisterEmployeeRequest } from '@features/auth/models/RegisterEmployee';
 
+interface EmployeeFormModel {
+  fullName: string;
+  username: string;
+  password: string;
+  isActive: boolean;
+}
+
 @Component({
   selector: 'app-employee-form-modal',
-  imports: [ReactiveFormsModule, FontAwesomeModule],
+  imports: [FormField, FormRoot, FontAwesomeModule],
   templateUrl: './employee-form-modal.html',
 })
 export class EmployeeFormModalComponent {
   public facade = inject(EmployeeFacade);
-  private _fb = inject(FormBuilder);
 
   readonly faUserTie = faUserTie;
   readonly faXmark = faXmark;
@@ -29,57 +35,76 @@ export class EmployeeFormModalComponent {
   readonly faLock = faLock;
   readonly faUser = faUser;
 
-  createForm: FormGroup = this._fb.group({
-    fullName: ['', [Validators.required, Validators.minLength(3)]],
-    username: ['', [Validators.required, Validators.minLength(3)]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+  private readonly _model = signal<EmployeeFormModel>({
+    fullName: '',
+    username: '',
+    password: '',
+    isActive: true,
   });
 
-  editForm: FormGroup = this._fb.group({
-    fullName: ['', [Validators.required, Validators.minLength(3)]],
-    isActive: [true],
+  readonly employeeForm = form(this._model, (path) => {
+    required(path.fullName, { message: 'الاسم الكامل مطلوب' });
+    minLength(path.fullName, 3, { message: 'يجب أن يكون الاسم 3 أحرف على الأقل' });
+
+    required(path.username, {
+      when: () => !this.facade.selectedEmployee(),
+      message: 'اسم المستخدم مطلوب',
+    });
+    minLength(path.username, 3, {
+      when: () => !this.facade.selectedEmployee(),
+      message: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل',
+    });
+
+    required(path.password, {
+      when: () => !this.facade.selectedEmployee(),
+      message: 'كلمة المرور مطلوبة',
+    });
+    minLength(path.password, 6, {
+      when: () => !this.facade.selectedEmployee(),
+      message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+    });
   });
 
   constructor() {
     effect(() => {
       const selected = this.facade.selectedEmployee();
       if (selected) {
-        this.editForm.patchValue({
+        this._model.set({
           fullName: selected.fullName,
+          username: '',
+          password: '',
           isActive: selected.isActive,
         });
       } else {
-        this.createForm.reset({
+        this._model.set({
           fullName: '',
           username: '',
           password: '',
+          isActive: true,
         });
       }
     });
   }
 
-  onSubmit(): void {
-    const isEdit = !!this.facade.selectedEmployee();
+  onSubmit(event?: Event): void {
+    if (event) event.preventDefault();
 
-    if (isEdit) {
-      if (this.editForm.invalid) {
-        this.editForm.markAllAsTouched();
-        return;
-      }
-      const selected = this.facade.selectedEmployee()!;
-      const val = this.editForm.value;
+    if (this.employeeForm().invalid()) {
+      this.employeeForm().markAsTouched();
+      return;
+    }
+
+    const selected = this.facade.selectedEmployee();
+    const val = this._model();
+
+    if (selected) {
       const request: UpdateEmployee = {
         userId: selected.userId,
         fullName: val.fullName,
-        isActive: !!val.isActive,
+        isActive: val.isActive,
       };
       this.facade.updateEmployee(request);
     } else {
-      if (this.createForm.invalid) {
-        this.createForm.markAllAsTouched();
-        return;
-      }
-      const val = this.createForm.value;
       const request: RegisterEmployeeRequest = {
         fullName: val.fullName,
         username: val.username,
@@ -93,3 +118,4 @@ export class EmployeeFormModalComponent {
     this.facade.closeFormModal();
   }
 }
+

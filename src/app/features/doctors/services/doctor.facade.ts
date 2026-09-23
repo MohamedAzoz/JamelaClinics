@@ -150,7 +150,7 @@ export class DoctorFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تحديث بيانات الطبيب بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تحديث بيانات الطبيب بنجاح');
             this.closeFormModal();
             this.loadDoctors();
           } else {
@@ -176,7 +176,7 @@ export class DoctorFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم حذف حساب الطبيب بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم حذف حساب الطبيب بنجاح');
             this.closeDeleteModal();
             this.loadDoctors();
           } else {
@@ -202,7 +202,7 @@ export class DoctorFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تغيير حالة الطبيب بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تغيير حالة الطبيب بنجاح');
             this.loadDoctors();
           } else {
             this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تغيير حالة الطبيب');
@@ -243,10 +243,8 @@ export class DoctorFacade {
 
   confirmDelete(): void {
     const doctor = this.doctorToDelete();
-    if (confirm('هل انت متاكد من حذف حساب الطبيب ' + doctor?.fullName)) {
-      if (doctor) {
-        this.deleteDoctor(doctor.userId);
-      }
+    if (doctor && confirm('هل انت متاكد من حذف حساب الطبيب ' + doctor?.fullName + '?')) {
+      this.deleteDoctor(doctor.userId);
     }
   }
 

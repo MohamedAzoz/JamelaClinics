@@ -6,6 +6,7 @@ import { IdentityService } from '../../../core/services/identity-service';
 import { AppMessageService } from '../../../core/services/app-message-service';
 import { RoutesManagement } from '../../../shared/constants/app-routes.constants';
 import { LoginRequest } from '../models/LoginRequest';
+import { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 
 @Service()
 export class AuthFacade {
@@ -45,5 +46,35 @@ export class AuthFacade {
     this._identity.clearAuth();
     this._messages.addSuccessMessage('تم تسجيل الخروج بنجاح');
     void this._router.navigate([`/${RoutesManagement.AUTH.path}`]);
+  }
+
+  readonly changePasswordLoading = signal(false);
+
+  async changePassword(request: ChangePasswordRequest): Promise<boolean> {
+    if (this.changePasswordLoading()) return false;
+
+    this.changePasswordLoading.set(true);
+
+    try {
+      const result = await firstValueFrom(this._api.changePassword(request));
+
+      if (result?.isSuccess !== false) {
+        this._messages.addSuccessMessage('تم تغيير كلمة المرور بنجاح');
+        // If the API returns a new token, update stored auth
+        if (result?.token) {
+          await this._identity.setAuth(result.token);
+        }
+        return true;
+      } else {
+        const msg = result?.message ?? 'فشل تغيير كلمة المرور. يرجى التأكد من البيانات المدخلة.';
+        this._messages.addErrorMessage(msg);
+        return false;
+      }
+    } catch {
+      this._messages.addErrorMessage('حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.');
+      return false;
+    } finally {
+      this.changePasswordLoading.set(false);
+    }
   }
 }

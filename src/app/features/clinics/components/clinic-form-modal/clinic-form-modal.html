@@ -48,7 +48,7 @@
       </div>
 
       <!-- Form Body -->
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 flex flex-col gap-5">
+      <form [formRoot]="clinicForm" (submit)="onSubmit($event)" novalidate class="p-6 flex flex-col gap-5">
         <!-- Clinic Name Field -->
         <div class="flex flex-col gap-1.5">
           <label
@@ -66,21 +66,19 @@
           <input
             id="clinicName"
             type="text"
-            formControlName="name"
+            [formField]="clinicForm.name"
             placeholder="مثال: عيادة الأسنان، عيادة الباطنة..."
             class="w-full px-4 py-3 rounded-xl border bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-            [class.border-slate-200]="!form.get('name')?.touched || form.get('name')?.valid"
-            [class.border-danger]="form.get('name')?.touched && form.get('name')?.invalid"
-            [class.dark:border-slate-700]="!form.get('name')?.touched || form.get('name')?.valid"
+            [class.border-slate-200]="!clinicForm.name().touched() || clinicForm.name().valid()"
+            [class.border-danger]="clinicForm.name().touched() && clinicForm.name().invalid()"
+            [class.dark:border-slate-700]="!clinicForm.name().touched() || clinicForm.name().valid()"
           />
 
           <!-- Validation error messages -->
-          @if (form.get('name')?.touched && form.get('name')?.invalid) {
-            <div class="text-xs text-danger flex items-center gap-1 mt-0.5">
-              @if (form.get('name')?.hasError('required')) {
-                <span>يرجى إدخال اسم العيادة</span>
-              } @else if (form.get('name')?.hasError('minlength')) {
-                <span>يجب أن يتكون اسم العيادة من حرفين على الأقل</span>
+          @if (clinicForm.name().touched() && clinicForm.name().invalid()) {
+            <div class="text-xs text-danger flex items-center gap-1 mt-0.5" role="alert">
+              @for (error of clinicForm.name().errors(); track error.message) {
+                <span>⚠ {{ error.message }}</span>
               }
             </div>
           }

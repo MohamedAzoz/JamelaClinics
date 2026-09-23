@@ -49,8 +49,9 @@
 
       <!-- Form Container -->
       <form
-        [formGroup]="facade.selectedEmployee() ? editForm : createForm"
-        (ngSubmit)="onSubmit()"
+        [formRoot]="employeeForm"
+        (submit)="onSubmit($event)"
+        novalidate
         class="p-6 flex flex-col gap-4"
       >
         <!-- Full Name Field -->
@@ -67,11 +68,17 @@
             <input
               id="fullName"
               type="text"
-              formControlName="fullName"
+              [formField]="employeeForm.fullName"
               placeholder="محمد علي..."
               class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              [class.border-danger]="employeeForm.fullName().touched() && employeeForm.fullName().invalid()"
             />
           </div>
+          @if (employeeForm.fullName().touched() && employeeForm.fullName().invalid()) {
+            @for (error of employeeForm.fullName().errors(); track error.message) {
+              <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+            }
+          }
         </div>
 
         <!-- Create Mode Specific Fields (Username & Password) -->
@@ -90,11 +97,17 @@
               <input
                 id="username"
                 type="text"
-                formControlName="username"
+                [formField]="employeeForm.username"
                 placeholder="reception_m..."
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                [class.border-danger]="employeeForm.username().touched() && employeeForm.username().invalid()"
               />
             </div>
+            @if (employeeForm.username().touched() && employeeForm.username().invalid()) {
+              @for (error of employeeForm.username().errors(); track error.message) {
+                <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+              }
+            }
           </div>
 
           <!-- Password Field -->
@@ -111,11 +124,17 @@
               <input
                 id="password"
                 type="password"
-                formControlName="password"
+                [formField]="employeeForm.password"
                 placeholder="••••••••"
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                [class.border-danger]="employeeForm.password().touched() && employeeForm.password().invalid()"
               />
             </div>
+            @if (employeeForm.password().touched() && employeeForm.password().invalid()) {
+              @for (error of employeeForm.password().errors(); track error.message) {
+                <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+              }
+            }
           </div>
         }
 
@@ -125,7 +144,7 @@
             <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
               <input
                 type="checkbox"
-                formControlName="isActive"
+                [formField]="employeeForm.isActive"
                 class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary/30 accent-primary cursor-pointer"
               />
               <span class="text-xs sm:text-sm font-semibold text-text">حساب نشط</span>

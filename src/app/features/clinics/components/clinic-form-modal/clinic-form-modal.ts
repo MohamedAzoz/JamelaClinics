@@ -1,25 +1,31 @@
-import { Component, effect, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, effect, inject, signal } from '@angular/core';
+import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faHospital, faXmark, faCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { ClinicFacade } from '../../services/clinic.facade';
 
+interface ClinicFormModel {
+  name: string;
+}
+
 @Component({
   selector: 'app-clinic-form-modal',
-  imports: [ReactiveFormsModule, FontAwesomeModule],
+  imports: [FormField, FormRoot, FontAwesomeModule],
   templateUrl: './clinic-form-modal.html',
 })
 export class ClinicFormModalComponent {
   public facade = inject(ClinicFacade);
-  private _fb = inject(FormBuilder);
 
   readonly faHospital = faHospital;
   readonly faXmark = faXmark;
   readonly faCheck = faCheck;
   readonly faSpinner = faSpinner;
 
-  form: FormGroup = this._fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
+  private readonly _model = signal<ClinicFormModel>({ name: '' });
+
+  readonly clinicForm = form(this._model, (path) => {
+    required(path.name, { message: 'يرجى إدخال اسم العيادة' });
+    minLength(path.name, 2, { message: 'يجب أن يتكون اسم العيادة من حرفين على الأقل' });
   });
 
   constructor() {
@@ -27,20 +33,21 @@ export class ClinicFormModalComponent {
     effect(() => {
       const clinic = this.facade.selectedClinic();
       if (clinic) {
-        this.form.patchValue({ name: clinic.name });
+        this._model.set({ name: clinic.name });
       } else {
-        this.form.reset({ name: '' });
+        this._model.set({ name: '' });
       }
     });
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  onSubmit(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.clinicForm().invalid()) {
+      this.clinicForm().markAsTouched();
       return;
     }
 
-    const name = this.form.value.name;
+    const name = this._model().name;
     const selected = this.facade.selectedClinic();
 
     if (selected) {
@@ -54,3 +61,4 @@ export class ClinicFormModalComponent {
     this.facade.closeFormModal();
   }
 }
+

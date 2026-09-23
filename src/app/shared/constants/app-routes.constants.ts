@@ -6,6 +6,7 @@ export const RoutesManagement = {
   CLINICS: { path: 'clinics' },
   DOCTORS: { path: 'doctors' },
   EMPLOYEES: { path: 'employees' },
+  CHANGE_PASSWORD: { path: 'change-password' },
 } as const;
 
 export const HospitalName = 'جميلة' as const;

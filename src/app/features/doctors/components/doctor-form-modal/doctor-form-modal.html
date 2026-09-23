@@ -49,8 +49,9 @@
 
       <!-- Form Container -->
       <form
-        [formGroup]="facade.selectedDoctor() ? editForm : createForm"
-        (ngSubmit)="onSubmit()"
+        [formRoot]="doctorForm"
+        (submit)="onSubmit($event)"
+        novalidate
         class="p-6 flex flex-col gap-4"
       >
         <!-- Full Name Field -->
@@ -65,11 +66,17 @@
             <input
               id="fullName"
               type="text"
-              formControlName="fullName"
+              [formField]="doctorForm.fullName"
               placeholder="د. أحمد محمود..."
               class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              [class.border-danger]="doctorForm.fullName().touched() && doctorForm.fullName().invalid()"
             />
           </div>
+          @if (doctorForm.fullName().touched() && doctorForm.fullName().invalid()) {
+            @for (error of doctorForm.fullName().errors(); track error.message) {
+              <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+            }
+          }
         </div>
 
         <!-- Clinic Dropdown Field -->
@@ -83,15 +90,21 @@
             </div>
             <select
               id="clinicId"
-              formControlName="clinicId"
+              [formField]="doctorForm.clinicId"
               class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer"
+              [class.border-danger]="doctorForm.clinicId().touched() && doctorForm.clinicId().invalid()"
             >
-              <option [ngValue]="null" disabled>اختر العيادة...</option>
+              <option value="" disabled>اختر العيادة...</option>
               @for (clinic of facade.clinics(); track clinic.id) {
                 <option [value]="clinic.id">{{ clinic.name }}</option>
               }
             </select>
           </div>
+          @if (doctorForm.clinicId().touched() && doctorForm.clinicId().invalid()) {
+            @for (error of doctorForm.clinicId().errors(); track error.message) {
+              <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+            }
+          }
         </div>
 
         <!-- Create Mode Specific Fields (Username & Password) -->
@@ -108,11 +121,17 @@
               <input
                 id="username"
                 type="text"
-                formControlName="username"
+                [formField]="doctorForm.username"
                 placeholder="dr_ahmed..."
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                [class.border-danger]="doctorForm.username().touched() && doctorForm.username().invalid()"
               />
             </div>
+            @if (doctorForm.username().touched() && doctorForm.username().invalid()) {
+              @for (error of doctorForm.username().errors(); track error.message) {
+                <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+              }
+            }
           </div>
 
           <!-- Password Field -->
@@ -127,11 +146,17 @@
               <input
                 id="password"
                 type="password"
-                formControlName="password"
+                [formField]="doctorForm.password"
                 placeholder="••••••••"
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                [class.border-danger]="doctorForm.password().touched() && doctorForm.password().invalid()"
               />
             </div>
+            @if (doctorForm.password().touched() && doctorForm.password().invalid()) {
+              @for (error of doctorForm.password().errors(); track error.message) {
+                <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+              }
+            }
           </div>
         }
 
@@ -150,13 +175,17 @@
                 <input
                   id="doctorPercentage"
                   type="number"
-                  min="0"
-                  max="100"
-                  formControlName="doctorPercentage"
+                  [formField]="doctorForm.doctorPercentage"
                   placeholder="70"
                   class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                  [class.border-danger]="doctorForm.doctorPercentage().touched() && doctorForm.doctorPercentage().invalid()"
                 />
               </div>
+              @if (doctorForm.doctorPercentage().touched() && doctorForm.doctorPercentage().invalid()) {
+                @for (error of doctorForm.doctorPercentage().errors(); track error.message) {
+                  <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+                }
+              }
             </div>
 
             <!-- Active Status Checkbox -->
@@ -164,7 +193,7 @@
               <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
-                  formControlName="isActive"
+                  [formField]="doctorForm.isActive"
                   class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary/30 accent-primary cursor-pointer"
                 />
                 <span class="text-xs sm:text-sm font-semibold text-text">حساب نشط</span>

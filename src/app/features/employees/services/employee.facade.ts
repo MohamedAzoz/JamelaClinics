@@ -108,7 +108,7 @@ export class EmployeeFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تسجيل حساب الموظف بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تسجيل حساب الموظف بنجاح');
             this.closeFormModal();
             this.loadEmployees();
           } else {
@@ -132,7 +132,7 @@ export class EmployeeFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تحديث بيانات الموظف بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تحديث بيانات الموظف بنجاح');
             this.closeFormModal();
             this.loadEmployees();
           } else {
@@ -158,7 +158,7 @@ export class EmployeeFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم حذف حساب الموظف بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم حذف حساب الموظف بنجاح');
             this.closeDeleteModal();
             this.loadEmployees();
           } else {
@@ -184,7 +184,7 @@ export class EmployeeFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تغيير حالة الموظف بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تغيير حالة الموظف بنجاح');
             this.loadEmployees();
           } else {
             this._messageService.addErrorMessage(res?.message || 'حدث خطأ أثناء تغيير حالة الموظف');
@@ -225,10 +225,8 @@ export class EmployeeFacade {
 
   confirmDelete(): void {
     const emp = this.employeeToDelete();
-    if (confirm('هل انت متاكد من حذف حساب الموظف ' + emp?.fullName)) {
-      if (emp) {
-        this.deleteEmployee(emp.userId);
-      }
+    if (emp && confirm('هل انت متاكد من حذف حساب الموظف ' + emp?.fullName + '?')) {
+      this.deleteEmployee(emp.userId);
     }
   }
 

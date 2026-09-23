@@ -100,7 +100,7 @@ export class ClinicFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تمت إضافة العيادة بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تمت إضافة العيادة بنجاح');
             this.closeFormModal();
             this.loadClinics();
           } else {
@@ -131,7 +131,7 @@ export class ClinicFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم تعديل بيانات العيادة بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم تعديل بيانات العيادة بنجاح');
             this.closeFormModal();
             this.loadClinics();
           } else {
@@ -159,7 +159,7 @@ export class ClinicFacade {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this._messageService.addSuccessMessage('تم حذف العيادة بنجاح');
+            this._messageService.addSuccessMessage(res?.message || 'تم حذف العيادة بنجاح');
             this.closeDeleteModal();
             this.loadClinics();
           } else {
@@ -201,7 +201,7 @@ export class ClinicFacade {
 
   confirmDelete(): void {
     const clinic = this.clinicToDelete();
-    if (clinic) {
+    if (clinic && confirm('هل انت متاكد من حذف العيادة: ' + clinic?.name + '?')) {
       this.deleteClinic(clinic.id);
     }
   }

@@ -1,33 +1,52 @@
-<section class="flex flex-col gap-8 p-6 md:p-7 min-h-full bg-main-bg" dir="rtl" aria-labelledby="dashboard-heading">
-
+<section
+  class="flex flex-col gap-8 p-6 md:p-7 min-h-full"
+  dir="rtl"
+  aria-labelledby="dashboard-heading"
+>
   <!-- ── Welcome Banner ── -->
-  <header class="relative overflow-hidden rounded-2xl bg-sidebar-bg p-8 md:p-10 flex items-center shadow-2xl shadow-primary/20">
-
+  <header
+    class="relative overflow-hidden rounded-2xl bg-sidebar-bg p-8 md:p-10 flex items-center shadow-2xl shadow-primary/20"
+  >
     <!-- Ambient blobs -->
-    <div class="absolute -top-32 -inset-e-24 w-80 h-80 rounded-full bg-primary opacity-40 blur-3xl pointer-events-none animate-pulse" aria-hidden="true"></div>
-    <div class="absolute -bottom-24 -inset-s-16 w-64 h-64 rounded-full bg-accent opacity-35 blur-3xl pointer-events-none animate-pulse" aria-hidden="true"></div>
+    <div
+      class="absolute -top-32 -inset-e-24 w-80 h-80 rounded-full bg-primary opacity-40 blur-3xl pointer-events-none animate-pulse"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="absolute -bottom-24 -inset-s-16 w-64 h-64 rounded-full bg-accent opacity-35 blur-3xl pointer-events-none animate-pulse"
+      aria-hidden="true"
+    ></div>
 
     <!-- Decorative ring -->
-    <div class="hidden lg:block absolute top-1/2 inset-e-24 -translate-y-1/2 w-72 h-72 rounded-full border border-white/8 pointer-events-none animate-[spin_22s_linear_infinite]" aria-hidden="true"></div>
+    <div
+      class="hidden lg:block absolute top-1/2 inset-e-24 -translate-y-1/2 w-72 h-72 rounded-full border border-white/8 pointer-events-none animate-[spin_22s_linear_infinite]"
+      aria-hidden="true"
+    ></div>
 
     <!-- Content -->
     <div class="relative z-10 flex items-center gap-5">
-
       <!-- Icon -->
-      <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/30 border border-white/12 text-sidebar-text text-2xl shrink-0 backdrop-blur-md animate-bounce">
+      <div
+        class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/30 border border-white/12 text-sidebar-text text-2xl shrink-0 backdrop-blur-md animate-bounce"
+      >
         <fa-icon [icon]="faDashboard" aria-hidden="true"></fa-icon>
       </div>
 
       <!-- Text -->
       <div class="flex flex-col gap-2">
-        <h1 id="dashboard-heading" class="text-2xl md:text-3xl font-bold text-sidebar-text m-0 tracking-tight">
+        <h1
+          id="dashboard-heading"
+          class="text-2xl md:text-3xl font-bold text-sidebar-text m-0 tracking-tight"
+        >
           أهلاً وسهلاً
           @if (userName()) {
             ، <span class="text-accent">{{ userName() }}</span>
           }
         </h1>
         <p class="flex items-center gap-2 text-sm text-sidebar-text/60 m-0">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-accent text-xs font-semibold tracking-wide">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-accent text-xs font-semibold tracking-wide"
+          >
             {{ roleLabel() }}
           </span>
           <span>&mdash; إليك نظرة سريعة على المسارات المتاحة لك</span>
@@ -38,10 +57,15 @@
 
   <!-- ── Cards Section ── -->
   <div class="flex flex-col gap-4">
-    <p class="text-xs font-semibold text-text-muted uppercase tracking-widest m-0">المسارات المتاحة</p>
+    <p class="text-xs font-semibold text-text-muted uppercase tracking-widest m-0">
+      المسارات المتاحة
+    </p>
 
-    <div class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));" role="list">
-
+    <div
+      class="grid gap-4"
+      style="grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr))"
+      role="list"
+    >
       @for (item of featureCards(); track item.route; let i = $index) {
         <a
           [routerLink]="item.route"
@@ -51,7 +75,10 @@
           [attr.aria-label]="'الانتقال إلى ' + item.label"
         >
           <!-- Hover glow backdrop -->
-          <div class="absolute inset-0 rounded-2xl bg-linear-to-b from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden="true"></div>
+          <div
+            class="absolute inset-0 rounded-2xl bg-linear-to-b from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            aria-hidden="true"
+          ></div>
 
           <!-- Icon circle -->
           <div
@@ -62,19 +89,26 @@
           </div>
 
           <!-- Label -->
-          <span class="relative z-10 text-sm font-semibold text-text text-center transition-colors duration-200 group-hover:text-primary">
+          <span
+            class="relative z-10 text-sm font-semibold text-text text-center transition-colors duration-200 group-hover:text-primary"
+          >
             {{ item.label }}
           </span>
 
           <!-- Arrow indicator -->
-          <span class="absolute bottom-2 inset-e-3 text-primary text-xs opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden="true">&#8592;</span>
+          <span
+            class="absolute bottom-2 inset-e-3 text-primary text-xs opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+            aria-hidden="true"
+            >&#8592;</span
+          >
         </a>
       }
 
       @if (featureCards().length === 0) {
-        <p class="col-span-full text-center text-sm text-text-muted py-12">لا توجد مسارات متاحة لدورك الحالي.</p>
+        <p class="col-span-full text-center text-sm text-text-muted py-12">
+          لا توجد مسارات متاحة لدورك الحالي.
+        </p>
       }
     </div>
   </div>
-
 </section>
