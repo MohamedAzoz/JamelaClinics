@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -15,20 +15,25 @@ import {
   faReceipt,
   faCheck,
   faBan,
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
+import { Appointments } from '../../models/Appointments';
+import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
 
 @Component({
   selector: 'app-schedule-appointments-table',
-  imports: [FontAwesomeModule, DatePipe],
+  imports: [FontAwesomeModule, DatePipe, EditAppointmentModalComponent],
   templateUrl: './schedule-appointments-table.html',
 })
 export class ScheduleAppointmentsTableComponent {
   readonly facade = inject(AppointmentFacade);
 
   readonly Number = Number;
+
+  readonly editingAppointment = signal<Appointments | null>(null);
 
   // Icons
   readonly faUser = faUser;
@@ -44,6 +49,17 @@ export class ScheduleAppointmentsTableComponent {
   readonly faReceipt = faReceipt;
   readonly faCheck = faCheck;
   readonly faBan = faBan;
+  readonly faEdit = faEdit;
+
+  openEditModal(app: Appointments): void {
+    this.facade.selectedDoctorId.set('');
+    this.facade.schedules.set([]);
+    this.editingAppointment.set(app);
+  }
+
+  closeEditModal(): void {
+    this.editingAppointment.set(null);
+  }
 
   getVisitTypeName(type: VisitType | number): string {
     switch (Number(type)) {

@@ -37,18 +37,6 @@
           </p>
         </div>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap items-center gap-3 self-start lg:self-auto">
-        <a
-          [routerLink]="['/main/appointment-booking']"
-          [queryParams]="{ scheduleId: facade.currentScheduleId() }"
-          class="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-dark transition"
-        >
-          <fa-icon [icon]="faPlus"></fa-icon>
-          <span>حجز موعد جديد</span>
-        </a>
-      </div>
     </div>
   </div>
 </div>

@@ -31,6 +31,7 @@
             <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
             <th scope="col" class="px-4 py-3.5">الحجز والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
+            <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-primary/5 text-text">
@@ -124,6 +125,19 @@
                   {{ getStatusName(app.status) }}
                 </span>
               </td>
+
+              <!-- Edit Button -->
+              <td class="px-4 py-4 text-center">
+                <button
+                  type="button"
+                  (click)="openEditModal(app)"
+                  title="تعديل بيانات الحجز"
+                  class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-bold transition cursor-pointer mx-auto"
+                >
+                  <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
+                  <span>تعديل</span>
+                </button>
+              </td>
             </tr>
           }
         </tbody>
@@ -131,3 +145,11 @@
     </div>
   }
 </div>
+
+<!-- Edit Appointment Modal -->
+@if (editingAppointment()) {
+  <app-edit-appointment-modal
+    [appointment]="editingAppointment()!"
+    (closed)="closeEditModal()"
+  />
+}

@@ -1,5 +1,4 @@
-import { Component, inject, output, signal, effect, computed, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, input, output, effect, signal, OnInit } from '@angular/core';
 import {
   form,
   FormField,
@@ -7,12 +6,13 @@ import {
   min,
   minLength,
   required,
-  validate,
   disabled,
   pattern,
 } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  faEdit,
+  faTimes,
   faUser,
   faPhone,
   faMapMarkerAlt,
@@ -28,11 +28,12 @@ import {
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
-import { CreateAppointments } from '../../models/CreateAppointments';
+import { Appointments } from '../../models/Appointments';
+import { AppointmentUpdate } from '../../models/AppointmentUpdate';
 import { VisitType } from '../../models/VisitType';
-import { DatePipe } from '@angular/common';
+import { Doctor } from '@features/doctors/models/Doctor';
 
-export interface BookingFormModel {
+export interface EditAppointmentFormModel {
   doctorId: string;
   doctorScheduleId: string;
   patientName: string;
@@ -44,21 +45,19 @@ export interface BookingFormModel {
 }
 
 @Component({
-  selector: 'app-booking-form',
-  imports: [FormField, FormRoot, FontAwesomeModule, DatePipe],
-  templateUrl: './booking-form.html',
+  selector: 'app-edit-appointment-modal',
+  imports: [FormField, FormRoot, FontAwesomeModule],
+  templateUrl: './edit-appointment-modal.html',
 })
-export class BookingFormComponent implements OnInit {
+export class EditAppointmentModalComponent implements OnInit {
   readonly facade = inject(AppointmentFacade);
-  private readonly _route = inject(ActivatedRoute);
 
-  // Output for form values sync (for live summary card)
-  readonly formValueChange = output<BookingFormModel>();
-
-  // Pending schedule selection from queryParams
-  readonly pendingScheduleId = signal<string | null>(null);
+  readonly appointment = input.required<Appointments>();
+  readonly closed = output<void>();
 
   // FontAwesome Icons
+  readonly faEdit = faEdit;
+  readonly faTimes = faTimes;
   readonly faUser = faUser;
   readonly faPhone = faPhone;
   readonly faMapMarkerAlt = faMapMarkerAlt;
@@ -73,37 +72,17 @@ export class BookingFormComponent implements OnInit {
   readonly faCalendarCheck = faCalendarCheck;
   readonly faChevronDown = faChevronDown;
 
-  // Visit Types Enum options
   readonly visitTypeOptions = [
-    {
-      value: VisitType.NewConsultation,
-      label: 'كشف جديد',
-      icon: 'faStethoscope',
-      desc: 'معاينة وفحص أول مرة',
-    },
-    {
-      value: VisitType.FollowUp,
-      label: 'إعادة',
-      icon: 'faCalendarCheck',
-      desc: 'متابعة بعد الكشف',
-    },
-    {
-      value: VisitType.Sessions,
-      label: 'جلسات علاجية',
-      icon: 'faUserCheck',
-      desc: 'جلسات متابعة مستمرة',
-    },
-    { value: VisitType.Laser, label: 'ليزر', icon: 'faCoins', desc: 'جلسات التجميل والليزر' },
-    {
-      value: VisitType.Fractional,
-      label: 'فراكشن',
-      icon: 'faCreditCard',
-      desc: 'جلسات الجلدية والعناية',
-    },
+    { value: VisitType.NewConsultation, label: 'كشف جديد', desc: 'معاينة وفحص أول مرة' },
+    { value: VisitType.FollowUp, label: 'إعادة', desc: 'متابعة بعد الكشف' },
+    { value: VisitType.Sessions, label: 'جلسات علاجية', desc: 'جلسات متابعة مستمرة' },
+    { value: VisitType.Laser, label: 'ليزر', desc: 'جلسات التجميل والليزر' },
+    { value: VisitType.Fractional, label: 'فراكشن', desc: 'جلسات الجلدية والعناية' },
   ];
 
-  // Signal Form Model
-  protected readonly _model = signal<BookingFormModel>({
+  readonly pendingScheduleId = signal<string | null>(null);
+
+  protected readonly _model = signal<EditAppointmentFormModel>({
     doctorId: '',
     doctorScheduleId: '',
     patientName: '',
@@ -116,7 +95,7 @@ export class BookingFormComponent implements OnInit {
 
   readonly model = this._model.asReadonly();
 
-  readonly bookingForm = form(this._model, (path) => {
+  readonly editForm = form(this._model, (path) => {
     required(path.doctorId, { message: 'يرجى اختيار الطبيب' });
 
     required(path.doctorScheduleId, { message: 'يرجى اختيار تاريخ وموعد الحجز' });
@@ -129,23 +108,31 @@ export class BookingFormComponent implements OnInit {
     minLength(path.patientName, 3, { message: 'اسم المريض يجب أن يتكون من 3 أحرف على الأقل' });
 
     required(path.patientPhoneNumber, { message: 'رقم هاتف المريض مطلوب' });
-    //خلى بالك الرقم لازم 11
     pattern(path.patientPhoneNumber, /^(01[0125]{1}[0-9]{8})$/, {
       message: 'رقم الهاتف غير صحيح',
     });
 
     required(path.consultationFee, { message: 'قيمة الكشف / الحجز مطلوبة' });
-    min(path.consultationFee, 0, { message: 'القيمة يجب أن تكون 0 أو أكثر' });
+    min(path.consultationFee, 0, { message: 'القيمة يجب أن تكون أكثر من 0' });
   });
 
   constructor() {
-    // Notify parent / summary of form value updates whenever model changes
+    // 1. Auto-select doctor when doctors list becomes available
     effect(() => {
-      const current = this._model();
-      this.formValueChange.emit(current);
+      const docs = this.facade.doctors();
+      const app = this.appointment();
+      const currentDoctorId = this._model().doctorId;
+
+      if (docs.length > 0 && !currentDoctorId && app) {
+        const matchedDoctorId = this.matchDoctorId(app.doctorName, docs);
+        if (matchedDoctorId) {
+          this._model.update((m) => ({ ...m, doctorId: matchedDoctorId }));
+          this.facade.selectDoctor(matchedDoctorId);
+        }
+      }
     });
 
-    // Effect: Auto-select scheduleId when facade.schedules() are loaded and match pendingScheduleId
+    // 2. Auto-select schedule when schedules list becomes available
     effect(() => {
       const scheds = this.facade.schedules();
       const pendingSchedId = this.pendingScheduleId();
@@ -164,77 +151,78 @@ export class BookingFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._route.queryParams.subscribe((params) => {
-      const docId = params['doctorId'];
-      const schedId = params['scheduleId'];
+    const app = this.appointment();
 
-      if (schedId) {
-        this.pendingScheduleId.set(String(schedId));
-      }
+    // Ensure active doctors list is loaded
+    if (this.facade.doctors().length === 0) {
+      this.facade.loadActiveDoctors();
+    }
 
-      if (docId) {
-        this._model.update((m) => ({
-          ...m,
-          doctorId: docId,
-        }));
-        this.facade.selectDoctor(docId);
-      }
+    const doctorId = this.matchDoctorId(app.doctorName, this.facade.doctors());
+    this.pendingScheduleId.set(String(app.doctorScheduleId));
+
+    this._model.set({
+      doctorId,
+      doctorScheduleId: String(app.doctorScheduleId),
+      patientName: app.patientName || '',
+      patientPhoneNumber: app.patientPhoneNumber || '',
+      patientAddress: app.patientAddress || '',
+      visitType: Number(app.visitType),
+      consultationFee: app.consultationFee ?? 0,
+      isPaid: Number(app.status) !== 1,
     });
+
+    if (doctorId) {
+      this.facade.selectDoctor(doctorId);
+    }
+  }
+
+  private matchDoctorId(doctorName: string | undefined, doctors: Doctor[]): string {
+    if (!doctorName || doctors.length === 0) return '';
+    const cleanAppDoc = doctorName.replace(/^د[\.\/]?\s*/, '').trim().toLowerCase();
+
+    const matched = doctors.find((d) => {
+      const cleanDoc = d.fullName.replace(/^د[\.\/]?\s*/, '').trim().toLowerCase();
+      return cleanDoc === cleanAppDoc || cleanAppDoc.includes(cleanDoc) || cleanDoc.includes(cleanAppDoc);
+    });
+
+    return matched?.userId ?? '';
   }
 
   onDoctorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const doctorId = select.value;
-
-    // Update model doctorId and clear doctorScheduleId
-    this._model.update((m) => ({
-      ...m,
-      doctorId,
-      doctorScheduleId: '',
-    }));
-
-    // Trigger facade doctor selection
+    this._model.update((m) => ({ ...m, doctorId, doctorScheduleId: '' }));
     this.facade.selectDoctor(doctorId);
   }
 
   onScheduleChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    this._model.update((m) => ({
-      ...m,
-      doctorScheduleId: select.value || '',
-    }));
+    this._model.update((m) => ({ ...m, doctorScheduleId: select.value || '' }));
   }
 
   onVisitTypeSelect(type: VisitType): void {
-    this._model.update((m) => ({
-      ...m,
-      visitType: type,
-    }));
+    this._model.update((m) => ({ ...m, visitType: type }));
   }
 
   onPaidToggle(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this._model.update((m) => ({
-      ...m,
-      isPaid: input.checked,
-    }));
+    this._model.update((m) => ({ ...m, isPaid: input.checked }));
   }
 
   async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
 
-    if (this.bookingForm().invalid() || this.facade.isSubmitting()) {
-      this.bookingForm().markAsTouched();
+    if (this.editForm().invalid() || this.facade.isUpdating()) {
+      this.editForm().markAsTouched();
       return;
     }
 
     const val = this._model();
+    const app = this.appointment();
 
-    if (!val.doctorScheduleId || Number(val.doctorScheduleId) <= 0) {
-      return;
-    }
-
-    const payload: CreateAppointments = {
+    const payload: AppointmentUpdate = {
+      id: app.id,
       patientName: val.patientName.trim(),
       patientPhoneNumber: val.patientPhoneNumber.trim(),
       patientAddress: val.patientAddress.trim(),
@@ -244,24 +232,14 @@ export class BookingFormComponent implements OnInit {
       isPaid: Boolean(val.isPaid),
     };
 
-    const ok = await this.facade.createAppointment(payload);
+    const ok = await this.facade.updateAppointment(payload);
     if (ok) {
-      this.resetForm();
+      this.closed.emit();
     }
   }
 
-  resetForm(): void {
-    this._model.set({
-      doctorId: '',
-      doctorScheduleId: '',
-      patientName: '',
-      patientPhoneNumber: '',
-      patientAddress: '',
-      visitType: VisitType.NewConsultation,
-      consultationFee: 0,
-      isPaid: false,
-    });
-    this.facade.selectedDoctorId.set('');
-    this.facade.schedules.set([]);
+  close(): void {
+    this.closed.emit();
   }
 }
+

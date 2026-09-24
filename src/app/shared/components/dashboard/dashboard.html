@@ -19,7 +19,7 @@
 
     <!-- Decorative ring -->
     <div
-      class="hidden lg:block absolute top-1/2 inset-e-24 -translate-y-1/2 w-72 h-72 rounded-full border border-white/8 pointer-events-none animate-[spin_22s_linear_infinite]"
+      class="hidden lg:block absolute top-1/2 inset-e-24 -translate-y-1/2 w-72 h-72 rounded-full border border-white/8 pointer-events-none"
       aria-hidden="true"
     ></div>
 
@@ -27,7 +27,7 @@
     <div class="relative z-10 flex items-center gap-5">
       <!-- Icon -->
       <div
-        class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/30 border border-white/12 text-sidebar-text text-2xl shrink-0 backdrop-blur-md animate-bounce"
+        class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/30 border border-white/12 text-sidebar-text text-2xl shrink-0"
       >
         <fa-icon [icon]="faDashboard" aria-hidden="true"></fa-icon>
       </div>
@@ -85,7 +85,7 @@
             class="relative z-10 flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/18 text-primary text-xl transition-all duration-250 group-hover:bg-primary/18 group-hover:scale-110"
             aria-hidden="true"
           >
-            <app-svg-icon [icon]="item.icon" />
+            <app-svg-icon [icon]="item.icon" class="flex items-center justify-center" />
           </div>
 
           <!-- Label -->

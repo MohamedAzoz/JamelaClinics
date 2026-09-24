@@ -1,18 +1,28 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { DoctorApiService } from '@features/doctors/services/doctor-api.service';
+import { EmployeeApiService } from '@features/employees/services/employee-api.service';
 import { DoctorScheduleApiService } from '@features/doctorSchedules/services/doctor-schedule-api.service';
 import { AppointmentApiService } from './appointment-api.service';
 import { Doctor } from '@features/doctors/models/Doctor';
+import { Employee } from '@features/employees/models/Employee';
 import { DoctorSchedule } from '@features/doctorSchedules/models/DoctorSchedule';
 import { Appointments } from '../models/Appointments';
-import { FilterAppointment, FilterAppointmentsForExcel } from '../models/FilterAppointment';
+import {
+  FilterAppointment,
+  FilterAppointments,
+  FilterAppointmentsForExcel,
+} from '../models/FilterAppointment';
 import { CreateAppointments } from '../models/CreateAppointments';
+import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { Period } from '../models/Period';
+import { AppointmentStatus } from '../models/AppointmentStatus';
+import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
 import { AppMessageService } from '@core/services/app-message-service';
 
 @Service()
 export class AppointmentFacade {
   private readonly _doctorApiService = inject(DoctorApiService);
+  private readonly _employeeApiService = inject(EmployeeApiService);
   private readonly _scheduleApiService = inject(DoctorScheduleApiService);
   private readonly _appointmentApiService = inject(AppointmentApiService);
   private readonly _toast = inject(AppMessageService);
@@ -31,6 +41,18 @@ export class AppointmentFacade {
   readonly lastBookedAppointment = signal<CreateAppointments | null>(null);
 
   // ==========================================
+  // Employees State for Filters
+  // ==========================================
+  readonly employees = signal<Employee[]>([]);
+  readonly isLoadingEmployees = signal<boolean>(false);
+
+  // ==========================================
+  // Statistics State
+  // ==========================================
+  readonly statistics = signal<AppointmentsStatistics | null>(null);
+  readonly isLoadingStatistics = signal<boolean>(false);
+
+  // ==========================================
   // Appointments Management & List State
   // ==========================================
   readonly appointments = signal<Appointments[]>([]);
@@ -41,11 +63,15 @@ export class AppointmentFacade {
 
   readonly isLoadingAppointments = signal<boolean>(false);
   readonly isExportingExcel = signal<boolean>(false);
+  readonly isUpdating = signal<boolean>(false);
 
   // Filter Signals
   readonly periodFilter = signal<Period | undefined>(undefined);
   readonly fromDateFilter = signal<string>('');
   readonly toDateFilter = signal<string>('');
+  readonly doctorIdFilter = signal<string>('');
+  readonly employeeIdFilter = signal<string>('');
+  readonly statusFilter = signal<AppointmentStatus | undefined>(undefined);
 
   // ==========================================
   // Schedule Specific Appointments State
@@ -109,14 +135,6 @@ export class AppointmentFacade {
     this.filteredAppointments().reduce((acc, curr) => acc + (curr.centerEarnings || 0), 0),
   );
 
-  // readonly paidAppointmentsCount = computed(
-  //   () => this.filteredAppointments().filter((a) => a.isPaid).length,
-  // );
-
-  // readonly unpaidAppointmentsCount = computed(
-  //   () => this.filteredAppointments().filter((a) => !a.isPaid).length,
-  // );
-
   // ==========================================
   // Booking Form Actions & API Wrappers
   // ==========================================
@@ -140,6 +158,24 @@ export class AppointmentFacade {
         this.isLoadingDoctors.set(false);
         this.doctors.set([]);
         this._toast.addErrorMessage('حدث خطأ أثناء الاتصال بالخادم لجلب الأطباء');
+      },
+    });
+  }
+
+  async loadActiveEmployees(): Promise<void> {
+    this.isLoadingEmployees.set(true);
+    this._employeeApiService.getAllEmployees(true).subscribe({
+      next: (res) => {
+        this.isLoadingEmployees.set(false);
+        if (res.isSuccess && res.data) {
+          this.employees.set(res.data);
+        } else {
+          this.employees.set([]);
+        }
+      },
+      error: () => {
+        this.isLoadingEmployees.set(false);
+        this.employees.set([]);
       },
     });
   }
@@ -203,12 +239,78 @@ export class AppointmentFacade {
     this.lastBookedAppointment.set(null);
   }
 
+  async updateAppointment(appointment: AppointmentUpdate): Promise<boolean> {
+    this.isUpdating.set(true);
+
+    return new Promise<boolean>((resolve) => {
+      this._appointmentApiService.updateAppointment(appointment).subscribe({
+        next: (res) => {
+          this.isUpdating.set(false);
+          if (res.isSuccess) {
+            this._toast.addSuccessMessage(res.message || 'تم تعديل بيانات الحجز بنجاح');
+            const currSchedId = this.currentScheduleId();
+            if (currSchedId) {
+              this.loadAppointmentsByScheduleId(currSchedId);
+            } else {
+              this.refreshData();
+            }
+            resolve(true);
+          } else {
+            this._toast.addErrorMessage(res.message || 'فشل في تعديل بيانات الحجز');
+            resolve(false);
+          }
+        },
+        error: () => {
+          this.isUpdating.set(false);
+          this._toast.addErrorMessage('حدث خطأ غير متوقع أثناء تعديل الحجز');
+          resolve(false);
+        },
+      });
+    });
+  }
+
   // ==========================================
   // Appointments Management & Listing Actions
   // ==========================================
   async initAppointmentsManagement(): Promise<void> {
-    await this.loadActiveDoctors();
-    await this.loadAppointments();
+    await Promise.all([this.loadActiveDoctors(), this.loadActiveEmployees()]);
+    this.refreshData();
+  }
+
+  refreshData(): void {
+    this.loadAppointments();
+    this.loadStatistics();
+  }
+
+  /**
+   * Fetches statistics via AppointmentApiService.getStatistics(filter)
+   */
+  async loadStatistics(): Promise<void> {
+    this.isLoadingStatistics.set(true);
+
+    const filter: FilterAppointments = {
+      Period: this.periodFilter(),
+      FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
+      ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
+      DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
+      EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
+      Status: this.statusFilter(),
+    };
+
+    this._appointmentApiService.getStatistics(filter).subscribe({
+      next: (res) => {
+        this.isLoadingStatistics.set(false);
+        if (res.isSuccess && res.data) {
+          this.statistics.set(res.data);
+        } else {
+          this.statistics.set(null);
+        }
+      },
+      error: () => {
+        this.isLoadingStatistics.set(false);
+        this.statistics.set(null);
+      },
+    });
   }
 
   /**
@@ -221,6 +323,8 @@ export class AppointmentFacade {
       Period: this.periodFilter(),
       FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
+      DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
+      EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
       PageNumber: this.pageNumber(),
       PageSize: this.pageSize(),
     };
@@ -292,7 +396,7 @@ export class AppointmentFacade {
       this.toDateFilter.set('');
     }
     this.pageNumber.set(1);
-    this.loadAppointments();
+    this.refreshData();
   }
 
   setDateRangeFilter(fromDate: string, toDate: string): void {
@@ -302,7 +406,25 @@ export class AppointmentFacade {
       this.periodFilter.set(undefined);
     }
     this.pageNumber.set(1);
-    this.loadAppointments();
+    this.refreshData();
+  }
+
+  setDoctorIdFilter(doctorId: string): void {
+    this.doctorIdFilter.set(doctorId);
+    this.pageNumber.set(1);
+    this.refreshData();
+  }
+
+  setEmployeeIdFilter(employeeId: string): void {
+    this.employeeIdFilter.set(employeeId);
+    this.pageNumber.set(1);
+    this.refreshData();
+  }
+
+  setStatusFilter(status?: AppointmentStatus): void {
+    this.statusFilter.set(status);
+    this.pageNumber.set(1);
+    this.refreshData();
   }
 
   setPageNumber(page: number): void {
@@ -321,8 +443,11 @@ export class AppointmentFacade {
     this.periodFilter.set(undefined);
     this.fromDateFilter.set('');
     this.toDateFilter.set('');
+    this.doctorIdFilter.set('');
+    this.employeeIdFilter.set('');
+    this.statusFilter.set(undefined);
     this.pageNumber.set(1);
-    this.loadAppointments();
+    this.refreshData();
   }
 
   // ==========================================
@@ -368,7 +493,7 @@ export class AppointmentFacade {
           if (currSchedId) {
             this.loadAppointmentsByScheduleId(currSchedId);
           } else {
-            this.loadAppointments();
+            this.refreshData();
           }
         } else {
           this._toast.addErrorMessage(res.message || 'فشل في تغيير حالة السداد');
@@ -392,7 +517,7 @@ export class AppointmentFacade {
           if (currSchedId) {
             this.loadAppointmentsByScheduleId(currSchedId);
           } else {
-            this.loadAppointments();
+            this.refreshData();
           }
         } else {
           this._toast.addErrorMessage(res.message || 'فشل في إنهاء الموعد');
@@ -416,7 +541,7 @@ export class AppointmentFacade {
           if (currSchedId) {
             this.loadAppointmentsByScheduleId(currSchedId);
           } else {
-            this.loadAppointments();
+            this.refreshData();
           }
         } else {
           this._toast.addErrorMessage(res.message || 'فشل في إلغاء الحجز');
@@ -429,3 +554,4 @@ export class AppointmentFacade {
     });
   }
 }
+
