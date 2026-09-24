@@ -15,7 +15,7 @@ import { IdentityService } from '@core/services/identity-service';
 
 @Component({
   selector: 'app-profile-header',
-  imports: [FontAwesomeModule, RouterLink],
+  imports: [FontAwesomeModule],
   templateUrl: './profile-header.html',
 })
 export class ProfileHeaderComponent {

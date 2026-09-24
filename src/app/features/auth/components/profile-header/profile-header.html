@@ -8,9 +8,13 @@
   ></div>
 
   <!-- Content Container -->
-  <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+  <div
+    class="relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6"
+  >
     <!-- User Avatar & Core Information -->
-    <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
+    <div
+      class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5"
+    >
       <!-- Gradient Avatar Circle -->
       <div
         class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-linear-to-tr from-primary via-primary-dark to-accent p-1 shadow-xl shadow-primary/20 shrink-0"
@@ -45,43 +49,23 @@
         </div>
 
         <!-- Username Handle -->
-        <div class="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-text-muted font-medium">
+        <div
+          class="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-text-muted font-medium"
+        >
           <fa-icon [icon]="faAt" class="text-primary/70"></fa-icon>
           <span>{{ facade.userProfile()?.userName || identity.userName() || '---' }}</span>
         </div>
 
         <!-- Account Verification Pill -->
         <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-1 text-xs">
-          <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+          <span
+            class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold"
+          >
             <fa-icon [icon]="faCircleCheck"></fa-icon>
             <span>حساب نشط ومُوثق بالنظام</span>
           </span>
         </div>
       </div>
-    </div>
-
-    <!-- Right Actions Buttons -->
-    <div class="flex flex-wrap items-center gap-3 shrink-0">
-      <!-- Change Password Button -->
-      <a
-        routerLink="/main/change-password"
-        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-dark active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md shadow-primary/25 transition-all duration-200 cursor-pointer no-underline"
-      >
-        <fa-icon [icon]="faKey"></fa-icon>
-        <span>تغيير كلمة المرور</span>
-      </a>
-
-      <!-- Refresh Button -->
-      <button
-        type="button"
-        (click)="refresh()"
-        [disabled]="facade.profileLoading()"
-        class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-surface hover:bg-slate-50 dark:hover:bg-slate-800 text-text transition-colors cursor-pointer disabled:opacity-50"
-        title="تحديث بيانات الملف الشخصي"
-        aria-label="تحديث بيانات الملف الشخصي"
-      >
-        <fa-icon [icon]="faRotateRight" [class.animate-spin]="facade.profileLoading()"></fa-icon>
-      </button>
     </div>
   </div>
 </div>

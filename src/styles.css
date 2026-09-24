@@ -159,222 +159,60 @@ a {
 
 @import 'tailwindcss';
 
-/*
- * Tailwind v4 manual dark mode
- */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* =========================================================
-   LIGHT THEME
-   Jamela — Azure Clinical Luxury
-   ========================================================= */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 :root {
-  /*
-   * MAIN BACKGROUND
-   *
-   * Very soft icy blue.
-   * Gives the application a clean clinical atmosphere
-   * without looking like a generic white hospital system.
-   */
   --raw-main-bg: #f4f9ff;
-
-  /*
-   * SURFACE
-   *
-   * Cards / Tables / Forms / Modals / Dropdowns
-   *
-   * Almost pure white with a very subtle blue undertone.
-   */
   --raw-surface: #ffffff;
-
-  /*
-   * SIDEBAR
-   *
-   * Deep medical navy.
-   *
-   * This is the strongest branding surface
-   * and visually connects directly with the dark
-   * sections of the new logo.
-   */
   --raw-sidebar-bg: #071a3d;
-
   --raw-sidebar-text: #f5faff;
-
-  /*
-   * PRIMARY
-   *
-   * Main Medical Azure.
-   *
-   * Used for:
-   * - Primary buttons
-   * - Active navigation
-   * - Links
-   * - Selected filters
-   * - Important interactive elements
-   */
   --raw-primary: #0d63d4;
-
-  /*
-   * PRIMARY DARK
-   *
-   * Hover / pressed / active state.
-   */
   --raw-primary-dark: #084ba7;
-
-  /*
-   * ACCENT
-   *
-   * Premium Cyan.
-   *
-   * Inspired by the cyan highlights of the logo.
-   *
-   * Use carefully for:
-   * - Icons
-   * - KPI highlights
-   * - Decorative lines
-   * - Selected statistics
-   * - Premium details
-   *
-   * It should NOT replace Primary.
-   */
   --raw-accent: #089fbe;
-
-  /*
-   * TYPOGRAPHY
-   *
-   * Deep blue-black rather than pure black.
-   */
   --raw-text: #10213d;
-
-  /*
-   * Secondary text / Metadata / Labels
-   */
   --raw-text-muted: #62738b;
-
-  /*
-   * SEMANTIC COLORS
-   *
-   * These intentionally remain independent
-   * from branding colors.
-   */
-
-  /* Paid / Completed / Successful */
   --raw-success: #187d67;
-
-  /* Pending / Requires attention */
   --raw-warning: #a66a12;
-
-  /* Failed / Delete / Error / Critical */
   --raw-danger: #c23e55;
-
-  /*
-   * FONT
-   */
   --raw-font-main: 'Cairo', sans-serif;
-
   color-scheme: light;
 }
 
-/* =========================================================
-   DARK THEME
-   Jamela — Midnight Azure
-   ========================================================= */
-
 .dark {
-  /*
-   * Main Dark Canvas
-   *
-   * Deep navy-black rather than generic gray.
-   */
   --raw-main-bg: #07111f;
-
-  /*
-   * Elevated surfaces
-   *
-   * Cards remain clearly separated from the background.
-   */
   --raw-surface: #0e1d2e;
-
-  /*
-   * Sidebar
-   *
-   * Almost-black navy.
-   */
   --raw-sidebar-bg: #040b16;
-
   --raw-sidebar-text: #f4f9ff;
-
-  /*
-   * Primary
-   *
-   * Slightly brighter for dark environments,
-   * while still supporting white text.
-   */
   --raw-primary: #2f73d9;
-
   --raw-primary-dark: #1d57b6;
-
-  /*
-   * Cyan brand highlight
-   */
   --raw-accent: #39c4df;
-
-  /*
-   * Typography
-   */
   --raw-text: #edf6ff;
-
   --raw-text-muted: #9eafc2;
-
-  /*
-   * Semantic states
-   */
   --raw-success: #5bc5a3;
-
   --raw-warning: #e4ad54;
-
   --raw-danger: #ed7484;
-
   color-scheme: dark;
 }
 
-/* =========================================================
-   TAILWIND V4 DESIGN TOKENS
-   ========================================================= */
-
-@theme inline {
+@theme {
   --color-main-bg: var(--raw-main-bg);
-
   --color-surface: var(--raw-surface);
-
   --color-sidebar-bg: var(--raw-sidebar-bg);
   --color-sidebar-text: var(--raw-sidebar-text);
-
   --color-primary: var(--raw-primary);
   --color-primary-dark: var(--raw-primary-dark);
-
   --color-accent: var(--raw-accent);
-
   --color-text: var(--raw-text);
   --color-text-muted: var(--raw-text-muted);
-
   --color-success: var(--raw-success);
   --color-warning: var(--raw-warning);
   --color-danger: var(--raw-danger);
-
   --font-main: var(--raw-font-main);
 }
 
-/* =========================================================
-   FONT
-   ========================================================= */
-
 @font-face {
   font-family: 'Cairo';
-
   src: url('/fonts/cairo-v31-arabic_latin-700.woff2') format('woff2');
-
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -382,17 +220,11 @@ a {
 
 @font-face {
   font-family: 'Cairo';
-
   src: url('/fonts/cairo-v31-arabic_latin-regular.woff2') format('woff2');
-
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
 
 *,
 *::before,
@@ -406,25 +238,11 @@ html {
 
 body {
   min-height: 100vh;
-
   margin: 0;
   padding: 0;
-
   font-family: var(--raw-font-main);
-
   color: var(--raw-text);
-
   background-color: var(--raw-main-bg);
-
-  /*
-   * PREMIUM AMBIENT BACKGROUND
-   *
-   * Extremely subtle.
-   *
-   * Cyan = technological / beauty identity
-   * Blue = clinical identity
-   */
-
   background-image:
     radial-gradient(
       circle at 5% 0%,
@@ -444,29 +262,15 @@ body {
     color 0.3s ease;
 }
 
-/* =========================================================
-   INTERACTIVE ELEMENTS
-   ========================================================= */
-
 button,
 a {
   @apply cursor-pointer;
 }
 
-/* =========================================================
-   UTILITIES
-   ========================================================= */
-
 @layer utilities {
-  /*
-   * Glass surfaces inherit the theme automatically.
-   */
-
   .glass {
     background: color-mix(in srgb, var(--raw-surface) 84%, transparent);
-
     backdrop-filter: blur(16px);
-
     -webkit-backdrop-filter: blur(16px);
   }
 

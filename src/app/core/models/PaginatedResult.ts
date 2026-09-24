@@ -5,3 +5,15 @@ export interface PaginatedResult<T> {
   totalCount: number;
   totalPages: number;
 }
+
+
+
+//  {
+//     "pageNumber": 0,
+//     "pageSize": 0,
+//     "totalCount": 0,
+//     "totalPages": 0,
+//     "items": [
+     
+//     ]
+//   }

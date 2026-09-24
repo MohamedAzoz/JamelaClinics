@@ -10,6 +10,8 @@ export const RoutesManagement = {
   USER_LOGIN_LOGS: { path: 'user-login-logs' },
   PROFILE: { path: 'profile' },
   CHANGE_PASSWORD: { path: 'change-password' },
+  APPOINTMENTS: { path: 'appointments' },
+  APPOINTMENT_BOOKING: { path: 'appointment-booking' },
 } as const;
 
 export const HospitalName = 'جميلة' as const;
