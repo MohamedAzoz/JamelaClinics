@@ -54,11 +54,11 @@ export class AppointmentTableComponent {
 
   getStatusName(status: AppointmentStatus | number): string {
     switch (Number(status)) {
-      case AppointmentStatus.conFirmed: return 'مؤكد';
+      case AppointmentStatus.Unpaid: return 'غير مدفوع';
       case AppointmentStatus.InProgress: return 'قيد المعاينة';
       case AppointmentStatus.Completed: return 'مكتمل';
       case AppointmentStatus.Cancelleted: return 'ملغى';
-      default: return 'مؤكد';
+      default: return 'غير مدفوع';
     }
   }
 

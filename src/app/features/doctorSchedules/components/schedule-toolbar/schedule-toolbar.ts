@@ -7,6 +7,9 @@ import {
   faCheckCircle,
   faTimesCircle,
   faStethoscope,
+  faFilter,
+  faClock,
+  faUndo,
 } from '@fortawesome/free-solid-svg-icons';
 import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
 
@@ -24,11 +27,36 @@ export class ScheduleToolbarComponent {
   readonly faCheckCircle = faCheckCircle;
   readonly faTimesCircle = faTimesCircle;
   readonly faStethoscope = faStethoscope;
+  readonly faFilter = faFilter;
+  readonly faClock = faClock;
+  readonly faUndo = faUndo;
 
   onDoctorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     if (select.value) {
       this.facade.selectDoctor(select.value);
+    }
+  }
+
+  onIsActiveChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    if (value === 'true') {
+      this.facade.setIsActiveFilter(true);
+    } else if (value === 'false') {
+      this.facade.setIsActiveFilter(false);
+    } else {
+      this.facade.setIsActiveFilter(undefined);
+    }
+  }
+
+  onOnlyFutureChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    if (value === 'true') {
+      this.facade.setOnlyFutureFilter(true);
+    } else if (value === 'false') {
+      this.facade.setOnlyFutureFilter(false);
+    } else {
+      this.facade.setOnlyFutureFilter(undefined);
     }
   }
 }

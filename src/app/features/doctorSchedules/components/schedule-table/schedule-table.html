@@ -48,7 +48,6 @@
           class="bg-main-bg/80 text-text-muted text-xs font-bold uppercase border-b border-slate-200/80 dark:border-slate-800"
         >
           <tr>
-            <th scope="col" class="px-6 py-4">#</th>
             <th scope="col" class="px-6 py-4">اليوم والتاريخ</th>
             @if (facade.isAdminOrReception()) {
               <th scope="col" class="px-6 py-4">اسم الطبيب</th>
@@ -61,13 +60,8 @@
 
         <!-- Table Body -->
         <tbody class="divide-y divide-slate-200/60 dark:divide-slate-800/60 font-medium">
-          @for (schedule of facade.schedules(); track schedule.id; let idx = $index) {
+          @for (schedule of facade.schedules(); track schedule.id) {
             <tr class="hover:bg-main-bg/40 transition-colors duration-150">
-              <!-- Index -->
-              <td class="px-6 py-4 text-text-muted font-bold">
-                {{ idx + 1 }}
-              </td>
-
               <!-- Day Name & Date -->
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">

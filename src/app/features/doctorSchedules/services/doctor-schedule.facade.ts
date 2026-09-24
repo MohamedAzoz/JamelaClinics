@@ -28,6 +28,10 @@ export class DoctorScheduleFacade {
   readonly isDeleteModalOpen = signal<boolean>(false);
   readonly selectedScheduleToDelete = signal<DoctorSchedule | null>(null);
 
+  // Filter Signals
+  readonly isActiveFilter = signal<boolean | undefined>(undefined);
+  readonly onlyFutureFilter = signal<boolean | undefined>(undefined);
+
   // Computed Reactive States
   readonly isDoctor = computed(() => this._identityService.isDoctor());
   readonly isAdminOrReception = computed(
@@ -100,7 +104,26 @@ export class DoctorScheduleFacade {
   }
 
   /**
-   * Loads schedules for a specific doctorId.
+   * Filter Setters
+   */
+  setIsActiveFilter(isActive?: boolean): void {
+    this.isActiveFilter.set(isActive);
+    this.loadSchedules();
+  }
+
+  setOnlyFutureFilter(onlyFuture?: boolean): void {
+    this.onlyFutureFilter.set(onlyFuture);
+    this.loadSchedules();
+  }
+
+  resetFilters(): void {
+    this.isActiveFilter.set(undefined);
+    this.onlyFutureFilter.set(undefined);
+    this.loadSchedules();
+  }
+
+  /**
+   * Loads schedules for a specific doctorId with active filters.
    */
   loadSchedules(doctorId?: string): void {
     const targetId = doctorId ?? this.selectedDoctorId();
@@ -110,8 +133,11 @@ export class DoctorScheduleFacade {
       return;
     }
 
+    const isActive = this.isActiveFilter();
+    const onlyFuture = this.onlyFutureFilter();
+
     this.isLoading.set(true);
-    this._scheduleApiService.getDoctorScheduleByDoctorId(targetId).subscribe({
+    this._scheduleApiService.getDoctorScheduleByDoctorId(targetId, isActive, onlyFuture).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         if (res.isSuccess && res.data) {

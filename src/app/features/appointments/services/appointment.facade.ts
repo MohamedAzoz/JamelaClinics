@@ -77,13 +77,13 @@ export class AppointmentFacade {
     this.filteredAppointments().reduce((acc, curr) => acc + (curr.centerEarnings || 0), 0),
   );
 
-  readonly paidAppointmentsCount = computed(
-    () => this.filteredAppointments().filter((a) => a.isPaid).length,
-  );
+  // readonly paidAppointmentsCount = computed(
+  //   () => this.filteredAppointments().filter((a) => a.isPaid).length,
+  // );
 
-  readonly unpaidAppointmentsCount = computed(
-    () => this.filteredAppointments().filter((a) => !a.isPaid).length,
-  );
+  // readonly unpaidAppointmentsCount = computed(
+  //   () => this.filteredAppointments().filter((a) => !a.isPaid).length,
+  // );
 
   // ==========================================
   // Booking Form Actions & API Wrappers

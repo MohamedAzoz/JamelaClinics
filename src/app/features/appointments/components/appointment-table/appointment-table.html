@@ -30,7 +30,6 @@
             <th scope="col" class="px-4 py-3.5">تاريخ الحجز</th>
             <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
             <th scope="col" class="px-4 py-3.5">الحجز والأرباح</th>
-            <th scope="col" class="px-4 py-3.5 text-center">حالة السداد</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
           </tr>
         </thead>
@@ -113,25 +112,6 @@
                     <span>•</span>
                     <span class="text-accent">المركز: {{ app.centerEarnings }}</span>
                   </div>
-                }
-              </td>
-
-              <!-- Payment Status Badge -->
-              <td class="px-4 py-4 text-center">
-                @if (app.isPaid) {
-                  <span
-                    class="inline-flex items-center gap-1 rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success border border-success/20"
-                  >
-                    <fa-icon [icon]="faCheckCircle" class="text-[10px]"></fa-icon>
-                    مدفوع
-                  </span>
-                } @else {
-                  <span
-                    class="inline-flex items-center gap-1 rounded-full bg-warning/10 px-3 py-1 text-xs font-bold text-warning border border-warning/20"
-                  >
-                    <fa-icon [icon]="faTimesCircle" class="text-[10px]"></fa-icon>
-                    غير مدفوع
-                  </span>
                 }
               </td>
 

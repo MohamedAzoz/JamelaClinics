@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { Result } from '@core/models/Result';
 import { DoctorSchedule } from '../models/DoctorSchedule';
+import { DoctorScheduleItem } from '../models/DoctorScheduleItem';
 import { DoctorScheduleUpdate } from '../models/DoctorScheduleUpdate';
 import { DoctorScheduleCreate } from '../models/DoctorScheduleCreate';
 
@@ -36,7 +37,9 @@ export class DoctorScheduleApiService {
   //   GET
   // /api/DoctorSchedules/doctor/{doctorId}/month/{month}
   getDoctorScheduleByDoctorIdAndMonth(doctorId: string, month: number) {
-    return this._http.get<Result<DoctorSchedule[]>>(`${this.baseUrl}/doctor/${doctorId}/month/${month}`);
+    return this._http.get<Result<DoctorSchedule[]>>(
+      `${this.baseUrl}/doctor/${doctorId}/month/${month}`,
+    );
   }
   // DELETE
   // /api/DoctorSchedules/{scheduleId}
@@ -57,5 +60,11 @@ export class DoctorScheduleApiService {
   // /api/DoctorSchedules/toggle-status/{scheduleId}
   toggleStatus(scheduleId: number) {
     return this._http.patch<Result<boolean>>(`${this.baseUrl}/toggle-status/${scheduleId}`, null);
+  }
+
+  //   GET
+  // /api/DoctorSchedules/today
+  getTodaySchedules() {
+    return this._http.get<Result<DoctorScheduleItem[]>>(`${this.baseUrl}/today`);
   }
 }
