@@ -1,13 +1,17 @@
 <div class="w-full" dir="rtl">
   <!-- Loading State -->
   @if (facade.isLoadingTodaySchedules()) {
-    <div class="flex flex-col items-center justify-center py-16 text-text-muted bg-surface rounded-2xl border border-primary/10">
+    <div
+      class="flex flex-col items-center justify-center py-16 text-text-muted bg-surface rounded-2xl border border-primary/10"
+    >
       <fa-icon [icon]="faSpinner" class="animate-spin text-3xl text-primary mb-3"></fa-icon>
       <p class="text-sm font-semibold">جاري تحميل قائمة أطباء اليوم...</p>
     </div>
   } @else if (facade.filteredTodaySchedules().length === 0) {
     <!-- Empty State -->
-    <div class="flex flex-col items-center justify-center py-16 px-4 text-center bg-surface rounded-2xl border border-primary/10">
+    <div
+      class="flex flex-col items-center justify-center py-16 px-4 text-center bg-surface rounded-2xl border border-primary/10"
+    >
       <div
         class="w-16 h-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center text-2xl mb-4 shadow-inner"
       >
@@ -44,7 +48,9 @@
                   <fa-icon [icon]="faUserMd"></fa-icon>
                 </div>
                 <div>
-                  <h2 class="text-base font-bold text-text group-hover:text-primary transition-colors">
+                  <h2
+                    class="text-base font-bold text-text group-hover:text-primary transition-colors"
+                  >
                     د. {{ item.doctorName || 'غير محدد' }}
                   </h2>
                   <div class="flex items-center gap-1.5 text-xs text-text-muted mt-0.5 font-medium">
@@ -73,7 +79,9 @@
             </div>
 
             <!-- Date & Appointments Count Details Box -->
-            <div class="grid grid-cols-2 gap-3 my-4 p-3.5 rounded-2xl bg-main-bg/60 border border-primary/10">
+            <div
+              class="grid grid-cols-2 gap-3 my-4 p-3.5 rounded-2xl bg-main-bg/60 border border-primary/10"
+            >
               <!-- Day & Date -->
               <div class="flex flex-col gap-0.5">
                 <span class="text-[11px] font-medium text-text-muted flex items-center gap-1">
@@ -111,7 +119,8 @@
 
             <!-- Book Appointment Button -->
             <a
-              routerLink="/main/appointment-booking"
+              [routerLink]="['/main/appointment-booking']"
+              [queryParams]="{ doctorId: item.doctorId, scheduleId: item.id }"
               title="حجز موعد مريض جديد"
               class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface hover:bg-main-bg text-text border border-primary/20 text-xs font-semibold transition-all cursor-pointer no-underline"
             >

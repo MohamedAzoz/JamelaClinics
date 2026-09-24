@@ -61,7 +61,7 @@ export class BookingSummaryCardComponent {
       case 4:
         return 'ليزر';
       case 5:
-        return 'فراكشنال';
+        return 'فراكشن';
       default:
         return 'كشف جديد';
     }

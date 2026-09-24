@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -13,6 +12,7 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-schedule-appointments-header',
@@ -21,6 +21,7 @@ import { AppointmentFacade } from '../../services/appointment.facade';
 })
 export class ScheduleAppointmentsHeaderComponent {
   readonly facade = inject(AppointmentFacade);
+  readonly location = inject(Location);
 
   readonly faCalendarCheck = faCalendarCheck;
   readonly faArrowRight = faArrowRight;
@@ -30,4 +31,8 @@ export class ScheduleAppointmentsHeaderComponent {
   readonly faClock = faClock;
   readonly faTimesCircle = faTimesCircle;
   readonly faPlus = faPlus;
+
+  onBackClick(): void {
+    this.location.back();
+  }
 }

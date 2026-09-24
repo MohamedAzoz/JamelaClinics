@@ -19,5 +19,5 @@ export interface Appointments {
   centerPercentage: number;
   doctorEarnings: number;
   centerEarnings: number;
-  cancelledByEmployeeName: string;
+  cancelledByEmployeeName: string | null | undefined;
 }

@@ -1,4 +1,5 @@
-import { Component, inject, output, signal, effect, computed } from '@angular/core';
+import { Component, inject, output, signal, effect, computed, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   form,
   FormField,
@@ -46,11 +47,15 @@ export interface BookingFormModel {
   imports: [FormField, FormRoot, FontAwesomeModule, DatePipe],
   templateUrl: './booking-form.html',
 })
-export class BookingFormComponent {
+export class BookingFormComponent implements OnInit {
   readonly facade = inject(AppointmentFacade);
+  private readonly _route = inject(ActivatedRoute);
 
   // Output for form values sync (for live summary card)
   readonly formValueChange = output<BookingFormModel>();
+
+  // Pending schedule selection from queryParams
+  readonly pendingScheduleId = signal<string | null>(null);
 
   // FontAwesome Icons
   readonly faUser = faUser;
@@ -90,7 +95,7 @@ export class BookingFormComponent {
     { value: VisitType.Laser, label: 'ليزر', icon: 'faCoins', desc: 'جلسات التجميل والليزر' },
     {
       value: VisitType.Fractional,
-      label: 'فراكشنال',
+      label: 'فراكشن',
       icon: 'faCreditCard',
       desc: 'جلسات الجلدية والعناية',
     },
@@ -136,6 +141,42 @@ export class BookingFormComponent {
     effect(() => {
       const current = this._model();
       this.formValueChange.emit(current);
+    });
+
+    // Effect: Auto-select scheduleId when facade.schedules() are loaded and match pendingScheduleId
+    effect(() => {
+      const scheds = this.facade.schedules();
+      const pendingSchedId = this.pendingScheduleId();
+
+      if (pendingSchedId && scheds.length > 0) {
+        const matchingSchedule = scheds.find((s) => String(s.id) === String(pendingSchedId));
+        if (matchingSchedule) {
+          this._model.update((m) => ({
+            ...m,
+            doctorScheduleId: String(matchingSchedule.id),
+          }));
+          this.pendingScheduleId.set(null);
+        }
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this._route.queryParams.subscribe((params) => {
+      const docId = params['doctorId'];
+      const schedId = params['scheduleId'];
+
+      if (schedId) {
+        this.pendingScheduleId.set(String(schedId));
+      }
+
+      if (docId) {
+        this._model.update((m) => ({
+          ...m,
+          doctorId: docId,
+        }));
+        this.facade.selectDoctor(docId);
+      }
     });
   }
 
