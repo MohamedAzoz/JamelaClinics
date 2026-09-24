@@ -3,6 +3,7 @@ import { DoctorScheduleApiService } from './doctor-schedule-api.service';
 import { DoctorApiService } from '@features/doctors/services/doctor-api.service';
 import { IdentityService } from '@core/services/identity-service';
 import { DoctorSchedule } from '../models/DoctorSchedule';
+import { DoctorScheduleItem } from '../models/DoctorScheduleItem';
 import { Doctor } from '@features/doctors/models/Doctor';
 import { DoctorScheduleCreate } from '../models/DoctorScheduleCreate';
 import { DoctorScheduleUpdate } from '../models/DoctorScheduleUpdate';
@@ -21,6 +22,11 @@ export class DoctorScheduleFacade {
   readonly selectedDoctorId = signal<string>('');
   readonly isLoading = signal<boolean>(false);
   readonly actionLoading = signal<boolean>(false);
+
+  // Today Schedules State Signals
+  readonly todaySchedules = signal<DoctorScheduleItem[]>([]);
+  readonly isLoadingTodaySchedules = signal<boolean>(false);
+  readonly todaySearchQuery = signal<string>('');
 
   // Modal Control Signals
   readonly isFormModalOpen = signal<boolean>(false);
@@ -44,6 +50,25 @@ export class DoctorScheduleFacade {
   readonly activeSchedulesCount = computed(() => this.schedules().filter((s) => s.isActive).length);
   readonly inactiveSchedulesCount = computed(
     () => this.schedules().filter((s) => !s.isActive).length,
+  );
+
+  // Today Schedules Computed Reactive States
+  readonly filteredTodaySchedules = computed(() => {
+    const query = this.todaySearchQuery().trim().toLowerCase();
+    if (!query) return this.todaySchedules();
+    return this.todaySchedules().filter(
+      (s) =>
+        s.doctorName?.toLowerCase().includes(query) ||
+        s.clinicName?.toLowerCase().includes(query),
+    );
+  });
+
+  readonly todayTotalDoctorsCount = computed(() => this.todaySchedules().length);
+  readonly todayActiveDoctorsCount = computed(
+    () => this.todaySchedules().filter((s) => s.isActive).length,
+  );
+  readonly todayTotalAppointmentsCount = computed(() =>
+    this.todaySchedules().reduce((acc, curr) => acc + (curr.appointmentsCount || 0), 0),
   );
 
   /**
@@ -286,5 +311,32 @@ export class DoctorScheduleFacade {
         this._toast.addErrorMessage('حدث خطأ أثناء تغيير حالة الموعد');
       },
     });
+  }
+
+  /**
+   * Fetches today's doctor schedules via DoctorScheduleApiService.getTodaySchedules()
+   */
+  loadTodaySchedules(): void {
+    this.isLoadingTodaySchedules.set(true);
+    this._scheduleApiService.getTodaySchedules().subscribe({
+      next: (res) => {
+        this.isLoadingTodaySchedules.set(false);
+        if (res.isSuccess && res.data) {
+          this.todaySchedules.set(res.data);
+        } else {
+          this.todaySchedules.set([]);
+          this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة مواعيد اليوم للأطباء');
+        }
+      },
+      error: () => {
+        this.isLoadingTodaySchedules.set(false);
+        this.todaySchedules.set([]);
+        this._toast.addErrorMessage('حدث خطأ أثناء جلب مواعيد اليوم للأطباء');
+      },
+    });
+  }
+
+  setTodaySearchQuery(query: string): void {
+    this.todaySearchQuery.set(query);
   }
 }

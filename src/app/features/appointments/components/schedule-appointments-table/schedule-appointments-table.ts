@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faUser,
@@ -12,23 +13,24 @@ import {
   faSpinner,
   faClock,
   faReceipt,
+  faCheck,
+  faBan,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
-import { DatePipe } from '@angular/common';
 import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 
 @Component({
-  selector: 'app-appointment-table',
+  selector: 'app-schedule-appointments-table',
   imports: [FontAwesomeModule, DatePipe],
-  templateUrl: './appointment-table.html',
+  templateUrl: './schedule-appointments-table.html',
 })
-export class AppointmentTableComponent {
+export class ScheduleAppointmentsTableComponent {
   readonly facade = inject(AppointmentFacade);
 
   readonly Number = Number;
 
-  // FontAwesome Icons
+  // Icons
   readonly faUser = faUser;
   readonly faPhone = faPhone;
   readonly faMapMarkerAlt = faMapMarkerAlt;
@@ -40,6 +42,8 @@ export class AppointmentTableComponent {
   readonly faSpinner = faSpinner;
   readonly faClock = faClock;
   readonly faReceipt = faReceipt;
+  readonly faCheck = faCheck;
+  readonly faBan = faBan;
 
   getVisitTypeName(type: VisitType | number): string {
     switch (Number(type)) {
@@ -76,16 +80,16 @@ export class AppointmentTableComponent {
   getStatusBadgeClass(status: AppointmentStatus | number): string {
     const num = Number(status);
     switch (num) {
-      case 1: // Confirmed - primary blue
-        return 'bg-primary/10 text-primary border border-primary/20';
-      case 2: // InProgress - accent
+      case 1: // Unpaid
+        return 'bg-warning/10 text-warning border border-warning/20';
+      case 2: // InProgress
         return 'bg-accent/10 text-accent border border-accent/20';
-      case 3: // Completed - success
+      case 3: // Completed
         return 'bg-success/10 text-success border border-success/20';
-      case 4: // Cancelled - danger
+      case 4: // Cancelled
         return 'bg-danger/10 text-danger border border-danger/20';
       default:
-        return 'bg-primary/10 text-primary border border-primary/20';
+        return 'bg-warning/10 text-warning border border-warning/20';
     }
   }
 }

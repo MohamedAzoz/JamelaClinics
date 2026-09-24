@@ -7,11 +7,13 @@ export const RoutesManagement = {
   DOCTORS: { path: 'doctors' },
   EMPLOYEES: { path: 'employees' },
   DOCTOR_SCHEDULES: { path: 'doctor-schedules' },
+  TODAY_DOCTOR_SCHEDULES: { path: 'today-doctor-schedules' },
   USER_LOGIN_LOGS: { path: 'user-login-logs' },
   PROFILE: { path: 'profile' },
   CHANGE_PASSWORD: { path: 'change-password' },
   APPOINTMENTS: { path: 'appointments' },
   APPOINTMENT_BOOKING: { path: 'appointment-booking' },
+  SCHEDULE_APPOINTMENTS: { path: 'schedule-appointments/:scheduleId' },
 } as const;
 
 export const HospitalName = 'جميلة' as const;

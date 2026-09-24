@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCalendarDay,
@@ -16,7 +17,7 @@ import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
 
 @Component({
   selector: 'app-schedule-table',
-  imports: [DatePipe, FontAwesomeModule],
+  imports: [DatePipe, RouterLink, FontAwesomeModule],
   templateUrl: './schedule-table.html',
 })
 export class ScheduleTableComponent {

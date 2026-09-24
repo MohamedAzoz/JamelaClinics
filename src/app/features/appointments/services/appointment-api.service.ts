@@ -5,8 +5,13 @@ import { CreateAppointments } from '../models/CreateAppointments';
 import { Appointments } from '../models/Appointments';
 import { Result } from '@core/models/Result';
 import { PaginatedResult } from '@core/models/PaginatedResult';
-import { FilterAppointment, FilterAppointmentsForExcel } from '../models/FilterAppointment';
+import {
+  FilterAppointment,
+  FilterAppointments,
+  FilterAppointmentsForExcel,
+} from '../models/FilterAppointment';
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
+import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
 
 @Service()
 export class AppointmentApiService {
@@ -32,6 +37,12 @@ export class AppointmentApiService {
     }
     if (filter.ToDate !== undefined) {
       params.push(`ToDate=${filter.ToDate}`);
+    }
+    if (filter.DoctorId !== undefined) {
+      params.push(`DoctorId=${filter.DoctorId}`);
+    }
+    if (filter.EmployeeId !== undefined) {
+      params.push(`EmployeeId=${filter.EmployeeId}`);
     }
     if (filter.PageNumber !== undefined) {
       params.push(`PageNumber=${filter.PageNumber}`);
@@ -96,9 +107,9 @@ export class AppointmentApiService {
   }
 
   // GET
-  // /api/Appointments/my-report
-  getMyReport(filter: FilterAppointment) {
-    let url = `${this._baseUrl}/my-report`;
+  // /api/Appointments/statistics
+  getStatistics(filter: FilterAppointments) {
+    let url = `${this._baseUrl}/statistics`;
     const params: string[] = [];
     if (filter.Period !== undefined) {
       params.push(`Period=${filter.Period}`);
@@ -109,41 +120,18 @@ export class AppointmentApiService {
     if (filter.ToDate !== undefined) {
       params.push(`ToDate=${filter.ToDate}`);
     }
-    if (filter.PageNumber !== undefined) {
-      params.push(`PageNumber=${filter.PageNumber}`);
+    if (filter.DoctorId !== undefined) {
+      params.push(`DoctorId=${filter.DoctorId}`);
     }
-    if (filter.PageSize !== undefined) {
-      params.push(`PageSize=${filter.PageSize}`);
+    if (filter.EmployeeId !== undefined) {
+      params.push(`EmployeeId=${filter.EmployeeId}`);
     }
-    if (params.length > 0) {
-      url += `?${params.join('&')}`;
-    }
-    return this._http.get<Result<PaginatedResult<Appointments[]>>>(url);
-  }
-
-  // GET
-  // /api/Appointments/doctor/{doctorId}/report
-  getDoctorReport(doctorId: string, filter: FilterAppointment) {
-    let url = `${this._baseUrl}/doctor/${doctorId}/report`;
-    const params: string[] = [];
-    if (filter.Period !== undefined) {
-      params.push(`Period=${filter.Period}`);
-    }
-    if (filter.FromDate !== undefined) {
-      params.push(`FromDate=${filter.FromDate}`);
-    }
-    if (filter.ToDate !== undefined) {
-      params.push(`ToDate=${filter.ToDate}`);
-    }
-    if (filter.PageNumber !== undefined) {
-      params.push(`PageNumber=${filter.PageNumber}`);
-    }
-    if (filter.PageSize !== undefined) {
-      params.push(`PageSize=${filter.PageSize}`);
+    if (filter.Status !== undefined) {
+      params.push(`Status=${filter.Status}`);
     }
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
-    return this._http.get<Result<PaginatedResult<Appointments[]>>>(url);
+    return this._http.get<Result<AppointmentsStatistics>>(url);
   }
 }

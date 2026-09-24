@@ -55,7 +55,7 @@ export class BookingSummaryCardComponent {
       case 1:
         return 'كشف جديد';
       case 2:
-        return 'استشارة / إعادة';
+        return 'إعادة';
       case 3:
         return 'جلسات';
       case 4:

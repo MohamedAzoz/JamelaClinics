@@ -5,6 +5,6 @@ export interface DoctorScheduleItem {
   doctorName: string;
   date: Date;
   dayName: string;
-  isActive: boolean;
   appointmentsCount: number;
+  isActive: boolean;
 }

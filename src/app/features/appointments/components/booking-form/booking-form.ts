@@ -77,7 +77,7 @@ export class BookingFormComponent {
     },
     {
       value: VisitType.FollowUp,
-      label: 'استشارة / إعادة',
+      label: 'إعادة',
       icon: 'faCalendarCheck',
       desc: 'متابعة بعد الكشف',
     },

@@ -48,6 +48,38 @@ export class AppointmentFacade {
   readonly toDateFilter = signal<string>('');
 
   // ==========================================
+  // Schedule Specific Appointments State
+  // ==========================================
+  readonly scheduleAppointments = signal<Appointments[]>([]);
+  readonly isLoadingScheduleAppointments = signal<boolean>(false);
+  readonly currentScheduleId = signal<number | null>(null);
+  readonly actionLoadingId = signal<number | null>(null);
+
+  // Computed metrics for schedule appointments
+  readonly scheduleTotalCount = computed(() => this.scheduleAppointments().length);
+  readonly scheduleTotalFeeSum = computed(() =>
+    this.scheduleAppointments().reduce((acc, curr) => acc + (curr.consultationFee || 0), 0),
+  );
+  readonly scheduleDoctorEarningsSum = computed(() =>
+    this.scheduleAppointments().reduce((acc, curr) => acc + (curr.doctorEarnings || 0), 0),
+  );
+  readonly scheduleCenterEarningsSum = computed(() =>
+    this.scheduleAppointments().reduce((acc, curr) => acc + (curr.centerEarnings || 0), 0),
+  );
+  readonly scheduleCompletedCount = computed(
+    () => this.scheduleAppointments().filter((a) => Number(a.status) === 3).length,
+  );
+  readonly scheduleInProgressCount = computed(
+    () => this.scheduleAppointments().filter((a) => Number(a.status) === 2).length,
+  );
+  readonly scheduleUnpaidCount = computed(
+    () => this.scheduleAppointments().filter((a) => Number(a.status) === 1).length,
+  );
+  readonly scheduleCancelledCount = computed(
+    () => this.scheduleAppointments().filter((a) => Number(a.status) === 4).length,
+  );
+
+  // ==========================================
   // Computed Reactive States
   // ==========================================
   readonly selectedDoctor = computed(
@@ -291,5 +323,109 @@ export class AppointmentFacade {
     this.toDateFilter.set('');
     this.pageNumber.set(1);
     this.loadAppointments();
+  }
+
+  // ==========================================
+  // Schedule Specific Appointments Actions
+  // ==========================================
+
+  /**
+   * Fetches appointments for a specific doctor schedule ID via AppointmentApiService.getAppointmentsByScheduleId
+   */
+  loadAppointmentsByScheduleId(scheduleId: number): void {
+    this.isLoadingScheduleAppointments.set(true);
+    this.currentScheduleId.set(scheduleId);
+
+    this._appointmentApiService.getAppointmentsByScheduleId(scheduleId).subscribe({
+      next: (res) => {
+        this.isLoadingScheduleAppointments.set(false);
+        if (res.isSuccess && res.data) {
+          this.scheduleAppointments.set(res.data);
+        } else {
+          this.scheduleAppointments.set([]);
+          this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة الحجوزات للموعد المحدد');
+        }
+      },
+      error: () => {
+        this.isLoadingScheduleAppointments.set(false);
+        this.scheduleAppointments.set([]);
+        this._toast.addErrorMessage('حدث خطأ أثناء جلب حجوزات الموعد');
+      },
+    });
+  }
+
+  /**
+   * Status change action methods for individual appointments
+   */
+  payAppointment(id: number): void {
+    this.actionLoadingId.set(id);
+    this._appointmentApiService.payAppointment(id).subscribe({
+      next: (res) => {
+        this.actionLoadingId.set(null);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم تحديث حالة الحجز إلى مدفوع بنجاح');
+          const currSchedId = this.currentScheduleId();
+          if (currSchedId) {
+            this.loadAppointmentsByScheduleId(currSchedId);
+          } else {
+            this.loadAppointments();
+          }
+        } else {
+          this._toast.addErrorMessage(res.message || 'فشل في تغيير حالة السداد');
+        }
+      },
+      error: () => {
+        this.actionLoadingId.set(null);
+        this._toast.addErrorMessage('حدث خطأ أثناء تغيير حالة السداد');
+      },
+    });
+  }
+
+  completeAppointment(id: number): void {
+    this.actionLoadingId.set(id);
+    this._appointmentApiService.completeAppointment(id).subscribe({
+      next: (res) => {
+        this.actionLoadingId.set(null);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم إكتمال الكشف والحجز بنجاح');
+          const currSchedId = this.currentScheduleId();
+          if (currSchedId) {
+            this.loadAppointmentsByScheduleId(currSchedId);
+          } else {
+            this.loadAppointments();
+          }
+        } else {
+          this._toast.addErrorMessage(res.message || 'فشل في إنهاء الموعد');
+        }
+      },
+      error: () => {
+        this.actionLoadingId.set(null);
+        this._toast.addErrorMessage('حدث خطأ أثناء تحديث حالة الموعد');
+      },
+    });
+  }
+
+  cancelAppointment(id: number): void {
+    this.actionLoadingId.set(id);
+    this._appointmentApiService.cancelAppointment(id).subscribe({
+      next: (res) => {
+        this.actionLoadingId.set(null);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم إلغاء الحجز بنجاح');
+          const currSchedId = this.currentScheduleId();
+          if (currSchedId) {
+            this.loadAppointmentsByScheduleId(currSchedId);
+          } else {
+            this.loadAppointments();
+          }
+        } else {
+          this._toast.addErrorMessage(res.message || 'فشل في إلغاء الحجز');
+        }
+      },
+      error: () => {
+        this.actionLoadingId.set(null);
+        this._toast.addErrorMessage('حدث خطأ أثناء إلغاء الحجز');
+      },
+    });
   }
 }

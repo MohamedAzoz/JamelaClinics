@@ -51,18 +51,20 @@ export class DoctorScheduleApiService {
   createDoctorSchedule(schedule: DoctorScheduleCreate) {
     return this._http.post<Result<boolean>>(`${this.baseUrl}/create`, schedule);
   }
+
   // PUT
   // /api/DoctorSchedules/update
   updateDoctorSchedule(schedule: DoctorScheduleUpdate) {
     return this._http.put<Result<boolean>>(`${this.baseUrl}/update`, schedule);
   }
+
   // PATCH
   // /api/DoctorSchedules/toggle-status/{scheduleId}
   toggleStatus(scheduleId: number) {
     return this._http.patch<Result<boolean>>(`${this.baseUrl}/toggle-status/${scheduleId}`, null);
   }
 
-  //   GET
+  //GET  
   // /api/DoctorSchedules/today
   getTodaySchedules() {
     return this._http.get<Result<DoctorScheduleItem[]>>(`${this.baseUrl}/today`);

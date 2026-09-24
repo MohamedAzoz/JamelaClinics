@@ -1,0 +1,194 @@
+<div class="rounded-2xl bg-surface shadow-sm border border-primary/10 overflow-hidden mb-6" dir="rtl">
+  <!-- Loading State -->
+  @if (facade.isLoadingScheduleAppointments()) {
+    <div class="flex flex-col items-center justify-center p-12 text-text-muted">
+      <fa-icon [icon]="faSpinner" class="animate-spin text-3xl text-primary mb-3"></fa-icon>
+      <p class="text-sm font-semibold">جاري تحميل قائمة حجوزات الموعد...</p>
+    </div>
+  } @else if (facade.scheduleAppointments().length === 0) {
+    <!-- Empty State -->
+    <div class="flex flex-col items-center justify-center p-12 text-center text-text-muted">
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
+        <fa-icon [icon]="faReceipt" class="text-2xl"></fa-icon>
+      </div>
+      <h3 class="text-lg font-bold text-text">لا توجد حجوزات لهذا الموعد</h3>
+      <p class="text-xs text-text-muted max-w-sm mt-1">لم يتم تسجيل أي حجز مريض لهذا اليوم أو الموعد بعد.</p>
+    </div>
+  } @else {
+    <!-- Data Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-right text-sm">
+        <thead class="bg-primary/5 text-xs font-bold text-text-muted border-b border-primary/10">
+          <tr>
+            <th scope="col" class="px-4 py-3.5 text-center">رقم الدور</th>
+            <th scope="col" class="px-4 py-3.5">بيانات المريض</th>
+            <th scope="col" class="px-4 py-3.5">الطبيب والموظف</th>
+            <th scope="col" class="px-4 py-3.5">تاريخ الحجز</th>
+            <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
+            <th scope="col" class="px-4 py-3.5">قيمة الحجز والأرباح</th>
+            <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
+            <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-primary/5 text-text">
+          @for (app of facade.scheduleAppointments(); track app.id) {
+            <tr class="hover:bg-primary/5 transition">
+              <!-- Queue Number -->
+              <td class="px-4 py-4 text-center">
+                <span
+                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary font-mono text-sm border border-primary/20"
+                >
+                  {{ app.queueNumber }}
+                </span>
+              </td>
+
+              <!-- Patient Data -->
+              <td class="px-4 py-4">
+                <div class="font-bold text-text flex items-center gap-1.5">
+                  <fa-icon [icon]="faUser" class="text-xs text-primary"></fa-icon>
+                  {{ app.patientName }}
+                </div>
+                @if (app.patientPhoneNumber) {
+                  <div
+                    class="text-xs font-mono text-text-muted flex items-center gap-1 mt-0.5"
+                    dir="ltr"
+                  >
+                    <span>{{ app.patientPhoneNumber }}</span>
+                    <fa-icon [icon]="faPhone" class="text-[10px] text-text-muted"></fa-icon>
+                  </div>
+                }
+                @if (app.patientAddress) {
+                  <div class="text-[11px] text-text-muted flex items-center gap-1 mt-0.5">
+                    <fa-icon [icon]="faMapMarkerAlt" class="text-[10px] text-text-muted"></fa-icon>
+                    {{ app.patientAddress }}
+                  </div>
+                }
+              </td>
+
+              <!-- Doctor & Employee Name -->
+              <td class="px-4 py-4">
+                <div class="font-semibold text-text flex items-center gap-1.5">
+                  <fa-icon [icon]="faUserMd" class="text-xs text-accent"></fa-icon>
+                  د. {{ app.doctorName || 'غير محدد' }}
+                </div>
+                @if (app.employeeName) {
+                  <div class="text-[11px] text-text-muted mt-0.5">
+                    الموظف: {{ app.employeeName }}
+                  </div>
+                }
+              </td>
+
+              <!-- Appointment Date -->
+              <td class="px-4 py-4">
+                <div class="font-bold text-text flex items-center gap-1.5">
+                  <fa-icon [icon]="faCalendarDay" class="text-xs text-accent"></fa-icon>
+                  {{ app.appointmentDate | date: 'yyyy-MM-dd' }}
+                </div>
+                <div class="text-[11px] text-text-muted mt-0.5">
+                  التسجيل: {{ app.createdAt | date: 'yyyy-MM-dd (HH:mm)' }}
+                </div>
+              </td>
+
+              <!-- Visit Type -->
+              <td class="px-4 py-4">
+                <span
+                  class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary border border-primary/15"
+                >
+                  {{ getVisitTypeName(app.visitType) }}
+                </span>
+              </td>
+
+              <!-- Fee & Earnings Breakdown -->
+              <td class="px-4 py-4">
+                <div class="font-extrabold text-text font-mono text-sm">
+                  {{ app.consultationFee }} جنية
+                </div>
+                @if (app.doctorEarnings || app.centerEarnings) {
+                  <div class="text-[11px] text-text-muted mt-0.5 flex items-center gap-2">
+                    <span class="text-success">الطبيب: {{ app.doctorEarnings }}</span>
+                    <span>•</span>
+                    <span class="text-accent">المركز: {{ app.centerEarnings }}</span>
+                  </div>
+                }
+              </td>
+
+              <!-- Appointment Status Badge -->
+              <td class="px-4 py-4 text-center">
+                <span
+                  [class]="getStatusBadgeClass(app.status)"
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold"
+                >
+                  {{ getStatusName(app.status) }}
+                </span>
+                @if (app.cancelledByEmployeeName) {
+                  <div class="text-[10px] text-danger mt-1">
+                    بواسطة: {{ app.cancelledByEmployeeName }}
+                  </div>
+                }
+              </td>
+
+              <!-- Quick Action Buttons -->
+              <td class="px-4 py-4 text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                  <!-- Pay Button if Unpaid -->
+                  @if (Number(app.status) === 1) {
+                    <button
+                      type="button"
+                      (click)="facade.payAppointment(app.id)"
+                      [disabled]="facade.actionLoadingId() === app.id"
+                      title="سداد الكشفية (دفع)"
+                      class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                    >
+                      @if (facade.actionLoadingId() === app.id) {
+                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                      } @else {
+                        <fa-icon [icon]="faCoins" class="text-xs"></fa-icon>
+                        <span>دفع</span>
+                      }
+                    </button>
+                  }
+
+                  <!-- Complete Button if InProgress or Unpaid -->
+                  @if (Number(app.status) !== 3 && Number(app.status) !== 4) {
+                    <button
+                      type="button"
+                      (click)="facade.completeAppointment(app.id)"
+                      [disabled]="facade.actionLoadingId() === app.id"
+                      title="إنهاء الموعد واكتمال الكشف"
+                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                    >
+                      @if (facade.actionLoadingId() === app.id) {
+                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                      } @else {
+                        <fa-icon [icon]="faCheck" class="text-xs"></fa-icon>
+                        <span>إنهاء</span>
+                      }
+                    </button>
+                  }
+
+                  <!-- Cancel Button if not Cancelled -->
+                  @if (Number(app.status) !== 4) {
+                    <button
+                      type="button"
+                      (click)="facade.cancelAppointment(app.id)"
+                      [disabled]="facade.actionLoadingId() === app.id"
+                      title="إلغاء الحجز"
+                      class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                    >
+                      @if (facade.actionLoadingId() === app.id) {
+                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                      } @else {
+                        <fa-icon [icon]="faBan" class="text-xs"></fa-icon>
+                        <span>إلغاء</span>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

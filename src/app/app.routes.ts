@@ -57,6 +57,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.TODAY_DOCTOR_SCHEDULES.path,
+        loadComponent: () =>
+          import('./features/doctorSchedules/pages/today-schedules/today-schedules').then(
+            (m) => m.TodaySchedulesPage,
+          ),
+      },
+      {
         path: RoutesManagement.USER_LOGIN_LOGS.path,
         loadComponent: () =>
           import('./features/auth/pages/user-login-log/user-login-log').then(
@@ -91,6 +98,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/appointments/pages/appointment-booking/appointment-booking').then(
             (m) => m.AppointmentBookingPage,
+          ),
+      },
+      {
+        path: RoutesManagement.SCHEDULE_APPOINTMENTS.path,
+        loadComponent: () =>
+          import('./features/appointments/pages/schedule-appointments/schedule-appointments').then(
+            (m) => m.ScheduleAppointmentsPage,
           ),
       },
     ],
