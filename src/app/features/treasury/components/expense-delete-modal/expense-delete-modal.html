@@ -1,0 +1,47 @@
+@if (facade.isDeleteModalOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-sidebar-bg/70 p-4 backdrop-blur-sm"
+    dir="rtl"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="expense-delete-title"
+  >
+    <div class="w-full max-w-md rounded-2xl border border-text-muted/10 bg-surface p-6 shadow-2xl">
+      <div class="flex flex-col items-center gap-3 text-center">
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10 text-danger"
+        >
+          <fa-icon [icon]="faTriangleExclamation" size="2xl"></fa-icon>
+        </div>
+        <h2 id="expense-delete-title" class="text-lg font-bold text-text">تأكيد حذف المصروف</h2>
+        <p class="text-sm text-text-muted">
+          سيتم حذف المصروف
+          <strong class="text-danger">{{ facade.expenseToDelete()?.description }}</strong> ولا يمكن
+          التراجع عن العملية.
+        </p>
+      </div>
+      <div class="mt-6 flex gap-2">
+        <button
+          type="button"
+          (click)="facade.closeDeleteModal()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 rounded-xl border border-text-muted/15 px-4 py-2.5 text-xs font-semibold text-text hover:bg-main-bg"
+        >
+          إلغاء</button
+        ><button
+          type="button"
+          (click)="confirm()"
+          [disabled]="facade.actionLoading()"
+          class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+        >
+          @if (facade.actionLoading()) {
+            <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+          } @else {
+            <fa-icon [icon]="faTrashCan"></fa-icon>
+          }
+          <span>حذف المصروف</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}

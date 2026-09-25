@@ -61,14 +61,14 @@ export class AppointmentFilterComponent {
 
   onStatusChange(event: Event): void {
     const val = (event.target as HTMLSelectElement).value;
-    const status = val ? (Number(val) as AppointmentStatus) : undefined;
-    this.facade.setStatusFilter(status);
+    const status = val ? (Number(val) as AppointmentStatus) : null;
+    this.facade.setStatusFilter(status || null);
   }
 
-  onPeriodSelect(period?: Period): void {
-    this.fromDate.set('');
-    this.toDate.set('');
-    this.facade.setPeriodFilter(period);
+  onPeriodSelect(event: Event): void {
+    const val = (event.target as HTMLSelectElement).value;
+    const period = val ? (Number(val) as Period) : null;
+    this.facade.setPeriodFilter(period || null);
   }
 
   onDateRangeApply(): void {
@@ -81,4 +81,3 @@ export class AppointmentFilterComponent {
     this.facade.resetAllFilters();
   }
 }
-

@@ -50,6 +50,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.TREASURY.path,
+        loadComponent: () =>
+          import('./features/treasury/pages/treasury-management/treasury-management').then(
+            (m) => m.TreasuryManagementPage,
+          ),
+      },
+      {
         path: RoutesManagement.DOCTOR_SCHEDULES.path,
         loadComponent: () =>
           import('./features/doctorSchedules/pages/doctor-schedule-management/doctor-schedule-management').then(
@@ -79,7 +86,8 @@ export const routes: Routes = [
       },
       {
         path: RoutesManagement.PROFILE.path,
-        loadComponent: () => import('./features/auth/pages/profile/profile').then((m) => m.UserProfilePage),
+        loadComponent: () =>
+          import('./features/auth/pages/profile/profile').then((m) => m.UserProfilePage),
       },
 
       {

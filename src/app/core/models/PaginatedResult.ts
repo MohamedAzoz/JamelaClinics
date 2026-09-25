@@ -6,14 +6,12 @@ export interface PaginatedResult<T> {
   totalPages: number;
 }
 
-
-
 //  {
 //     "pageNumber": 0,
 //     "pageSize": 0,
 //     "totalCount": 0,
 //     "totalPages": 0,
 //     "items": [
-     
+
 //     ]
 //   }

@@ -16,7 +16,7 @@
       >
         <fa-icon [icon]="faReceipt" class="text-2xl"></fa-icon>
       </div>
-      <h3 class="text-lg font-bold text-text">لا توجد حجوزات لهذا الموعد</h3>
+      <h3 class="text-lg font-semibold text-text">لا توجد حجوزات لهذا الموعد</h3>
       <p class="text-xs text-text-muted max-w-sm mt-1">
         لم يتم تسجيل أي حجز مريض لهذا اليوم أو الموعد بعد.
       </p>
@@ -25,7 +25,9 @@
     <!-- Data Table -->
     <div class="overflow-x-auto">
       <table class="w-full text-right text-sm">
-        <thead class="bg-primary/5 text-xs font-bold text-text-muted border-b border-primary/10">
+        <thead
+          class="bg-primary/5 text-xs font-semibold text-text-muted border-b border-primary/10"
+        >
           <tr>
             <th scope="col" class="px-4 py-3.5 text-center">رقم الدور</th>
             <th scope="col" class="px-4 py-3.5">بيانات المريض</th>
@@ -35,7 +37,9 @@
             <th scope="col" class="px-4 py-3.5">قيمة الحجز والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
             <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
-            <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
+            @if (!facade.isDoctor()) {
+              <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
+            }
           </tr>
         </thead>
         <tbody class="divide-y divide-primary/5 text-text">
@@ -44,7 +48,7 @@
               <!-- Queue Number -->
               <td class="px-4 py-4 text-center">
                 <span
-                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary font-mono text-sm border border-primary/20"
+                  class="inline-flex lg:h-9 lg:w-9 h-6 w-6 items-center justify-center rounded-xl bg-primary/10 font-semibold text-primary font-mono text-sm border border-primary/20"
                 >
                   {{ app.queueNumber }}
                 </span>
@@ -52,13 +56,15 @@
 
               <!-- Patient Data -->
               <td class="px-4 py-4">
-                <div class="font-bold text-text flex items-center gap-1.5">
-                  <fa-icon [icon]="faUser" class="text-xs text-primary"></fa-icon>
+                <div
+                  class="text-xs md:text-sm lg:text-base font-semibold text-text flex items-center gap-1.5"
+                >
+                  <fa-icon [icon]="faUser" class="lg:text-xs text-[10px] text-primary"></fa-icon>
                   {{ app.patientName }}
                 </div>
                 @if (app.patientPhoneNumber) {
                   <div
-                    class="text-xs font-mono text-text-muted flex items-center gap-1 mt-0.5"
+                    class="lg:text-xs text-[10px] font-mono text-text-muted flex items-center gap-1 mt-0.5"
                     dir="ltr"
                   >
                     <span>{{ app.patientPhoneNumber }}</span>
@@ -66,7 +72,9 @@
                   </div>
                 }
                 @if (app.patientAddress) {
-                  <div class="text-[11px] text-text-muted flex items-center gap-1 mt-0.5">
+                  <div
+                    class="lg:text-xs text-[10px] text-text-muted flex items-center gap-1 mt-0.5"
+                  >
                     <fa-icon [icon]="faMapMarkerAlt" class="text-[10px] text-text-muted"></fa-icon>
                     {{ app.patientAddress }}
                   </div>
@@ -75,12 +83,14 @@
 
               <!-- Doctor & Employee Name -->
               <td class="px-4 py-4">
-                <div class="font-semibold text-text flex items-center gap-1.5">
+                <div
+                  class="lg:text-xs text-[10px] font-semibold text-text flex items-center gap-1.5"
+                >
                   <fa-icon [icon]="faUserMd" class="text-xs text-accent"></fa-icon>
                   د. {{ app.doctorName || 'غير محدد' }}
                 </div>
                 @if (app.employeeName) {
-                  <div class="text-[11px] text-text-muted mt-0.5">
+                  <div class="lg:text-xs text-[10px] text-text-muted mt-0.5">
                     الموظف: {{ app.employeeName }}
                   </div>
                 }
@@ -88,11 +98,13 @@
 
               <!-- Appointment Date -->
               <td class="px-4 py-4">
-                <div class="font-bold text-text flex items-center gap-1.5">
+                <div
+                  class="lg:text-xs text-[10px] font-semibold text-text flex items-center gap-1.5"
+                >
                   <fa-icon [icon]="faCalendarDay" class="text-xs text-accent"></fa-icon>
                   {{ app.appointmentDate | date: 'yyyy-MM-dd' }}
                 </div>
-                <div class="text-[11px] text-text-muted mt-0.5">
+                <div class="lg:text-xs text-[10px] text-text-muted mt-0.5">
                   التسجيل: {{ app.createdAt | date: 'yyyy-MM-dd (HH:mm)' }}
                 </div>
               </td>
@@ -100,7 +112,7 @@
               <!-- Visit Type -->
               <td class="px-4 py-4">
                 <span
-                  class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary border border-primary/15"
+                  class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary border border-primary/15"
                 >
                   {{ getVisitTypeName(app.visitType) }}
                 </span>
@@ -108,11 +120,15 @@
 
               <!-- Fee & Earnings Breakdown -->
               <td class="px-4 py-4">
-                <div class="font-extrabold text-text font-mono text-sm">
+                <div
+                  class="lg:text-xs text-[10px] font-semibold text-text font-mono text-sm"
+                >
                   {{ app.consultationFee }} جنية
                 </div>
-                @if (app.doctorEarnings || app.centerEarnings) {
-                  <div class="text-[11px] text-text-muted mt-0.5 flex items-center gap-2">
+                @if (facade.isAdminOrAccountant() && (app.doctorEarnings || app.centerEarnings)) {
+                  <div
+                    class="lg:text-xs text-[10px] text-text-muted mt-0.5 flex items-center gap-2"
+                  >
                     <span class="text-success">الطبيب: {{ app.doctorEarnings }}</span>
                     <span>•</span>
                     <span class="text-accent">المركز: {{ app.centerEarnings }}</span>
@@ -124,14 +140,14 @@
               <td class="px-4 py-4 text-center">
                 <span
                   [class]="getStatusBadgeClass(app.status)"
-                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold"
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
                 >
                   {{ getStatusName(app.status) }}
                 </span>
                 @if (
                   app.cancelledByEmployeeName && app.cancelledByEmployeeName?.trim().length > 0
                 ) {
-                  <div class="text-[10px] text-danger mt-1">
+                  <div class="lg:text-xs text-[10px] text-danger mt-1">
                     بواسطة: {{ app.cancelledByEmployeeName }}
                   </div>
                 }
@@ -141,13 +157,13 @@
               <td class="px-4 py-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
                   <!-- Pay Button if Unpaid -->
-                  @if (Number(app.status) === 1) {
+                  @if (!facade.isDoctor() && Number(app.status) === 1) {
                     <button
                       type="button"
                       (click)="facade.payAppointment(app.id)"
                       [disabled]="facade.actionLoadingId() === app.id"
                       title="سداد الكشفية (دفع)"
-                      class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                      class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
                     >
                       @if (facade.actionLoadingId() === app.id) {
                         <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -165,7 +181,7 @@
                       (click)="facade.completeAppointment(app.id)"
                       [disabled]="facade.actionLoadingId() === app.id"
                       title="إنهاء الموعد واكتمال الكشف"
-                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
                     >
                       @if (facade.actionLoadingId() === app.id) {
                         <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -177,13 +193,13 @@
                   }
 
                   <!-- Cancel Button if not Cancelled -->
-                  @if (Number(app.status) !== 4 && Number(app.status) !== 3) {
+                  @if (!facade.isDoctor() && Number(app.status) !== 4 && Number(app.status) !== 3) {
                     <button
                       type="button"
                       (click)="facade.cancelAppointment(app.id)"
                       [disabled]="facade.actionLoadingId() === app.id"
                       title="إلغاء الحجز"
-                      class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-bold transition cursor-pointer disabled:opacity-50"
+                      class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
                     >
                       @if (facade.actionLoadingId() === app.id) {
                         <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -197,17 +213,19 @@
               </td>
 
               <!-- Edit Button -->
-              <td class="px-4 py-4 text-center">
-                <button
-                  type="button"
-                  (click)="openEditModal(app)"
-                  title="تعديل بيانات الحجز"
-                  class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-bold transition cursor-pointer mx-auto"
-                >
-                  <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
-                  <span>تعديل</span>
-                </button>
-              </td>
+              @if (!facade.isDoctor()) {
+                <td class="px-4 py-4 text-center">
+                  <button
+                    type="button"
+                    (click)="openEditModal(app)"
+                    title="تعديل بيانات الحجز"
+                    class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer mx-auto"
+                  >
+                    <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
+                    <span>تعديل</span>
+                  </button>
+                </td>
+              }
             </tr>
           }
         </tbody>

@@ -42,31 +42,31 @@
           <div class="rounded-2xl bg-main-bg p-4 border border-primary/10 space-y-3">
             <div class="flex items-center justify-between text-sm">
               <span class="text-text-muted">اسم المريض:</span>
-              <span class="font-bold text-text">{{ app.patientName }}</span>
+              <span class="font-semibold text-text">{{ app.patientName }}</span>
             </div>
 
             <div class="flex items-center justify-between text-sm">
               <span class="text-text-muted">رقم الهاتف:</span>
-              <span class="font-mono font-bold text-primary" dir="ltr">{{
+              <span class="font-mono font-semibold text-primary" dir="ltr">{{
                 app.patientPhoneNumber
               }}</span>
             </div>
 
             <div class="flex items-center justify-between text-sm">
               <span class="text-text-muted">قيمة الحجز:</span>
-              <span class="font-bold text-warning">{{ app.consultationFee }} جنية</span>
+              <span class="font-semibold text-warning">{{ app.consultationFee }} جنية</span>
             </div>
 
             <div class="flex items-center justify-between text-sm">
               <span class="text-text-muted">حالة السداد:</span>
               @if (app.isPaid) {
                 <span
-                  class="font-bold text-success bg-success/10 px-2 py-0.5 rounded text-xs border border-success/20"
+                  class="font-semibold text-success bg-success/10 px-2 py-0.5 rounded text-xs border border-success/20"
                   >مدفوع</span
                 >
               } @else {
                 <span
-                  class="font-bold text-warning bg-warning/10 px-2 py-0.5 rounded text-xs border border-warning/20"
+                  class="font-semibold text-warning bg-warning/10 px-2 py-0.5 rounded text-xs border border-warning/20"
                   >غير مدفوع</span
                 >
               }
@@ -83,7 +83,7 @@
           <button
             type="button"
             (click)="closeModal()"
-            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-dark transition"
+            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary-dark transition"
           >
             <fa-icon [icon]="faCalendarPlus"></fa-icon>
             <span>حجز موعد جديد آخر</span>

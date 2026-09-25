@@ -18,11 +18,13 @@ import { Period } from '../models/Period';
 import { AppointmentStatus } from '../models/AppointmentStatus';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
 import { AppMessageService } from '@core/services/app-message-service';
+import { IdentityService } from '@core/services/identity-service';
 
 @Service()
 export class AppointmentFacade {
   private readonly _doctorApiService = inject(DoctorApiService);
   private readonly _employeeApiService = inject(EmployeeApiService);
+  private readonly _identityService = inject(IdentityService);
   private readonly _scheduleApiService = inject(DoctorScheduleApiService);
   private readonly _appointmentApiService = inject(AppointmentApiService);
   private readonly _toast = inject(AppMessageService);
@@ -66,12 +68,12 @@ export class AppointmentFacade {
   readonly isUpdating = signal<boolean>(false);
 
   // Filter Signals
-  readonly periodFilter = signal<Period | undefined>(undefined);
+  readonly periodFilter = signal<Period | null>(null);
   readonly fromDateFilter = signal<string>('');
   readonly toDateFilter = signal<string>('');
   readonly doctorIdFilter = signal<string>('');
   readonly employeeIdFilter = signal<string>('');
-  readonly statusFilter = signal<AppointmentStatus | undefined>(undefined);
+  readonly statusFilter = signal<AppointmentStatus | null>(null);
 
   // ==========================================
   // Schedule Specific Appointments State
@@ -111,6 +113,12 @@ export class AppointmentFacade {
   readonly selectedDoctor = computed(
     () => this.doctors().find((d) => d.userId === this.selectedDoctorId()) ?? null,
   );
+
+  readonly isAdminOrAccountant = computed(
+    () => this._identityService.isAdmin() || this._identityService.isAccountant(),
+  );
+
+  readonly isDoctor = computed(() => this._identityService.isDoctor());
 
   readonly hasAvailableSchedules = computed(() => this.schedules().length > 0);
 
@@ -289,7 +297,7 @@ export class AppointmentFacade {
     this.isLoadingStatistics.set(true);
 
     const filter: FilterAppointments = {
-      Period: this.periodFilter(),
+      Period: this.periodFilter() || null,
       FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
       DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
@@ -320,7 +328,7 @@ export class AppointmentFacade {
     this.isLoadingAppointments.set(true);
 
     const filter: FilterAppointment = {
-      Period: this.periodFilter(),
+      Period: this.periodFilter() || null,
       FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
       DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
@@ -389,9 +397,9 @@ export class AppointmentFacade {
   // ==========================================
   // Filter Handlers
   // ==========================================
-  setPeriodFilter(period?: Period): void {
+  setPeriodFilter(period: Period | null): void {
     this.periodFilter.set(period);
-    if (period !== undefined) {
+    if (period !== null) {
       this.fromDateFilter.set('');
       this.toDateFilter.set('');
     }
@@ -403,7 +411,7 @@ export class AppointmentFacade {
     this.fromDateFilter.set(fromDate);
     this.toDateFilter.set(toDate);
     if (fromDate || toDate) {
-      this.periodFilter.set(undefined);
+      this.periodFilter.set(null);
     }
     this.pageNumber.set(1);
     this.refreshData();
@@ -421,7 +429,7 @@ export class AppointmentFacade {
     this.refreshData();
   }
 
-  setStatusFilter(status?: AppointmentStatus): void {
+  setStatusFilter(status: AppointmentStatus | null): void {
     this.statusFilter.set(status);
     this.pageNumber.set(1);
     this.refreshData();
@@ -440,12 +448,12 @@ export class AppointmentFacade {
   }
 
   resetAllFilters(): void {
-    this.periodFilter.set(undefined);
+    this.periodFilter.set(null);
     this.fromDateFilter.set('');
     this.toDateFilter.set('');
     this.doctorIdFilter.set('');
     this.employeeIdFilter.set('');
-    this.statusFilter.set(undefined);
+    this.statusFilter.set(null);
     this.pageNumber.set(1);
     this.refreshData();
   }
@@ -554,4 +562,3 @@ export class AppointmentFacade {
     });
   }
 }
-

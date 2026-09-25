@@ -57,6 +57,7 @@ export class IdentityService {
   });
 
   readonly isAdmin = computed(() => this._role() === ROLES.Admin);
+  readonly isAccountant = computed(() => this._role() === ROLES.Accountant);
   readonly isDoctor = computed(() => this._role() === ROLES.Doctor);
   readonly isReception = computed(() => this._role() === ROLES.Reception);
 

@@ -28,4 +28,8 @@ export class BookingSuccessModalComponent {
   closeModal(): void {
     this.facade.resetBookingState();
   }
+
+  printAppointment(): void {
+    window.print();
+  }
 }

@@ -29,7 +29,7 @@ export class AppointmentApiService {
   getAllAppointments(filter: FilterAppointment) {
     let url = `${this._baseUrl}/get-all-appointments`;
     const params: string[] = [];
-    if (filter.Period !== undefined) {
+    if (filter.Period !== null) {
       params.push(`Period=${filter.Period}`);
     }
     if (filter.FromDate !== undefined) {
@@ -61,7 +61,7 @@ export class AppointmentApiService {
   getExportAppointments(filter: FilterAppointmentsForExcel) {
     let url = `${this._baseUrl}/export-excel`;
     const params: string[] = [];
-    if (filter.Period !== undefined) {
+    if (filter.Period !== null) {
       params.push(`Period=${filter.Period}`);
     }
     if (filter.FromDate !== undefined) {
@@ -111,7 +111,7 @@ export class AppointmentApiService {
   getStatistics(filter: FilterAppointments) {
     let url = `${this._baseUrl}/statistics`;
     const params: string[] = [];
-    if (filter.Period !== undefined) {
+    if (filter.Period !== null) {
       params.push(`Period=${filter.Period}`);
     }
     if (filter.FromDate !== undefined) {
@@ -126,7 +126,7 @@ export class AppointmentApiService {
     if (filter.EmployeeId !== undefined) {
       params.push(`EmployeeId=${filter.EmployeeId}`);
     }
-    if (filter.Status !== undefined) {
+    if (filter.Status !== null) {
       params.push(`Status=${filter.Status}`);
     }
     if (params.length > 0) {

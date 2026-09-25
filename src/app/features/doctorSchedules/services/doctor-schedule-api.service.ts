@@ -64,7 +64,7 @@ export class DoctorScheduleApiService {
     return this._http.patch<Result<boolean>>(`${this.baseUrl}/toggle-status/${scheduleId}`, null);
   }
 
-  //GET  
+  //GET
   // /api/DoctorSchedules/today
   getTodaySchedules() {
     return this._http.get<Result<DoctorScheduleItem[]>>(`${this.baseUrl}/today`);
