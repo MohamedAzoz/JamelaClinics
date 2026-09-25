@@ -7,8 +7,16 @@ import { AppMessageService } from '../../../core/services/app-message-service';
 import { RoutesManagement } from '../../../shared/constants/app-routes.constants';
 import { LoginRequest } from '../models/LoginRequest';
 import { ChangePasswordRequest } from '../models/ChangePasswordRequest';
+import { AdminChangePasswordRequest } from '../models/AdminChangePasswordRequest';
 import { UserInfo } from '../models/UserInfo';
 import { UserProfile } from '../models/UserProfile';
+import { DoctorApiService } from '@features/doctors/services/doctor-api.service';
+import { EmployeeApiService } from '@features/employees/services/employee-api.service';
+import { Doctor } from '@features/doctors/models/Doctor';
+import { Employee } from '@features/employees/models/Employee';
+
+export type ManagedUser = Doctor | Employee;
+export type ManagedUserType = 'doctors' | 'employees';
 
 @Service()
 export class AuthFacade {
@@ -16,9 +24,77 @@ export class AuthFacade {
   private readonly _identity = inject(IdentityService);
   private readonly _router = inject(Router);
   private readonly _messages = inject(AppMessageService);
+  private readonly _doctorApi = inject(DoctorApiService);
+  private readonly _employeeApi = inject(EmployeeApiService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+
+  readonly managedUserType = signal<ManagedUserType>('doctors');
+  readonly managedUsers = signal<ManagedUser[]>([]);
+  readonly managedUsersLoading = signal(false);
+  readonly adminPasswordLoading = signal(false);
+  readonly selectedManagedUser = signal<ManagedUser | null>(null);
+  readonly isAdminPasswordModalOpen = signal(false);
+
+  async selectManagedUserType(type: ManagedUserType): Promise<void> {
+    this.managedUserType.set(type);
+    await this.loadManagedUsers(type);
+  }
+
+  async loadManagedUsers(type: ManagedUserType = this.managedUserType()): Promise<void> {
+    this.managedUsersLoading.set(true);
+
+    try {
+      const result =
+        type === 'doctors'
+          ? await firstValueFrom(this._doctorApi.getAllDoctors())
+          : await firstValueFrom(this._employeeApi.getAllEmployees());
+
+      if (result.isSuccess && result.data) {
+        this.managedUsers.set(result.data);
+      } else {
+        this.managedUsers.set([]);
+        this._messages.addErrorMessage(result.message || 'تعذر تحميل قائمة المستخدمين');
+      }
+    } catch {
+      this.managedUsers.set([]);
+      this._messages.addErrorMessage('حدث خطأ أثناء تحميل قائمة المستخدمين');
+    } finally {
+      this.managedUsersLoading.set(false);
+    }
+  }
+
+  openAdminPasswordModal(user: ManagedUser): void {
+    this.selectedManagedUser.set(user);
+    this.isAdminPasswordModalOpen.set(true);
+  }
+
+  closeAdminPasswordModal(): void {
+    this.isAdminPasswordModalOpen.set(false);
+    this.selectedManagedUser.set(null);
+  }
+
+  async adminChangePassword(request: AdminChangePasswordRequest): Promise<boolean> {
+    if (this.adminPasswordLoading()) return false;
+
+    this.adminPasswordLoading.set(true);
+    try {
+      const result = await firstValueFrom(this._api.adminChangePassword(request));
+      if (result.isSuccess) {
+        this._messages.addSuccessMessage('تم تغيير كلمة مرور المستخدم بنجاح');
+        return true;
+      }
+
+      this._messages.addErrorMessage(result.message || 'تعذر تغيير كلمة المرور');
+      return false;
+    } catch {
+      this._messages.addErrorMessage('حدث خطأ أثناء تغيير كلمة المرور');
+      return false;
+    } finally {
+      this.adminPasswordLoading.set(false);
+    }
+  }
 
   async login(request: LoginRequest): Promise<void> {
     if (this.loading()) return;
@@ -122,22 +198,22 @@ export class AuthFacade {
         log.fullName?.toLowerCase().includes(query) ||
         log.username?.toLowerCase().includes(query) ||
         log.roles?.toLowerCase().includes(query) ||
-        log.deviceInfo?.toLowerCase().includes(query)
+        log.deviceInfo?.toLowerCase().includes(query),
     );
   });
 
   readonly hasPreviousPage = computed(() => this.loginLogsPageNumber() > 1);
   readonly hasNextPage = computed(() => this.loginLogsPageNumber() < this.loginLogsTotalPages());
   readonly successfulLoginsCount = computed(
-    () => this.loginLogs().filter((l) => l.isSuccessful).length
+    () => this.loginLogs().filter((l) => l.isSuccessful).length,
   );
   readonly failedLoginsCount = computed(
-    () => this.loginLogs().filter((l) => !l.isSuccessful).length
+    () => this.loginLogs().filter((l) => !l.isSuccessful).length,
   );
 
   async loadUserLoginLogs(
     pageNumber: number = this.loginLogsPageNumber(),
-    pageSize: number = this.loginLogsPageSize()
+    pageSize: number = this.loginLogsPageSize(),
   ): Promise<void> {
     this.loginLogsLoading.set(true);
     this.loginLogsPageNumber.set(pageNumber);

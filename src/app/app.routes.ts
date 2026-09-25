@@ -85,6 +85,17 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.ADMIN_PASSWORD_MANAGEMENT.path,
+        canActivate: [roleGuard],
+        data: {
+          roles: [ROLES.Admin],
+        },
+        loadComponent: () =>
+          import('./features/auth/pages/admin-password-management/admin-password-management').then(
+            (m) => m.AdminPasswordManagementPage,
+          ),
+      },
+      {
         path: RoutesManagement.PROFILE.path,
         loadComponent: () =>
           import('./features/auth/pages/profile/profile').then((m) => m.UserProfilePage),

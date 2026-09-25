@@ -5,6 +5,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'clinics', label: 'العيادات', route: '/main/clinics' },
   { icon: 'doctors', label: 'الأطباء', route: '/main/doctors' },
   { icon: 'users', label: 'الموظفين', route: '/main/employees' },
+  { icon: 'settings', label: 'إدارة كلمات المرور', route: '/main/admin-password-management' },
   { icon: 'payment', label: 'إدارة المصروفات', route: '/main/treasury' },
   { icon: 'schedule', label: 'مواعيد الأطباء', route: '/main/doctor-schedules' },
   { icon: 'schedule', label: 'أطباء اليوم', route: '/main/today-doctor-schedules' },

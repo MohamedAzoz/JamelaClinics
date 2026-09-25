@@ -12,6 +12,7 @@ export const RoutesManagement = {
   USER_LOGIN_LOGS: { path: 'user-login-logs' },
   PROFILE: { path: 'profile' },
   CHANGE_PASSWORD: { path: 'change-password' },
+  ADMIN_PASSWORD_MANAGEMENT: { path: 'admin-password-management' },
   APPOINTMENTS: { path: 'appointments' },
   APPOINTMENT_BOOKING: { path: 'appointment-booking' },
   SCHEDULE_APPOINTMENTS: { path: 'schedule-appointments/:scheduleId' },
