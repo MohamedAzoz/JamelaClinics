@@ -1,0 +1,71 @@
+@if (facade.totalCount() > 0) {
+  <div
+    class="flex flex-col gap-4 rounded-2xl border border-primary/10 bg-surface p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+    dir="rtl"
+  >
+    <div class="flex flex-wrap items-center gap-3 text-xs text-text-muted">
+      <span>عرض</span>
+      <select
+        [value]="facade.filters().pageSize ?? 10"
+        (change)="onPageSizeChange($event)"
+        class="rounded-xl border border-primary/20 bg-main-bg px-2.5 py-1.5 text-xs font-bold text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+        aria-label="عدد العناصر في الصفحة"
+      >
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
+      <span>عنصر لكل صفحة</span>
+      <span class="border-e border-primary/10 pe-3 font-medium">
+        إجمالي النتائج:
+        <strong class="font-mono text-text">{{ facade.totalCount() }}</strong>
+        مصروف
+      </span>
+    </div>
+
+    @if (facade.totalPages() > 1) {
+      <nav
+        class="flex max-w-full flex-wrap items-center justify-center gap-1.5"
+        aria-label="صفحات المصروفات"
+      >
+        <button
+          type="button"
+          (click)="onPageSelect((facade.filters().pageNumber ?? 1) - 1)"
+          [disabled]="(facade.filters().pageNumber ?? 1) <= 1"
+          class="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 bg-main-bg text-text-muted transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+          title="الصفحة السابقة"
+          aria-label="الصفحة السابقة"
+        >
+          <fa-icon [icon]="faChevronRight" class="text-xs"></fa-icon>
+        </button>
+
+        @for (page of pagesList(); track page) {
+          <button
+            type="button"
+            (click)="onPageSelect(page)"
+            [class.bg-primary]="(facade.filters().pageNumber ?? 1) === page"
+            [class.text-white]="(facade.filters().pageNumber ?? 1) === page"
+            [class.bg-main-bg]="(facade.filters().pageNumber ?? 1) !== page"
+            [class.text-text-muted]="(facade.filters().pageNumber ?? 1) !== page"
+            class="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 text-xs font-bold transition hover:bg-primary hover:text-white"
+            [attr.aria-label]="'الصفحة ' + page"
+            [attr.aria-current]="(facade.filters().pageNumber ?? 1) === page ? 'page' : null"
+          >
+            {{ page }}
+          </button>
+        }
+
+        <button
+          type="button"
+          (click)="onPageSelect((facade.filters().pageNumber ?? 1) + 1)"
+          [disabled]="(facade.filters().pageNumber ?? 1) >= facade.totalPages()"
+          class="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 bg-main-bg text-text-muted transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+          title="الصفحة التالية"
+          aria-label="الصفحة التالية"
+        >
+          <fa-icon [icon]="faChevronLeft" class="text-xs"></fa-icon>
+        </button>
+      </nav>
+    }
+  </div>
+}

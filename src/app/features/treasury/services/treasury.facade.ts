@@ -17,7 +17,6 @@ export class TreasuryFacade {
   readonly loading = signal(false);
   readonly actionLoading = signal(false);
   readonly filters = signal<ReportExpense>({
-    period: TreasuryPeriod.ThisMonth,
     pageNumber: 1,
     pageSize: 10,
   });
@@ -68,6 +67,15 @@ export class TreasuryFacade {
   setPage(pageNumber: number): void {
     if (pageNumber < 1 || pageNumber > this.totalPages()) return;
     this.filters.update((current) => ({ ...current, pageNumber }));
+  }
+
+  setPageSize(pageSize: number): void {
+    this.filters.update((current) => ({ ...current, pageSize, pageNumber: 1 }));
+  }
+
+  resetAllFilters(): void {
+    const pageSize = this.filters().pageSize ?? 10;
+    this.filters.set({ pageNumber: 1, pageSize });
   }
 
   openCreateModal(): void {

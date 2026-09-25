@@ -10,7 +10,6 @@ interface FilterModel {
   period: string;
   fromDate: string;
   toDate: string;
-  pageSize: string;
 }
 
 @Component({
@@ -36,16 +35,18 @@ export class TreasuryFiltersComponent {
       period: value.period ? (Number(value.period) as TreasuryPeriod) : undefined,
       fromDate: value.fromDate || undefined,
       toDate: value.toDate || undefined,
-      pageNumber: 1,
-      pageSize: Number(value.pageSize),
     };
     this.facade.setFilters({ ...current, ...filters });
   }
 
-  reset(): void {
-    const defaults = this.facade.filters();
-    this.model.set(this.toModel(defaults));
-    this.facade.setFilters(defaults);
+  resetAll(): void {
+    this.model.set({
+      type: '',
+      period: '',
+      fromDate: '',
+      toDate: '',
+    });
+    this.facade.resetAllFilters();
   }
 
   private toModel(filters: ReportExpense): FilterModel {
@@ -54,8 +55,6 @@ export class TreasuryFiltersComponent {
       period: filters.period?.toString() ?? '',
       fromDate: filters.fromDate ?? '',
       toDate: filters.toDate ?? '',
-      pageSize: filters.pageSize?.toString() ?? '10',
     };
   }
-
 }

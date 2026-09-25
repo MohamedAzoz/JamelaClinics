@@ -2,7 +2,9 @@
   class="overflow-hidden rounded-2xl border border-text-muted/10 bg-surface shadow-sm"
   dir="rtl"
 >
-  <div class="flex items-center justify-between border-b border-text-muted/10 px-4 py-4 sm:px-6">
+  <div
+    class="flex flex-col gap-3 border-b border-text-muted/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+  >
     <div>
       <h2 class="font-bold text-text">سجل المصروفات</h2>
       <p class="mt-1 text-xs text-text-muted">{{ facade.totalCount() }} عملية ضمن الفلتر الحالي</p>
@@ -77,24 +79,5 @@
       <h3 class="font-bold text-text">لا توجد مصروفات</h3>
       <p class="text-xs text-text-muted">جرّب تغيير الفلاتر أو أضف أول مصروف للفترة.</p>
     </div>
-  }
-  @if (facade.totalPages() > 1) {
-    <nav
-      class="flex items-center justify-center gap-2 border-t border-text-muted/10 p-4"
-      aria-label="صفحات المصروفات"
-    >
-      @for (page of [].constructor(facade.totalPages()); track $index) {
-        <button
-          type="button"
-          (click)="facade.setPage($index + 1)"
-          class="h-8 min-w-8 rounded-lg px-2 text-xs font-semibold"
-          [class.bg-primary]="facade.filters().pageNumber === $index + 1"
-          [class.text-white]="facade.filters().pageNumber === $index + 1"
-          [class.bg-main-bg]="facade.filters().pageNumber !== $index + 1"
-        >
-          {{ $index + 1 }}
-        </button>
-      }
-    </nav>
   }
 </section>
