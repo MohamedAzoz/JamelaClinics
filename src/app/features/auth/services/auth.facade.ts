@@ -14,6 +14,7 @@ import { DoctorApiService } from '@features/doctors/services/doctor-api.service'
 import { EmployeeApiService } from '@features/employees/services/employee-api.service';
 import { Doctor } from '@features/doctors/models/Doctor';
 import { Employee } from '@features/employees/models/Employee';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export type ManagedUser = Doctor | Employee;
 export type ManagedUserType = 'doctors' | 'employees';
@@ -88,14 +89,15 @@ export class AuthFacade {
 
       this._messages.addErrorMessage(result.message || 'تعذر تغيير كلمة المرور');
       return false;
-    } catch {
-      this._messages.addErrorMessage('حدث خطأ أثناء تغيير كلمة المرور');
+    } catch (e: any) {
+      let msg = e.error.message;
+      this._messages.addErrorMessage(msg || 'حدث خطأ أثناء تغيير كلمة المرور');
+      this.error.set(msg);
       return false;
     } finally {
       this.adminPasswordLoading.set(false);
     }
   }
-
   async login(request: LoginRequest): Promise<void> {
     if (this.loading()) return;
 
@@ -108,13 +110,20 @@ export class AuthFacade {
       if (result.isSuccess && result.data?.token) {
         await this._identity.setAuth(result.data.token);
         this._messages.addSuccessMessage(`مرحبا ${result.data.fullName}`);
-        void this._router.navigate([`/${RoutesManagement.MAIN.path}`]);
+        this._router.navigate([`/${RoutesManagement.MAIN.path}`]);
       } else {
-        const msg = result.message ?? 'فشل تسجيل الدخول. يرجى المحاولة مجدداً.';
+        const msg = result.message || 'فشل تسجيل الدخول. يرجى المحاولة مجدداً.';
+        this.error.set(msg);
         this._messages.addErrorMessage(msg);
       }
-    } catch {
-      const msg = 'حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.';
+    } catch (error: any) {
+      const msg =
+        error.error?.message ||
+        (typeof error === 'string'
+          ? error
+          : 'حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.');
+
+      this.error.set(msg);
       this._messages.addErrorMessage(msg);
     } finally {
       this.loading.set(false);
@@ -124,6 +133,11 @@ export class AuthFacade {
     this._identity.clearAuth();
     this._messages.addSuccessMessage('تم تسجيل الخروج بنجاح');
     void this._router.navigate([`/${RoutesManagement.AUTH.path}`]);
+  }
+
+  forceLogout() {
+    this._identity.clearAuth();
+    void this._router.navigate([`/${RoutesManagement.AUTH.path}`], { replaceUrl: true });
   }
 
   readonly changePasswordLoading = signal(false);
@@ -148,8 +162,10 @@ export class AuthFacade {
         this._messages.addErrorMessage(msg);
         return false;
       }
-    } catch {
-      this._messages.addErrorMessage('حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.');
+    } catch (e: any) {
+      let msg = e.error.message;
+      this._messages.addErrorMessage(msg || 'حدث خطأ أثناء تغيير كلمة المرور');
+      this.error.set(msg);
       return false;
     } finally {
       this.changePasswordLoading.set(false);

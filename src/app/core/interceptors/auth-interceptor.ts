@@ -1,16 +1,10 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { IdentityService } from '../services/identity-service';
-import { catchError, throwError, retry, timer } from 'rxjs';
-import { Router } from '@angular/router';
-import { AppMessageService } from '@core/services/app-message-service';
-import { AuthFacade } from '@features/auth/services/auth.facade';
+import { throwError, retry, timer } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const identityService = inject(IdentityService);
-  const authFacade = inject(AuthFacade);
-  const appmsg = inject(AppMessageService);
-  const router = inject(Router);
 
   const token = identityService.token();
   let clonedReq = req;
@@ -37,22 +31,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // لو الخطأ مش مؤقت (زي 401)، ارمي الخطأ فوراً ومتحاولش تاني
         return throwError(() => error);
       },
-    }),
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        appmsg.addWarnMessage('انتهت الجلسة، جاري تحويلك لتسجيل الدخول...');
-        authFacade.logout();
-        if (!router.url.includes('/login')) {
-          router.navigate(['/login']);
-        }
-      }
-
-      // إذا استمر الخطأ بعد محاولات الـ retry
-      if (error.status === 0) {
-        appmsg.addErrorMessage('تأكد من اتصالك بالإنترنت وحاول مرة أخرى');
-      }
-
-      return throwError(() => error);
     }),
   );
 };
