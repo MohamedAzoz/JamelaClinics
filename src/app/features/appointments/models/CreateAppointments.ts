@@ -7,5 +7,6 @@ export interface CreateAppointments {
   visitType: VisitType;
   doctorScheduleId: number;
   consultationFee: number;
+  discountAmount?: number;
   isPaid: boolean;
 }

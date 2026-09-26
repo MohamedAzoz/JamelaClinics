@@ -1,60 +1,57 @@
-import { Component, inject, signal } from '@angular/core';
-import { form, FormField, FormRoot } from '@angular/forms/signals';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faFilter, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faFilter, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryFacade } from '../../services/treasury.facade';
-import { ReportExpense, TreasuryPeriod, TreasuryType } from '../../models/ReportExpense';
-
-interface FilterModel {
-  type: string;
-  period: string;
-  fromDate: string;
-  toDate: string;
-}
+import { TreasuryPeriod, TreasuryType } from '../../models/ReportExpense';
 
 @Component({
   selector: 'app-treasury-filters',
-  imports: [FormField, FormRoot, FontAwesomeModule],
+  imports: [FormField, FontAwesomeModule],
   templateUrl: './treasury-filters.html',
 })
 export class TreasuryFiltersComponent {
   readonly facade = inject(TreasuryFacade);
+  readonly faCalendarAlt = faCalendarAlt;
   readonly faFilter = faFilter;
   readonly faRotateLeft = faRotateLeft;
-  readonly model = signal<FilterModel>(this.toModel(this.facade.filters()));
-  readonly filterForm = form(this.model);
+  readonly TreasuryPeriod = TreasuryPeriod;
+  readonly TreasuryType = TreasuryType;
 
-  TreasuryPeriod = TreasuryPeriod;
-  TreasuryType = TreasuryType;
+  readonly dateRange = linkedSignal({
+    source: () => ({
+      period: this.facade.periodFilter(),
+      fromDate: this.facade.fromDateFilter(),
+      toDate: this.facade.toDateFilter(),
+    }),
+    computation: ({ fromDate, toDate }) => ({ fromDate, toDate }),
+  });
+  readonly dateForm = form(this.dateRange);
+  readonly invalidDateRange = computed(() => {
+    const { fromDate, toDate } = this.dateRange();
+    return !!fromDate && !!toDate && fromDate > toDate;
+  });
 
-  apply(): void {
-    const value = this.model();
-    const current = this.facade.filters();
-    const filters: ReportExpense = {
-      type: value.type ? (Number(value.type) as TreasuryType) : undefined,
-      period: value.period ? (Number(value.period) as TreasuryPeriod) : undefined,
-      fromDate: value.fromDate || undefined,
-      toDate: value.toDate || undefined,
-    };
-    this.facade.setFilters({ ...current, ...filters });
+  onTypeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.facade.setTypeFilter(value ? (Number(value) as TreasuryType) : null);
+  }
+
+  onPeriodSelect(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.facade.setPeriodFilter(value ? (Number(value) as TreasuryPeriod) : null);
+    if (value) this.dateRange.set({ fromDate: '', toDate: '' });
+  }
+
+  onDateRangeApply(event: Event): void {
+    event.preventDefault();
+    if (this.invalidDateRange()) return;
+    const { fromDate, toDate } = this.dateRange();
+    this.facade.setDateRangeFilter(fromDate, toDate);
   }
 
   resetAll(): void {
-    this.model.set({
-      type: '',
-      period: '',
-      fromDate: '',
-      toDate: '',
-    });
     this.facade.resetAllFilters();
-  }
-
-  private toModel(filters: ReportExpense): FilterModel {
-    return {
-      type: filters.type?.toString() ?? '',
-      period: filters.period?.toString() ?? '',
-      fromDate: filters.fromDate ?? '',
-      toDate: filters.toDate ?? '',
-    };
+    this.dateRange.set({ fromDate: '', toDate: '' });
   }
 }

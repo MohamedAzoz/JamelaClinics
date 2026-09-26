@@ -1,25 +1,40 @@
-import { computed, effect, inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { AppMessageService } from '@core/services/app-message-service';
 import { Expense } from '../models/Expense';
 import { CreateExpense } from '../models/CreateExpense';
-import { ReportExpense, TreasuryPeriod } from '../models/ReportExpense';
+import { ReportExpense, TreasuryPeriod, TreasuryType } from '../models/ReportExpense';
 import { TreasuryApiService } from './treasury-api.service';
-import { finalize } from 'rxjs';
+import { firstValueFrom, finalize } from 'rxjs';
+import { TreasurySummary } from '../models/TreasurySummary';
 
 @Service()
 export class TreasuryFacade {
   private readonly _api = inject(TreasuryApiService);
   private readonly _messages = inject(AppMessageService);
   private readonly _initialized = signal(false);
+  private reportRequestId = 0;
+  private summaryRequestId = 0;
 
   readonly expenses = signal<Expense[]>([]);
-  readonly summary = signal<import('../models/TreasurySummary').TreasurySummary | null>(null);
-  readonly loading = signal(false);
+  readonly summary = signal<TreasurySummary | null>(null);
+  readonly isLoadingReport = signal(false);
+  readonly isLoadingSummary = signal(false);
+  readonly loading = computed(() => this.isLoadingReport() || this.isLoadingSummary());
   readonly actionLoading = signal(false);
-  readonly filters = signal<ReportExpense>({
-    pageNumber: 1,
-    pageSize: 10,
-  });
+  readonly typeFilter = signal<TreasuryType | null>(null);
+  readonly periodFilter = signal<TreasuryPeriod | null>(null);
+  readonly fromDateFilter = signal('');
+  readonly toDateFilter = signal('');
+  readonly pageNumber = signal(1);
+  readonly pageSize = signal(10);
+  readonly filters = computed<ReportExpense>(() => ({
+    Type: this.typeFilter() ?? undefined,
+    Period: this.periodFilter() ?? undefined,
+    FromDate: this.fromDateFilter() || undefined,
+    ToDate: this.toDateFilter() || undefined,
+    PageNumber: this.pageNumber(),
+    PageSize: this.pageSize(),
+  }));
   readonly totalCount = signal(0);
   readonly totalPages = signal(0);
   readonly selectedExpense = signal<Expense | null>(null);
@@ -28,54 +43,105 @@ export class TreasuryFacade {
   readonly expenseToDelete = signal<Expense | null>(null);
   readonly hasExpenses = computed(() => this.expenses().length > 0);
 
-  constructor() {
-    effect(() => {
-      const currentFilters = this.filters();
-      if (this._initialized()) this.loadData(currentFilters);
-    });
-  }
-
   initialize(): void {
     this._initialized.set(true);
+    this.refreshData();
   }
 
-  loadData(filters = this.filters()): void {
-    this.loading.set(true);
-    this._api
-      .getReport(filters)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (response) => {
-          const report = response?.data;
-          this.expenses.set(report?.items ?? []);
-          this.totalCount.set(report?.totalCount ?? 0);
-          this.totalPages.set(report?.totalPages ?? 0);
-        },
-        error: (error) => this._messages.showHttpError(error, 'تعذر تحميل تقرير المصروفات'),
-      });
-
-    this._api.getSummary(filters).subscribe({
-      next: (response) => this.summary.set(response?.data ?? null),
-      error: (error) => this._messages.showHttpError(error, 'تعذر تحميل ملخص الخزينة'),
-    });
+  refreshData(): void {
+    if (!this._initialized()) return;
+    const currentFilters = this.filters();
+    this.loadReport(currentFilters);
+    this.loadSummary(currentFilters);
   }
 
-  setFilters(filters: ReportExpense): void {
-    this.filters.set({ ...filters, pageNumber: 1 });
+  async loadReport(filters = this.filters()): Promise<void> {
+    const requestId = ++this.reportRequestId;
+    this.isLoadingReport.set(true);
+
+    try {
+      const response = await firstValueFrom(this._api.getReport(filters));
+      if (requestId !== this.reportRequestId) return;
+      const report = response?.data;
+      console.log(report);
+
+      this.expenses.set(report?.items ?? []);
+      this.totalCount.set(report?.totalCount ?? 0);
+      this.totalPages.set(report?.totalPages ?? 0);
+    } catch (error) {
+      if (requestId !== this.reportRequestId) return;
+      this._messages.showHttpError(error, 'تعذر تحميل تقرير المصروفات');
+    } finally {
+      if (requestId === this.reportRequestId) this.isLoadingReport.set(false);
+    }
   }
 
-  setPage(pageNumber: number): void {
+  async loadSummary(filters = this.filters()): Promise<void> {
+    const requestId = ++this.summaryRequestId;
+    this.isLoadingSummary.set(true);
+
+    try {
+      const response = await firstValueFrom(this._api.getSummary(filters));
+      if (requestId !== this.summaryRequestId) return;
+      this.summary.set(response?.data ?? null);
+      console.log(response?.data);
+    } catch (error) {
+      if (requestId !== this.summaryRequestId) return;
+      this._messages.showHttpError(error, 'تعذر تحميل ملخص الخزينة');
+    } finally {
+      if (requestId === this.summaryRequestId) this.isLoadingSummary.set(false);
+    }
+  }
+
+  setTypeFilter(type: TreasuryType | null): void {
+    this.typeFilter.set(type);
+    this.pageNumber.set(1);
+    this.refreshData();
+  }
+
+  setPeriodFilter(period: TreasuryPeriod | null): void {
+    this.periodFilter.set(period);
+    if (period !== null) {
+      this.fromDateFilter.set('');
+      this.toDateFilter.set('');
+    }
+    this.pageNumber.set(1);
+    this.refreshData();
+  }
+
+  setDateRangeFilter(fromDate: string, toDate: string): void {
+    if (fromDate && toDate && fromDate > toDate) {
+      this._messages.addErrorMessage('يجب أن يكون تاريخ البداية قبل تاريخ النهاية أو مساويًا له');
+      return;
+    }
+
+    this.fromDateFilter.set(fromDate);
+    this.toDateFilter.set(toDate);
+    if (fromDate || toDate) this.periodFilter.set(null);
+    this.pageNumber.set(1);
+    this.refreshData();
+  }
+
+  async setPage(pageNumber: number): Promise<void> {
     if (pageNumber < 1 || pageNumber > this.totalPages()) return;
-    this.filters.update((current) => ({ ...current, pageNumber }));
+    this.pageNumber.set(pageNumber);
+    await this.loadReport();
   }
 
-  setPageSize(pageSize: number): void {
-    this.filters.update((current) => ({ ...current, pageSize, pageNumber: 1 }));
+  async setPageSize(pageSize: number): Promise<void> {
+    if (!Number.isInteger(pageSize) || pageSize < 1) return;
+    this.pageSize.set(pageSize);
+    this.pageNumber.set(1);
+    await this.loadReport();
   }
 
   resetAllFilters(): void {
-    const pageSize = this.filters().pageSize ?? 10;
-    this.filters.set({ pageNumber: 1, pageSize });
+    this.typeFilter.set(null);
+    this.periodFilter.set(null);
+    this.fromDateFilter.set('');
+    this.toDateFilter.set('');
+    this.pageNumber.set(1);
+    this.refreshData();
   }
 
   openCreateModal(): void {
@@ -130,7 +196,8 @@ export class TreasuryFacade {
         this._messages.addSuccessMessage(response.message || successMessage);
         if (isDelete) this.closeDeleteModal();
         else this.closeFormModal();
-        this.loadData();
+        this.loadReport();
+        this.loadSummary();
       },
       error: (error) => this._messages.showHttpError(error, 'تعذر تنفيذ عملية المصروف'),
     });

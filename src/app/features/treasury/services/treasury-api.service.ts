@@ -24,31 +24,61 @@ export class TreasuryApiService {
   // GET
   // /api/Treasury/report
   getReport(report: ReportExpense) {
-    let params = new HttpParams();
-    if (report.type) params = params.set('Type', report.type.toString());
-    if (report.period) params = params.set('Period', report.period);
-    if (report.fromDate) params = params.set('FromDate', report.fromDate.toString());
-    if (report.toDate) params = params.set('ToDate', report.toDate.toString());
-    if (report.pageNumber) params = params.set('PageNumber', report.pageNumber.toString());
-    if (report.pageSize) params = params.set('PageSize', report.pageSize.toString());
-    return this._httpClient.get<Result<PaginatedResult<Expense[]>>>(`${this._baseUrl}/report`, {
-      params,
-    });
+    const params: string[] = [];
+    if (report.Type) {
+      params.push(`Type=${report.Type}`);
+    }
+    if (report.Period) {
+      params.push(`Period=${report.Period}`);
+    }
+    if (report.FromDate) {
+      params.push(`FromDate=${report.FromDate}`);
+    }
+    if (report.ToDate) {
+      params.push(`ToDate=${report.ToDate}`);
+    }
+    if (report.PageNumber) {
+      params.push(`PageNumber=${report.PageNumber}`);
+    }
+    if (report.PageSize) {
+      params.push(`PageSize=${report.PageSize}`);
+    }
+    if (params.length > 0) {
+      return this._httpClient.get<Result<PaginatedResult<Expense[]>>>(
+        `${this._baseUrl}/report` + `?${params.join('&')}`,
+      );
+    }
+    return this._httpClient.get<Result<PaginatedResult<Expense[]>>>(`${this._baseUrl}/report`);
   }
 
   // GET
   // /api/Treasury/summary
   getSummary(summary: ReportExpense) {
-    let params = new HttpParams();
-    if (summary.type) params = params.set('Type', summary.type.toString());
-    if (summary.period) params = params.set('Period', summary.period);
-    if (summary.fromDate) params = params.set('FromDate', summary.fromDate.toString());
-    if (summary.toDate) params = params.set('ToDate', summary.toDate.toString());
-    if (summary.pageNumber) params = params.set('PageNumber', summary.pageNumber.toString());
-    if (summary.pageSize) params = params.set('PageSize', summary.pageSize.toString());
-    return this._httpClient.get<Result<TreasurySummary>>(`${this._baseUrl}/summary`, {
-      params,
-    });
+    const params: string[] = [];
+    if (summary.Type) {
+      params.push(`Type=${summary.Type}`);
+    }
+    if (summary.Period) {
+      params.push(`Period=${summary.Period}`);
+    }
+    if (summary.FromDate) {
+      params.push(`FromDate=${summary.FromDate}`);
+    }
+    if (summary.ToDate) {
+      params.push(`ToDate=${summary.ToDate}`);
+    }
+    if (summary.PageNumber) {
+      params.push(`PageNumber=${summary.PageNumber}`);
+    }
+    if (summary.PageSize) {
+      params.push(`PageSize=${summary.PageSize}`);
+    }
+    if (params.length > 0) {
+      return this._httpClient.get<Result<TreasurySummary>>(
+        `${this._baseUrl}/summary?${params.join('&')}`,
+      );
+    }
+    return this._httpClient.get<Result<TreasurySummary>>(`${this._baseUrl}/summary`);
   }
 
   // PUT

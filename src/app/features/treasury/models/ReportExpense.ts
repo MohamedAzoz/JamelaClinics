@@ -1,10 +1,10 @@
 export interface ReportExpense {
-  type?: TreasuryType;
-  period?: TreasuryPeriod;
-  fromDate?: string;
-  toDate?: string;
-  pageNumber?: number;
-  pageSize?: number;
+  Type?: TreasuryType;
+  Period?: TreasuryPeriod;
+  FromDate?: string;
+  ToDate?: string;
+  PageNumber?: number;
+  PageSize?: number;
 }
 
 export enum TreasuryType {

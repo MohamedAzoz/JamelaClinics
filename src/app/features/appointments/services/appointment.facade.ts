@@ -130,19 +130,6 @@ export class AppointmentFacade {
     return list;
   });
 
-  // Summary Metrics
-  readonly totalFeeSum = computed(() =>
-    this.filteredAppointments().reduce((acc, curr) => acc + (curr.consultationFee || 0), 0),
-  );
-
-  readonly totalDoctorEarningsSum = computed(() =>
-    this.filteredAppointments().reduce((acc, curr) => acc + (curr.doctorEarnings || 0), 0),
-  );
-
-  readonly totalCenterEarningsSum = computed(() =>
-    this.filteredAppointments().reduce((acc, curr) => acc + (curr.centerEarnings || 0), 0),
-  );
-
   // ==========================================
   // Booking Form Actions & API Wrappers
   // ==========================================

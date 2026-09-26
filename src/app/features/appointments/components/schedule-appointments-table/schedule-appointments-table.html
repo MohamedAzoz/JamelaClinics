@@ -34,7 +34,7 @@
             <th scope="col" class="px-4 py-3.5">الطبيب والموظف</th>
             <th scope="col" class="px-4 py-3.5">تاريخ الحجز</th>
             <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
-            <th scope="col" class="px-4 py-3.5">قيمة الحجز والأرباح</th>
+            <th scope="col" class="px-4 py-3.5">الحجز والخصم والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
             <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
             @if (!facade.isDoctor()) {
@@ -105,7 +105,7 @@
                   {{ app.appointmentDate | date: 'yyyy-MM-dd' }}
                 </div>
                 <div class="lg:text-xs text-[10px] text-text-muted mt-0.5">
-                  التسجيل: {{ app.createdAt | date: 'yyyy-MM-dd (HH:mm)' }}
+                  التسجيل: {{ app.createdAt | date: 'yyyy-MM-dd (HH:mm a)' }}
                 </div>
               </td>
 
@@ -120,11 +120,21 @@
 
               <!-- Fee & Earnings Breakdown -->
               <td class="px-4 py-4">
-                <div
-                  class="lg:text-xs text-[10px] font-semibold text-text font-mono text-sm"
-                >
+                <div class="lg:text-xs text-[10px] font-semibold text-text font-mono text-sm">
                   {{ app.consultationFee }} جنية
                 </div>
+                @if ((app.discountAmount ?? 0) > 0) {
+                  <div class="mt-1 flex flex-col gap-0.5 text-[10px]">
+                    <span class="font-semibold text-danger"
+                      >الخصم: {{ app.discountAmount }} جنية</span
+                    >
+                    @if (app.finalPaidAmount !== undefined && app.finalPaidAmount !== null) {
+                      <span class="font-semibold text-success"
+                        >المدفوع النهائي: {{ app.finalPaidAmount }} جنية</span
+                      >
+                    }
+                  </div>
+                }
                 @if (facade.isAdminOrAccountant() && (app.doctorEarnings || app.centerEarnings)) {
                   <div
                     class="lg:text-xs text-[10px] text-text-muted mt-0.5 flex items-center gap-2"

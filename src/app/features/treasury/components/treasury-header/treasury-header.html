@@ -22,7 +22,7 @@
     <div class="relative flex items-center gap-2 self-start sm:self-auto">
       <button
         type="button"
-        (click)="facade.loadData()"
+        (click)="facade.refreshData()"
         [disabled]="facade.loading()"
         class="inline-flex items-center gap-2 rounded-xl border border-text-muted/15 bg-surface px-3.5 py-2.5 text-xs font-semibold text-text transition hover:bg-main-bg disabled:opacity-50"
         title="تحديث البيانات"

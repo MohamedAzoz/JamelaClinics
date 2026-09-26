@@ -7,6 +7,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'users', label: 'الموظفين', route: '/main/employees' },
   { icon: 'settings', label: 'إدارة كلمات المرور', route: '/main/admin-password-management' },
   { icon: 'payment', label: 'إدارة المصروفات', route: '/main/treasury' },
+  { icon: 'payment', label: 'حسابات الأطباء', route: '/main/doctor-wallet' },
   { icon: 'schedule', label: 'مواعيد الأطباء', route: '/main/doctor-schedules' },
   { icon: 'schedule', label: 'أطباء اليوم', route: '/main/today-doctor-schedules' },
   { icon: 'appointments', label: 'الحجوزات', route: '/main/appointments' },
@@ -16,6 +17,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
 
 export const DOCTOR_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'dashboard', label: 'الرئيسية', route: '/main/dashboard' },
+  { icon: 'payment', label: 'حسابي المالي', route: '/main/doctor-wallet' },
   { icon: 'schedule', label: 'مواعيدي المتاحة', route: '/main/doctor-schedules' },
   { icon: 'settings', label: 'الإعدادات', route: '/main/change-password' },
 ];
@@ -30,6 +32,7 @@ export const RECEPTIONIST_NAV_ITEMS: readonly NavItem[] = [
 
 export const ACCOUNTANT_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'dashboard', label: 'الرئيسية', route: '/main/dashboard' },
+  { icon: 'payment', label: 'حسابات الأطباء', route: '/main/doctor-wallet' },
   { icon: 'payment', label: 'المدفوعات', route: '/main/payments' },
   { icon: 'reports', label: 'التقارير', route: '/main/reports' },
   { icon: 'inventory', label: 'المخزن', route: '/main/inventory' },

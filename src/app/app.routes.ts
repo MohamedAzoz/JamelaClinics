@@ -57,6 +57,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.DOCTOR_WALLET.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant, ROLES.Doctor] },
+        loadComponent: () =>
+          import('./features/doctorWallet/pages/doctor-wallet-management/doctor-wallet-management').then(
+            (m) => m.DoctorWalletManagementPage,
+          ),
+      },
+      {
         path: RoutesManagement.DOCTOR_SCHEDULES.path,
         loadComponent: () =>
           import('./features/doctorSchedules/pages/doctor-schedule-management/doctor-schedule-management').then(

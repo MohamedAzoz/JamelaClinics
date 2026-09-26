@@ -15,7 +15,7 @@ export class TreasuryPaginationComponent {
 
   readonly pagesList = computed(() => {
     const total = this.facade.totalPages();
-    const current = this.facade.filters().pageNumber ?? 1;
+    const current = this.facade.filters().PageNumber ?? 1;
     const pages: number[] = [];
     const start = Math.max(1, current - 2);
     const end = Math.min(total, current + 2);
