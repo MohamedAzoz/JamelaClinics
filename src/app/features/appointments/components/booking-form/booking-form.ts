@@ -96,7 +96,7 @@ export class BookingFormComponent implements OnInit {
     { value: VisitType.Laser, label: 'ليزر', icon: 'faCoins', desc: 'جلسات التجميل والليزر' },
     {
       value: VisitType.Fractional,
-      label: 'فراكشن',
+      label: 'فراكشنال',
       icon: 'faCreditCard',
       desc: 'جلسات الجلدية والعناية',
     },

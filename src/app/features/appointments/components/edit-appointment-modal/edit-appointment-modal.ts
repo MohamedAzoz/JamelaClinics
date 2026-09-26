@@ -77,7 +77,7 @@ export class EditAppointmentModalComponent implements OnInit {
     { value: VisitType.FollowUp, label: 'إعادة', desc: 'متابعة بعد الكشف' },
     { value: VisitType.Sessions, label: 'جلسات علاجية', desc: 'جلسات متابعة مستمرة' },
     { value: VisitType.Laser, label: 'ليزر', desc: 'جلسات التجميل والليزر' },
-    { value: VisitType.Fractional, label: 'فراكشن', desc: 'جلسات الجلدية والعناية' },
+    { value: VisitType.Fractional, label: 'فراكشنال', desc: 'جلسات الجلدية والعناية' },
   ];
 
   readonly pendingScheduleId = signal<string | null>(null);
@@ -179,11 +179,19 @@ export class EditAppointmentModalComponent implements OnInit {
 
   private matchDoctorId(doctorName: string | undefined, doctors: Doctor[]): string {
     if (!doctorName || doctors.length === 0) return '';
-    const cleanAppDoc = doctorName.replace(/^د[\.\/]?\s*/, '').trim().toLowerCase();
+    const cleanAppDoc = doctorName
+      .replace(/^د[\.\/]?\s*/, '')
+      .trim()
+      .toLowerCase();
 
     const matched = doctors.find((d) => {
-      const cleanDoc = d.fullName.replace(/^د[\.\/]?\s*/, '').trim().toLowerCase();
-      return cleanDoc === cleanAppDoc || cleanAppDoc.includes(cleanDoc) || cleanDoc.includes(cleanAppDoc);
+      const cleanDoc = d.fullName
+        .replace(/^د[\.\/]?\s*/, '')
+        .trim()
+        .toLowerCase();
+      return (
+        cleanDoc === cleanAppDoc || cleanAppDoc.includes(cleanDoc) || cleanDoc.includes(cleanAppDoc)
+      );
     });
 
     return matched?.userId ?? '';
@@ -242,4 +250,3 @@ export class EditAppointmentModalComponent implements OnInit {
     this.closed.emit();
   }
 }
-

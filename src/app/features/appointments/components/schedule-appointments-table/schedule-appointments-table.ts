@@ -72,7 +72,7 @@ export class ScheduleAppointmentsTableComponent {
       case VisitType.Laser:
         return 'ليزر';
       case VisitType.Fractional:
-        return 'فراكشن';
+        return 'فراكشنال';
       default:
         return 'كشف';
     }
