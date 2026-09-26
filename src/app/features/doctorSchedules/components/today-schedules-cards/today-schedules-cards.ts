@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -15,6 +15,7 @@ import {
   faStethoscope,
 } from '@fortawesome/free-solid-svg-icons';
 import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
+import { IdentityService } from '@core/services/identity-service';
 
 @Component({
   selector: 'app-today-schedules-cards',
@@ -23,6 +24,9 @@ import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
 })
 export class TodaySchedulesCardsComponent {
   readonly facade = inject(DoctorScheduleFacade);
+  readonly identity = inject(IdentityService);
+
+  readonly IsAdmian = computed(() => this.identity.isAdmin());
 
   readonly faUserMd = faUserMd;
   readonly faHospital = faHospital;

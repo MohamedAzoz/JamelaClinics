@@ -37,7 +37,7 @@
             <th scope="col" class="px-4 py-3.5">الحجز والخصم والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
             <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
-            @if (!facade.isDoctor()) {
+            @if (!facade.isDoctorOrAdmin()) {
               <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
             }
           </tr>
@@ -167,7 +167,7 @@
               <td class="px-4 py-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
                   <!-- Pay Button if Unpaid -->
-                  @if (!facade.isDoctor() && Number(app.status) === 1) {
+                  @if (!facade.isDoctorOrAdmin() && Number(app.status) === 1) {
                     <button
                       type="button"
                       (click)="facade.payAppointment(app.id)"
@@ -203,7 +203,11 @@
                   }
 
                   <!-- Cancel Button if not Cancelled -->
-                  @if (!facade.isDoctor() && Number(app.status) !== 4 && Number(app.status) !== 3) {
+                  @if (
+                    !facade.isDoctorOrAdmin() &&
+                    Number(app.status) !== 4 &&
+                    Number(app.status) !== 3
+                  ) {
                     <button
                       type="button"
                       (click)="facade.cancelAppointment(app.id)"
@@ -223,7 +227,7 @@
               </td>
 
               <!-- Edit Button -->
-              @if (!facade.isDoctor()) {
+              @if (!facade.isDoctorOrAdmin()) {
                 <td class="px-4 py-4 text-center">
                   <button
                     type="button"

@@ -118,15 +118,17 @@
             </a>
 
             <!-- Book Appointment Button -->
-            <a
-              [routerLink]="['/main/appointment-booking']"
-              [queryParams]="{ doctorId: item.doctorId, scheduleId: item.id }"
-              title="حجز موعد مريض جديد"
-              class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface hover:bg-main-bg text-text border border-primary/20 text-xs font-semibold transition-all cursor-pointer no-underline"
-            >
-              <fa-icon [icon]="faPlus" class="text-primary text-xs"></fa-icon>
-              <span>حجز جديد</span>
-            </a>
+            @if (!IsAdmian()) {
+              <a
+                [routerLink]="['/main/appointment-booking']"
+                [queryParams]="{ doctorId: item.doctorId, scheduleId: item.id }"
+                title="حجز موعد مريض جديد"
+                class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface hover:bg-main-bg text-text border border-primary/20 text-xs font-semibold transition-all cursor-pointer no-underline"
+              >
+                <fa-icon [icon]="faPlus" class="text-primary text-xs"></fa-icon>
+                <span>حجز جديد</span>
+              </a>
+            }
           </div>
         </div>
       }

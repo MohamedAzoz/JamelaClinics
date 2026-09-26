@@ -58,6 +58,18 @@
             </div>
 
             <div class="flex items-center justify-between text-sm">
+              <span class="text-text-muted">الخصم:</span>
+              <span class="font-semibold text-text"
+                >{{ app.discountAmount ?? 0 | number: '1.2-2' }} ج.م</span
+              >
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-text-muted">المطلوب من المريض بعد الخصم:</span>
+              <span class="font-semibold text-text"
+                >{{ app.consultationFee - (app.discountAmount ?? 0) | number: '1.2-2' }} ج.م</span
+              >
+            </div>
+            <div class="flex items-center justify-between text-sm">
               <span class="text-text-muted">حالة السداد:</span>
               @if (app.isPaid) {
                 <span

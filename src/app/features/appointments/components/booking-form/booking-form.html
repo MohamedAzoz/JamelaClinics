@@ -54,6 +54,7 @@
             <p class="mt-1 text-xs text-danger font-medium">{{ err.message }}</p>
           }
         }
+        <app-doctor-percentage-info [doctor]="selectedDoctor()" />
       </div>
 
       <!-- Doctor Schedule Selection Dropdown -->
@@ -254,7 +255,7 @@
           <input
             id="consultationFee"
             type="number"
-            step="5"
+            step="0.01"
             [formField]="bookingForm.consultationFee"
             placeholder="0"
             class="w-full rounded-xl border border-primary/20 bg-main-bg px-4 py-2.5 pr-10 text-sm font-semibold text-text placeholder-text-muted transition focus:border-primary focus:bg-surface focus:outline-none focus:ring-4 focus:ring-primary/10"
@@ -281,6 +282,44 @@
         }
       </div>
 
+      <div>
+        <label for="booking-discount" class="mb-1.5 block text-sm font-semibold text-text"
+          >قيمة الخصم (ج.م)</label
+        >
+        <input
+          id="booking-discount"
+          type="number"
+          step="0.01"
+          inputmode="decimal"
+          [formField]="bookingForm.discountAmount"
+          [attr.aria-invalid]="bookingForm.discountAmount().invalid()"
+          [attr.aria-describedby]="
+            bookingForm.discountAmount().invalid()
+              ? 'booking-discount-help booking-discount-error'
+              : 'booking-discount-help'
+          "
+          class="w-full rounded-xl border border-primary/20 bg-main-bg px-4 py-2.5 text-sm font-semibold text-text focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+        />
+        <p id="booking-discount-help" class="mt-2 text-xs text-text">
+          الخصم من حصة الطبيب فقط. أدخل 0 للحجز دون خصم.
+          @if (maxDiscount() !== null) {
+            <span class="block mt-1"
+              >الحد الأقصى للخصم من حصة الطبيب: {{ maxDiscount() | number: '1.2-2' }} ج.م
+            </span>
+          }
+        </p>
+        @if (bookingForm.discountAmount().invalid()) {
+          <div
+            id="booking-discount-error"
+            role="alert"
+            class="mt-2 text-xs font-semibold text-text"
+          >
+            @for (error of bookingForm.discountAmount().errors(); track error.kind) {
+              <p class="text-danger">{{ error.message }}</p>
+            }
+          </div>
+        }
+      </div>
       <!-- Payment Status Toggle Checkbox -->
       <div class="pt-2 md:pt-6">
         <label
@@ -305,6 +344,12 @@
       </div>
     </div>
   </div>
+
+  <app-appointment-fee-breakdown
+    [fee]="model().consultationFee"
+    [discount]="model().discountAmount"
+    [doctorPercentage]="selectedDoctor()?.doctorPercentage"
+  />
 
   <!-- Submit & Reset Action Buttons -->
   <div class="flex items-center justify-end gap-3 pt-2">

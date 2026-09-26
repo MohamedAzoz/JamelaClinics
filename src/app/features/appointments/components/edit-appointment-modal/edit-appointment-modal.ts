@@ -1,4 +1,5 @@
-import { Component, inject, input, output, effect, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, input, output, effect, signal, OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import {
   form,
   FormField,
@@ -8,6 +9,7 @@ import {
   required,
   disabled,
   pattern,
+  validate,
 } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -32,6 +34,9 @@ import { Appointments } from '../../models/Appointments';
 import { AppointmentUpdate } from '../../models/AppointmentUpdate';
 import { VisitType } from '../../models/VisitType';
 import { Doctor } from '@features/doctors/models/Doctor';
+import { getDiscountError, getDoctorShare, isValidMoney } from '../../utils/appointment-pricing';
+import { AppointmentFeeBreakdownComponent } from '../appointment-fee-breakdown/appointment-fee-breakdown';
+import { DoctorPercentageInfoComponent } from '../doctor-percentage-info/doctor-percentage-info';
 
 export interface EditAppointmentFormModel {
   doctorId: string;
@@ -41,12 +46,20 @@ export interface EditAppointmentFormModel {
   patientAddress: string;
   visitType: number;
   consultationFee: number;
+  discountAmount: number;
   isPaid: boolean;
 }
 
 @Component({
   selector: 'app-edit-appointment-modal',
-  imports: [FormField, FormRoot, FontAwesomeModule],
+  imports: [
+    FormField,
+    FormRoot,
+    FontAwesomeModule,
+    DecimalPipe,
+    AppointmentFeeBreakdownComponent,
+    DoctorPercentageInfoComponent,
+  ],
   templateUrl: './edit-appointment-modal.html',
 })
 export class EditAppointmentModalComponent implements OnInit {
@@ -90,10 +103,17 @@ export class EditAppointmentModalComponent implements OnInit {
     patientAddress: '',
     visitType: VisitType.NewConsultation,
     consultationFee: 0,
+    discountAmount: 0,
     isPaid: false,
   });
 
   readonly model = this._model.asReadonly();
+  readonly selectedDoctor = computed(() =>
+    this.facade.doctors().find((doctor) => doctor.userId === this.model().doctorId),
+  );
+  readonly maxDiscount = computed(() =>
+    getDoctorShare(this.model().consultationFee, this.selectedDoctor()?.doctorPercentage),
+  );
 
   readonly editForm = form(this._model, (path) => {
     required(path.doctorId, { message: 'يرجى اختيار الطبيب' });
@@ -114,6 +134,22 @@ export class EditAppointmentModalComponent implements OnInit {
 
     required(path.consultationFee, { message: 'قيمة الكشف / الحجز مطلوبة' });
     min(path.consultationFee, 0, { message: 'القيمة يجب أن تكون أكثر من 0' });
+    validate(path.consultationFee, ({ value }) =>
+      isValidMoney(value())
+        ? null
+        : {
+            kind: 'money',
+            message: 'أدخل قيمة كشف صحيحة بحد أقصى منزلتان عشريتان',
+          },
+    );
+    validate(path.discountAmount, ({ value }) => {
+      const message = getDiscountError(
+        this.model().consultationFee,
+        value(),
+        this.selectedDoctor()?.doctorPercentage,
+      );
+      return message ? { kind: 'discount', message } : null;
+    });
   });
 
   constructor() {
@@ -169,6 +205,7 @@ export class EditAppointmentModalComponent implements OnInit {
       patientAddress: app.patientAddress || '',
       visitType: Number(app.visitType),
       consultationFee: app.consultationFee ?? 0,
+      discountAmount: app.discountAmount ?? 0,
       isPaid: Number(app.status) !== 1,
     });
 
@@ -184,17 +221,15 @@ export class EditAppointmentModalComponent implements OnInit {
       .trim()
       .toLowerCase();
 
-    const matched = doctors.find((d) => {
+    const matched = doctors.filter((d) => {
       const cleanDoc = d.fullName
         .replace(/^د[\.\/]?\s*/, '')
         .trim()
         .toLowerCase();
-      return (
-        cleanDoc === cleanAppDoc || cleanAppDoc.includes(cleanDoc) || cleanDoc.includes(cleanAppDoc)
-      );
+      return cleanDoc === cleanAppDoc;
     });
 
-    return matched?.userId ?? '';
+    return matched.length === 1 ? matched[0].userId : '';
   }
 
   onDoctorChange(event: Event): void {
@@ -237,6 +272,7 @@ export class EditAppointmentModalComponent implements OnInit {
       visitType: Number(val.visitType) as VisitType,
       doctorScheduleId: Number(val.doctorScheduleId),
       consultationFee: Number(val.consultationFee),
+      discountAmount: val.discountAmount,
       isPaid: Boolean(val.isPaid),
     };
 

@@ -14,7 +14,6 @@
         <p class="text-xs text-white/60">معاينة فورية لبيانات التذكرة</p>
       </div>
     </div>
-   
   </div>
 
   <!-- Summary Items -->
@@ -101,6 +100,16 @@
         </span>
       </div>
 
+      <div class="flex items-center justify-between text-xs text-white">
+        <span>الخصم من حصة الطبيب:</span>
+        <span class="font-bold">{{ formData()?.discountAmount ?? 0 | number: '1.2-2' }} ج.م</span>
+      </div>
+      @if (pricing(); as amounts) {
+        <div class="flex items-center justify-between text-sm text-white">
+          <span>المطلوب من المريض:</span>
+          <span class="font-bold">{{ amounts.finalPaidAmount | number: '1.2-2' }} ج.م</span>
+        </div>
+      }
       <div class="pt-2 border-t border-white/10 flex items-center justify-between">
         <span class="text-xs font-semibold text-white/80">حالة السداد:</span>
         @if (formData()?.isPaid) {

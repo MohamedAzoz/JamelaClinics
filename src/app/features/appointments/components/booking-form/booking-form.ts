@@ -30,7 +30,10 @@ import {
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { CreateAppointments } from '../../models/CreateAppointments';
 import { VisitType } from '../../models/VisitType';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { getDiscountError, getDoctorShare, isValidMoney } from '../../utils/appointment-pricing';
+import { AppointmentFeeBreakdownComponent } from '../appointment-fee-breakdown/appointment-fee-breakdown';
+import { DoctorPercentageInfoComponent } from '../doctor-percentage-info/doctor-percentage-info';
 
 export interface BookingFormModel {
   doctorId: string;
@@ -40,12 +43,21 @@ export interface BookingFormModel {
   patientAddress: string;
   visitType: number;
   consultationFee: number;
+  discountAmount: number;
   isPaid: boolean;
 }
 
 @Component({
   selector: 'app-booking-form',
-  imports: [FormField, FormRoot, FontAwesomeModule, DatePipe],
+  imports: [
+    FormField,
+    FormRoot,
+    FontAwesomeModule,
+    DatePipe,
+    DecimalPipe,
+    AppointmentFeeBreakdownComponent,
+    DoctorPercentageInfoComponent,
+  ],
   templateUrl: './booking-form.html',
 })
 export class BookingFormComponent implements OnInit {
@@ -111,10 +123,17 @@ export class BookingFormComponent implements OnInit {
     patientAddress: '',
     visitType: VisitType.NewConsultation,
     consultationFee: 0,
+    discountAmount: 0,
     isPaid: false,
   });
 
   readonly model = this._model.asReadonly();
+  readonly selectedDoctor = computed(() =>
+    this.facade.doctors().find((doctor) => doctor.userId === this.model().doctorId),
+  );
+  readonly maxDiscount = computed(() =>
+    getDoctorShare(this.model().consultationFee, this.selectedDoctor()?.doctorPercentage),
+  );
 
   readonly bookingForm = form(this._model, (path) => {
     required(path.doctorId, { message: 'يرجى اختيار الطبيب' });
@@ -136,6 +155,22 @@ export class BookingFormComponent implements OnInit {
 
     required(path.consultationFee, { message: 'قيمة الكشف / الحجز مطلوبة' });
     min(path.consultationFee, 0, { message: 'القيمة يجب أن تكون 0 أو أكثر' });
+    validate(path.consultationFee, ({ value }) =>
+      isValidMoney(value())
+        ? null
+        : {
+            kind: 'money',
+            message: 'أدخل قيمة كشف صحيحة بحد أقصى منزلتان عشريتان',
+          },
+    );
+    validate(path.discountAmount, ({ value }) => {
+      const message = getDiscountError(
+        this.model().consultationFee,
+        value(),
+        this.selectedDoctor()?.doctorPercentage,
+      );
+      return message ? { kind: 'discount', message } : null;
+    });
   });
 
   constructor() {
@@ -241,6 +276,7 @@ export class BookingFormComponent implements OnInit {
       visitType: Number(val.visitType) as VisitType,
       doctorScheduleId: Number(val.doctorScheduleId),
       consultationFee: Number(val.consultationFee),
+      discountAmount: val.discountAmount,
       isPaid: Boolean(val.isPaid),
     };
 
@@ -259,6 +295,7 @@ export class BookingFormComponent implements OnInit {
       patientAddress: '',
       visitType: VisitType.NewConsultation,
       consultationFee: 0,
+      discountAmount: 0,
       isPaid: false,
     });
     this.facade.selectedDoctorId.set('');

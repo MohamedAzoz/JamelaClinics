@@ -1,4 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCheckCircle,
@@ -11,7 +12,7 @@ import { AppointmentFacade } from '../../services/appointment.facade';
 
 @Component({
   selector: 'app-booking-success-modal',
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, DecimalPipe],
   templateUrl: './booking-success-modal.html',
 })
 export class BookingSuccessModalComponent {

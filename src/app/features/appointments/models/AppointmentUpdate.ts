@@ -8,5 +8,6 @@ export interface AppointmentUpdate {
   visitType: VisitType;
   doctorScheduleId: number;
   consultationFee: number;
+  discountAmount?: number;
   isPaid: boolean;
 }

@@ -243,10 +243,10 @@ export class DoctorWalletFacade {
       this.actionTarget.set(null);
       this.pageNumber.set(1);
       this.refreshData();
-    } catch (error) {
+    } catch (error: any) {
       if (this.destroyRef.destroyed) return;
       this.actionError.set('تعذر تنفيذ العملية. راجع رسالة الخطأ قبل إعادة المحاولة.');
-      this.messages.showHttpError(error, 'تعذر تنفيذ الحركة المالية');
+      this.messages.addErrorMessage(error.error?.message || 'تعذر تنفيذ الحركة المالية');
     } finally {
       if (!this.destroyRef.destroyed) this.actionLoading.set(false);
     }
