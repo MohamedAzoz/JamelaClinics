@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faWallet, faPlus, faArrowUp, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { DoctorWalletFacade } from '../../services/doctor-wallet.facade';
+import { WalletTransactionType } from '@features/doctorWallet/models/WalletTransactionType';
 
 @Component({
   selector: 'app-wallet-header',
@@ -39,14 +40,14 @@ import { DoctorWalletFacade } from '../../services/doctor-wallet.facade';
         @if (facade.canManage()) {
           <button
             type="button"
-            (click)="facade.openTransaction('deposit')"
+            (click)="facade.openTransaction(WalletTransactionType.Deposit)"
             class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-dark"
           >
             <fa-icon [icon]="faPlus" /> إضافة رصيد
           </button>
           <button
             type="button"
-            (click)="facade.openTransaction('withdraw')"
+            (click)="facade.openTransaction(WalletTransactionType.Withdrawal)"
             class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-danger/30 bg-surface px-4 py-2 text-sm font-bold text-text transition hover:bg-danger/10"
           >
             <fa-icon [icon]="faArrowUp" /> سحب رصيد
@@ -62,4 +63,5 @@ export class WalletHeaderComponent {
   readonly faPlus = faPlus;
   readonly faArrowUp = faArrowUp;
   readonly faRotate = faRotate;
+  readonly WalletTransactionType = WalletTransactionType;
 }
