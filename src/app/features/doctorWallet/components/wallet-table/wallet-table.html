@@ -40,7 +40,7 @@
       @if (facade.canManage()) {
         <button
           type="button"
-          (click)="facade.openTransaction('deposit')"
+          (click)="facade.openTransaction(WalletTransactionType.Deposit)"
           class="mt-1 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-dark"
         >
           إضافة رصيد
@@ -79,8 +79,10 @@
               </th>
               <td class="px-4 py-4">
                 <span
-                  class="inline-block whitespace-nowrap rounded-lg border border-primary/15 bg-primary/5 px-2.5 py-1 text-xs font-semibold"
-                  >{{ transaction.typeName || 'غير محدد' }}</span
+                  class="inline-block whitespace-nowrap rounded-lg border border-primary/15 {{
+                    formatTypeClass(transaction.type)
+                  }} px-2.5 py-1 text-xs font-semibold"
+                  >{{ formatType(transaction.type) }}</span
                 >
               </td>
               <td class="whitespace-nowrap px-4 py-4 font-bold">

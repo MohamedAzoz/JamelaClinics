@@ -32,6 +32,16 @@ export class ExpenseTableComponent {
         return '';
     }
   }
+  formatTypeClass(value: TreasuryType): string {
+    switch (value) {
+      case TreasuryType.Expense:
+        return 'bg-danger/10 text-danger';
+      case TreasuryType.Income:
+        return 'bg-success/10 text-success';
+      default:
+        return '';
+    }
+  }
 
   formatMoney(value: number): string {
     return `${value} ج.م`;

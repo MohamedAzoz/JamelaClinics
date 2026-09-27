@@ -14,6 +14,7 @@ import { form, FormField, min, required } from '@angular/forms/signals';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faWallet, faXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { DoctorWalletFacade, WalletActionTarget } from '../../services/doctor-wallet.facade';
+import { WalletTransactionType } from '@features/doctorWallet/models/WalletTransactionType';
 
 @Component({
   selector: 'app-wallet-transaction-modal',
@@ -29,7 +30,7 @@ export class WalletTransactionModalComponent implements OnDestroy {
   readonly faWallet = faWallet;
   readonly faXmark = faXmark;
   readonly faSpinner = faSpinner;
-  readonly isDeposit = computed(() => this.target().action === 'deposit');
+  readonly isDeposit = computed(() => this.target().action === WalletTransactionType.Deposit);
   readonly model = linkedSignal(() => ({
     doctorId: this.target().doctorId,
     amount: 0,

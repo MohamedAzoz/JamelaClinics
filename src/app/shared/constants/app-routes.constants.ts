@@ -8,6 +8,7 @@ export const RoutesManagement = {
   EMPLOYEES: { path: 'employees' },
   TREASURY: { path: 'treasury' },
   DOCTOR_WALLET: { path: 'doctor-wallet' },
+  MATERIALS: { path: 'materials' },
   DOCTOR_SCHEDULES: { path: 'doctor-schedules' },
   TODAY_DOCTOR_SCHEDULES: { path: 'today-doctor-schedules' },
   USER_LOGIN_LOGS: { path: 'user-login-logs' },

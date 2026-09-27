@@ -66,6 +66,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.MATERIALS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin] },
+        loadComponent: () =>
+          import('./features/materials/pages/materials-management/materials-management').then(
+            (m) => m.MaterialsManagementPage,
+          ),
+      },
+      {
         path: RoutesManagement.DOCTOR_SCHEDULES.path,
         loadComponent: () =>
           import('./features/doctorSchedules/pages/doctor-schedule-management/doctor-schedule-management').then(

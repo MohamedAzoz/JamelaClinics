@@ -8,6 +8,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'settings', label: 'إدارة كلمات المرور', route: '/main/admin-password-management' },
   { icon: 'payment', label: 'إدارة المصروفات', route: '/main/treasury' },
   { icon: 'payment', label: 'حسابات الأطباء', route: '/main/doctor-wallet' },
+  { icon: 'inventory', label: 'المواد والمستحضرات', route: '/main/materials' },
   { icon: 'schedule', label: 'مواعيد الأطباء', route: '/main/doctor-schedules' },
   { icon: 'schedule', label: 'أطباء اليوم', route: '/main/today-doctor-schedules' },
   { icon: 'appointments', label: 'الحجوزات', route: '/main/appointments' },

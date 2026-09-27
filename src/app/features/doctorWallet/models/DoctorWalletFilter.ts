@@ -1,4 +1,4 @@
-import { AppointmentStatus } from './AppointmentStatus';
+import { WalletTransactionType } from './WalletTransactionType';
 import { Period } from './Period';
 /**Name	Description
 DoctorId
@@ -19,7 +19,7 @@ export interface DoctorWalletFilter {
   Period?: Period | null;
   FromDate?: string;
   DateTo?: string;
-  Type?: AppointmentStatus | null;
+  Type?: WalletTransactionType | null;
   PageNumber?: number;
   PageSize?: number;
 }

@@ -10,8 +10,9 @@ import { DoctorWalletTransaction } from '../models/DoctorWalletTransaction';
 import { DoctorWalletSummary } from '../models/DoctorWalletSummary';
 import { DoctorWalletReport } from '../models/DoctorWalletReport';
 import { Period } from '../models/Period';
+import { WalletTransactionType } from '../models/WalletTransactionType';
 
-export type WalletAction = 'deposit' | 'withdraw';
+export type WalletAction = WalletTransactionType.Deposit | WalletTransactionType.Withdrawal;
 export interface WalletActionTarget {
   action: WalletAction;
   doctorId: string;
@@ -228,7 +229,9 @@ export class DoctorWalletFacade {
     try {
       const payload = { ...transaction, description: transaction.description.trim() };
       const response = await firstValueFrom(
-        target.action === 'deposit' ? this.api.deposit(payload) : this.api.withdraw(payload),
+        target.action === WalletTransactionType.Deposit
+          ? this.api.deposit(payload)
+          : this.api.withdraw(payload),
       );
       if (this.destroyRef.destroyed) return;
       if (!response.isSuccess || response.data !== true) {
@@ -238,7 +241,9 @@ export class DoctorWalletFacade {
         return;
       }
       this.messages.addSuccessMessage(
-        target.action === 'deposit' ? 'تمت إضافة الرصيد بنجاح' : 'تم سحب الرصيد بنجاح',
+        target.action === WalletTransactionType.Deposit
+          ? 'تمت إضافة الرصيد بنجاح'
+          : 'تم سحب الرصيد بنجاح',
       );
       this.actionTarget.set(null);
       this.pageNumber.set(1);
