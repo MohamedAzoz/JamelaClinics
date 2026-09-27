@@ -12,6 +12,7 @@ import {
 } from '../models/FilterAppointment';
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
+import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
 
 @Service()
 export class AppointmentApiService {
@@ -133,5 +134,13 @@ export class AppointmentApiService {
       url += `?${params.join('&')}`;
     }
     return this._http.get<Result<AppointmentsStatistics>>(url);
+  }
+
+  //   GET
+  // /api/Appointments/details-with-materials/{appointmentId}
+  getAppointmentDetailsWithMaterials(appointmentId: number) {
+    return this._http.get<Result<AppointmentsMaterial>>(
+      `${this._baseUrl}/details-with-materials/${appointmentId}`,
+    );
   }
 }

@@ -17,6 +17,7 @@ import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { Period } from '../models/Period';
 import { AppointmentStatus } from '../models/AppointmentStatus';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
+import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
 import { AppMessageService } from '@core/services/app-message-service';
 import { IdentityService } from '@core/services/identity-service';
 
@@ -82,6 +83,9 @@ export class AppointmentFacade {
   readonly isLoadingScheduleAppointments = signal<boolean>(false);
   readonly currentScheduleId = signal<number | null>(null);
   readonly actionLoadingId = signal<number | null>(null);
+
+  readonly appointmentDetails = signal<AppointmentsMaterial | null>(null);
+  readonly isLoadingAppointmentDetails = signal<boolean>(false);
 
   // Computed metrics for schedule appointments
   readonly scheduleTotalCount = computed(() => this.scheduleAppointments().length);
@@ -451,6 +455,35 @@ export class AppointmentFacade {
   // ==========================================
   // Schedule Specific Appointments Actions
   // ==========================================
+
+  /**
+   * Fetch appointment details with materials using AppointmentApiService.getAppointmentDetailsWithMaterials.
+   */
+  loadAppointmentDetails(appointmentId: number): void {
+    this.isLoadingAppointmentDetails.set(true);
+
+    this._appointmentApiService.getAppointmentDetailsWithMaterials(appointmentId).subscribe({
+      next: (res) => {
+        this.isLoadingAppointmentDetails.set(false);
+        if (res.isSuccess && res.data) {
+          this.appointmentDetails.set(res.data);
+        } else {
+          this.appointmentDetails.set(null);
+          this._toast.addErrorMessage(res.message || 'فشل في جلب تفاصيل الحجز');
+        }
+      },
+      error: () => {
+        this.isLoadingAppointmentDetails.set(false);
+        this.appointmentDetails.set(null);
+        this._toast.addErrorMessage('حدث خطأ أثناء تحميل تفاصيل الحجز');
+      },
+    });
+  }
+
+  clearAppointmentDetails(): void {
+    this.appointmentDetails.set(null);
+    this.isLoadingAppointmentDetails.set(false);
+  }
 
   /**
    * Fetches appointments for a specific doctor schedule ID via AppointmentApiService.getAppointmentsByScheduleId

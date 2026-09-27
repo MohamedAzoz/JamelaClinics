@@ -16,16 +16,23 @@ import {
   faCheck,
   faBan,
   faEdit,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { Appointments } from '../../models/Appointments';
 import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
+import { AppointmentDetailsModalComponent } from '../appointment-details-modal/appointment-details-modal';
 
 @Component({
   selector: 'app-schedule-appointments-table',
-  imports: [FontAwesomeModule, DatePipe, EditAppointmentModalComponent],
+  imports: [
+    FontAwesomeModule,
+    DatePipe,
+    EditAppointmentModalComponent,
+    AppointmentDetailsModalComponent,
+  ],
   templateUrl: './schedule-appointments-table.html',
 })
 export class ScheduleAppointmentsTableComponent {
@@ -34,6 +41,7 @@ export class ScheduleAppointmentsTableComponent {
   readonly Number = Number;
 
   readonly editingAppointment = signal<Appointments | null>(null);
+  readonly detailsAppointmentId = signal<number | null>(null);
 
   // Icons
   readonly faUser = faUser;
@@ -50,6 +58,7 @@ export class ScheduleAppointmentsTableComponent {
   readonly faCheck = faCheck;
   readonly faBan = faBan;
   readonly faEdit = faEdit;
+  readonly faEye = faEye;
 
   openEditModal(app: Appointments): void {
     this.facade.selectedDoctorId.set('');
@@ -59,6 +68,14 @@ export class ScheduleAppointmentsTableComponent {
 
   closeEditModal(): void {
     this.editingAppointment.set(null);
+  }
+
+  openDetailsModal(app: Appointments): void {
+    this.detailsAppointmentId.set(app.id);
+  }
+
+  closeDetailsModal(): void {
+    this.detailsAppointmentId.set(null);
   }
 
   getVisitTypeName(type: VisitType | number): string {

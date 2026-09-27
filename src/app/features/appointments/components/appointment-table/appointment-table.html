@@ -153,18 +153,30 @@
                 </span>
               </td>
 
-              <!-- Edit Button -->
+              <!-- Action Buttons -->
               @if (!facade.isDoctor()) {
                 <td class="px-4 py-4 text-center">
-                  <button
-                    type="button"
-                    (click)="openEditModal(app)"
-                    title="تعديل بيانات الحجز"
-                    class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer mx-auto"
-                  >
-                    <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
-                    <span>تعديل</span>
-                  </button>
+                  <div class="flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      (click)="openDetailsModal(app)"
+                      title="عرض تفاصيل الحجز"
+                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
+                    >
+                      <fa-icon [icon]="faEye" class="text-xs"></fa-icon>
+                      <span>تفاصيل</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      (click)="openEditModal(app)"
+                      title="تعديل بيانات الحجز"
+                      class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
+                    >
+                      <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
+                      <span>تعديل</span>
+                    </button>
+                  </div>
                 </td>
               }
             </tr>
@@ -174,6 +186,13 @@
     </div>
   }
 </div>
+
+@if (detailsAppointmentId() !== null) {
+  <app-appointment-details-modal
+    [appointmentId]="detailsAppointmentId()!"
+    (closed)="closeDetailsModal()"
+  />
+}
 
 <!-- Edit Appointment Modal -->
 @if (editingAppointment()) {

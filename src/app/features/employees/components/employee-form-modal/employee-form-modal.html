@@ -4,7 +4,9 @@
     dir="rtl"
     role="dialog"
     aria-modal="true"
-    [attr.aria-labelledby]="facade.selectedEmployee() ? 'edit-employee-title' : 'add-employee-title'"
+    [attr.aria-labelledby]="
+      facade.selectedEmployee() ? 'edit-employee-title' : 'add-employee-title'
+    "
   >
     <!-- Modal Dialog Card -->
     <div
@@ -25,7 +27,11 @@
               [id]="facade.selectedEmployee() ? 'edit-employee-title' : 'add-employee-title'"
               class="text-base sm:text-lg font-bold text-text"
             >
-              {{ facade.selectedEmployee() ? 'تعديل بيانات موظف الاستقبال' : 'إضافة موظف استقبال جديد' }}
+              {{
+                facade.selectedEmployee()
+                  ? 'تعديل بيانات موظف الاستقبال'
+                  : 'إضافة موظف استقبال جديد'
+              }}
             </h2>
             <p class="text-xs text-text-muted">
               {{
@@ -71,7 +77,9 @@
               [formField]="employeeForm.fullName"
               placeholder="محمد علي..."
               class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              [class.border-danger]="employeeForm.fullName().touched() && employeeForm.fullName().invalid()"
+              [class.border-danger]="
+                employeeForm.fullName().touched() && employeeForm.fullName().invalid()
+              "
             />
           </div>
           @if (employeeForm.fullName().touched() && employeeForm.fullName().invalid()) {
@@ -81,8 +89,30 @@
           }
         </div>
 
-        <!-- Create Mode Specific Fields (Username & Password) -->
+        <!-- Create Mode Specific Fields (Username, Password & Role) -->
         @if (!facade.selectedEmployee()) {
+          <div class="flex flex-col gap-1.5">
+            <label for="roleName" class="text-xs sm:text-sm font-semibold text-text">
+              نوع الحساب <span class="text-danger">*</span>
+            </label>
+            <select
+              id="roleName"
+              [formField]="employeeForm.roleName"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              [class.border-danger]="
+                employeeForm.roleName().touched() && employeeForm.roleName().invalid()
+              "
+            >
+              <option value="Reception">موظف استقبال</option>
+              <option value="Accountant">محاسب</option>
+            </select>
+            @if (employeeForm.roleName().touched() && employeeForm.roleName().invalid()) {
+              @for (error of employeeForm.roleName().errors(); track error.message) {
+                <span class="text-xs text-danger" role="alert">⚠ {{ error.message }}</span>
+              }
+            }
+          </div>
+
           <!-- Username Field -->
           <div class="flex flex-col gap-1.5">
             <label for="username" class="text-xs sm:text-sm font-semibold text-text">
@@ -98,9 +128,11 @@
                 id="username"
                 type="text"
                 [formField]="employeeForm.username"
-                placeholder="reception_m..."
+                placeholder="اسم المستخدم"
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-                [class.border-danger]="employeeForm.username().touched() && employeeForm.username().invalid()"
+                [class.border-danger]="
+                  employeeForm.username().touched() && employeeForm.username().invalid()
+                "
               />
             </div>
             @if (employeeForm.username().touched() && employeeForm.username().invalid()) {
@@ -127,7 +159,9 @@
                 [formField]="employeeForm.password"
                 placeholder="••••••••"
                 class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-                [class.border-danger]="employeeForm.password().touched() && employeeForm.password().invalid()"
+                [class.border-danger]="
+                  employeeForm.password().touched() && employeeForm.password().invalid()
+                "
               />
             </div>
             @if (employeeForm.password().touched() && employeeForm.password().invalid()) {

@@ -12,11 +12,13 @@ import {
 import { EmployeeFacade } from '../../services/employee.facade';
 import { UpdateEmployee } from '../../models/UpdateEmployee';
 import { RegisterEmployeeRequest } from '@features/auth/models/RegisterEmployee';
+import { ROLES } from '@shared/constants/roles.constants';
 
 interface EmployeeFormModel {
   fullName: string;
   username: string;
   password: string;
+  roleName: 'Accountant' | 'Reception';
   isActive: boolean;
 }
 
@@ -39,12 +41,18 @@ export class EmployeeFormModalComponent {
     fullName: '',
     username: '',
     password: '',
+    roleName: ROLES.Reception,
     isActive: true,
   });
 
   readonly employeeForm = form(this._model, (path) => {
     required(path.fullName, { message: 'الاسم الكامل مطلوب' });
     minLength(path.fullName, 3, { message: 'يجب أن يكون الاسم 3 أحرف على الأقل' });
+
+    required(path.roleName, {
+      when: () => !this.facade.selectedEmployee(),
+      message: 'نوع الحساب مطلوب',
+    });
 
     required(path.username, {
       when: () => !this.facade.selectedEmployee(),
@@ -73,6 +81,7 @@ export class EmployeeFormModalComponent {
           fullName: selected.fullName,
           username: '',
           password: '',
+          roleName: ROLES.Reception,
           isActive: selected.isActive,
         });
       } else {
@@ -80,6 +89,7 @@ export class EmployeeFormModalComponent {
           fullName: '',
           username: '',
           password: '',
+          roleName: ROLES.Reception,
           isActive: true,
         });
       }
@@ -109,6 +119,7 @@ export class EmployeeFormModalComponent {
         fullName: val.fullName,
         username: val.username,
         password: val.password,
+        roleName: val.roleName,
       };
       this.facade.registerEmployee(request);
     }
@@ -118,4 +129,3 @@ export class EmployeeFormModalComponent {
     this.facade.closeFormModal();
   }
 }
-
