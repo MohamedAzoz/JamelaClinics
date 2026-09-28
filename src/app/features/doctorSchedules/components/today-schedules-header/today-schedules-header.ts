@@ -13,13 +13,11 @@ import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
 
 @Component({
   selector: 'app-today-schedules-header',
-  imports: [FontAwesomeModule, DatePipe],
+  imports: [FontAwesomeModule],
   templateUrl: './today-schedules-header.html',
 })
 export class TodaySchedulesHeaderComponent {
   readonly facade = inject(DoctorScheduleFacade);
-
-  readonly currentDate = new Date();
 
   readonly faUserMd = faUserMd;
   readonly faSearch = faSearch;

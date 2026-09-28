@@ -18,11 +18,10 @@ export class DoctorWalletApiService {
     let url = `${this._baseUrl}transactions-report`;
     const params: string[] = [];
 
-    if (searchParams.DoctorId !== undefined) params.push(`DoctorId=${searchParams.DoctorId}`);
+    if (searchParams.DoctorId) params.push(`DoctorId=${searchParams.DoctorId}`);
     if (searchParams.Period) params.push(`Period=${searchParams.Period}`);
-    if (searchParams.FromDate !== undefined)
-      params.push(`FromDate=${searchParams.FromDate.toString()}`);
-    if (searchParams.DateTo !== undefined) params.push(`DateTo=${searchParams.DateTo.toString()}`);
+    if (searchParams.FromDate) params.push(`FromDate=${searchParams.FromDate}`);
+    if (searchParams.ToDate) params.push(`ToDate=${searchParams.ToDate}`);
     if (searchParams.Type) params.push(`Type=${searchParams.Type}`);
 
     params.push(`PageNumber=${searchParams.PageNumber ?? 1}`);
@@ -32,6 +31,7 @@ export class DoctorWalletApiService {
     }
     return this._http.get<Result<PaginatedResult<DoctorWalletReport[]>>>(url);
   }
+
   // GET
   // /api/DoctorWallet/summary-report
   //Ex:   /transactions-report?FromDate=2026-09-20&ToDate=2026-09-22
@@ -40,11 +40,10 @@ export class DoctorWalletApiService {
     let url = `${this._baseUrl}summary-report`;
     const params: string[] = [];
 
-    if (searchParams.DoctorId !== undefined) params.push(`DoctorId=${searchParams.DoctorId}`);
+    if (searchParams.DoctorId) params.push(`DoctorId=${searchParams.DoctorId}`);
     if (searchParams.Period) params.push(`Period=${searchParams.Period}`);
-    if (searchParams.FromDate !== undefined)
-      params.push(`FromDate=${searchParams.FromDate.toString()}`);
-    if (searchParams.DateTo !== undefined) params.push(`DateTo=${searchParams.DateTo.toString()}`);
+    if (searchParams.FromDate) params.push(`FromDate=${searchParams.FromDate}`);
+    if (searchParams.ToDate) params.push(`ToDate=${searchParams.ToDate}`);
     if (searchParams.Type) params.push(`Type=${searchParams.Type}`);
 
     params.push(`PageNumber=${searchParams.PageNumber ?? 1}`);

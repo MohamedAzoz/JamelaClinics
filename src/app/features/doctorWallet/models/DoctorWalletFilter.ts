@@ -18,7 +18,7 @@ export interface DoctorWalletFilter {
   DoctorId?: string;
   Period?: Period | null;
   FromDate?: string;
-  DateTo?: string;
+  ToDate?: string;
   Type?: WalletTransactionType | null;
   PageNumber?: number;
   PageSize?: number;

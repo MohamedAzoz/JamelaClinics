@@ -90,7 +90,7 @@ export class AppointmentDetailsModalComponent {
       case VisitType.FollowUp:
         return 'إعادة';
       case VisitType.Sessions:
-        return 'جلسات علاجية';
+        return 'جلسات';
       case VisitType.Laser:
         return 'ليزر';
       case VisitType.Fractional:

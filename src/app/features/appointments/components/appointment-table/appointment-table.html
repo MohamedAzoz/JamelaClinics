@@ -33,7 +33,8 @@
             <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
             <th scope="col" class="px-4 py-3.5">الحجز والخصم والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
-            @if (!facade.isDoctor()) {
+            <th scope="col" class="px-4 py-3.5 text-center">تفاصيل الموعد</th>
+            @if (!facade.isDoctorOrAdminOrAccountant()) {
               <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
             }
           </tr>
@@ -152,21 +153,21 @@
                   {{ getStatusName(app.status) }}
                 </span>
               </td>
-
+              <td class="px-4 py-4 text-center">
+                <button
+                  type="button"
+                  (click)="openDetailsModal(app)"
+                  title="عرض تفاصيل الحجز"
+                  class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
+                >
+                  <fa-icon [icon]="faEye" class="text-xs"></fa-icon>
+                  <span>تفاصيل</span>
+                </button>
+              </td>
               <!-- Action Buttons -->
-              @if (!facade.isDoctor()) {
+              @if (!facade.isDoctorOrAdminOrAccountant()) {
                 <td class="px-4 py-4 text-center">
                   <div class="flex items-center justify-center gap-2">
-                    <button
-                      type="button"
-                      (click)="openDetailsModal(app)"
-                      title="عرض تفاصيل الحجز"
-                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
-                    >
-                      <fa-icon [icon]="faEye" class="text-xs"></fa-icon>
-                      <span>تفاصيل</span>
-                    </button>
-
                     <button
                       type="button"
                       (click)="openEditModal(app)"

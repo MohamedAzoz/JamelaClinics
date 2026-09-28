@@ -88,7 +88,7 @@ export class EditAppointmentModalComponent implements OnInit {
   readonly visitTypeOptions = [
     { value: VisitType.NewConsultation, label: 'كشف جديد', desc: 'معاينة وفحص أول مرة' },
     { value: VisitType.FollowUp, label: 'إعادة', desc: 'متابعة بعد الكشف' },
-    { value: VisitType.Sessions, label: 'جلسات علاجية', desc: 'جلسات متابعة مستمرة' },
+    { value: VisitType.Sessions, label: 'جلسات', desc: 'جلسات متابعة مستمرة' },
     { value: VisitType.Laser, label: 'ليزر', desc: 'جلسات التجميل والليزر' },
     { value: VisitType.Fractional, label: 'فراكشنال', desc: 'جلسات الجلدية والعناية' },
   ];

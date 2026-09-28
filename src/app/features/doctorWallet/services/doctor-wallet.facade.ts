@@ -64,7 +64,7 @@ export class DoctorWalletFacade {
     DoctorId: this.isDoctor() ? this.identity.userId() : this.doctorIdFilter() || undefined,
     Period: this.periodFilter(),
     FromDate: this.fromDateFilter() || undefined,
-    DateTo: this.toDateFilter() || undefined,
+    ToDate: this.toDateFilter() || undefined,
     PageNumber: this.pageNumber(),
     PageSize: this.pageSize(),
   }));

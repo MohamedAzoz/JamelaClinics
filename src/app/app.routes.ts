@@ -123,7 +123,7 @@ export const routes: Routes = [
         path: RoutesManagement.APPOINTMENTS.path,
         canActivate: [roleGuard],
         data: {
-          roles: [ROLES.Admin],
+          roles: [ROLES.Admin, ROLES.Accountant],
         },
         loadComponent: () =>
           import('./features/appointments/pages/appointments-management/appointments-management').then(

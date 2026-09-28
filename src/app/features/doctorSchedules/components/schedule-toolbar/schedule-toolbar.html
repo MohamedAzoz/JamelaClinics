@@ -82,7 +82,7 @@
           class="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-main-bg text-text text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
         >
           <option value="">المواعيد النشطة فقط</option>
-          <option value="false">المواعيد الموقوفة فقط</option>
+          <option value="false">المواعيد غير النشطة فقط</option>
         </select>
       </div>
 
@@ -162,7 +162,7 @@
         <fa-icon [icon]="faTimesCircle" size="lg"></fa-icon>
       </div>
       <div>
-        <span class="text-xs text-text-muted font-medium">الأيام الموقوفة مؤقتاً</span>
+        <span class="text-xs text-text-muted font-medium">الأيام غير النشطة مؤقتاً</span>
         <div class="text-lg font-bold text-rose-600 dark:text-rose-400">
           {{ facade.inactiveSchedulesCount() }} يوم
         </div>

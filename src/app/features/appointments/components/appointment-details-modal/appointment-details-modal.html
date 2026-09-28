@@ -260,7 +260,7 @@
                 >
                   <span class="text-text-muted">قيمة الكشف</span>
                   <span class="font-bold text-text"
-                    >{{ appointment()?.consultationFee | number: '1.2-2' }} ج</span
+                    >{{ appointment()?.consultationFee | number: '1.2-2' }} ج.م</span
                   >
                 </div>
 
@@ -269,16 +269,16 @@
                 >
                   <span class="text-text-muted">المبلغ بعد الخصم</span>
                   <span class="font-bold text-text"
-                    >{{ appointment()?.finalPaidAmount | number: '1.2-2' }} ج</span
+                    >{{ appointment()?.finalPaidAmount | number: '1.2-2' }} ج.م</span
                   >
                 </div>
 
                 <div
                   class="flex items-center justify-between rounded-xl bg-main-bg px-3 py-2.5 text-sm"
                 >
-                  <span class="text-text-muted">إجمالي مواد الحجز</span>
+                  <span class="text-text-muted">إجمالي مواد materials</span>
                   <span class="font-bold text-primary"
-                    >{{ totalMaterialsCost() | number: '1.2-2' }} ج</span
+                    >{{ totalMaterialsCost() | number: '1.2-2' }} ج.م</span
                   >
                 </div>
 
@@ -287,27 +287,29 @@
                 >
                   <span class="text-text-muted">صافي الحجز</span>
                   <span class="font-bold text-success"
-                    >{{ appointment()?.netAppointmentAmount | number: '1.2-2' }} ج</span
+                    >{{ appointment()?.netAppointmentAmount | number: '1.2-2' }} ج.م</span
                   >
                 </div>
 
-                <div
-                  class="flex items-center justify-between rounded-xl bg-main-bg px-3 py-2.5 text-sm"
-                >
-                  <span class="text-text-muted">أرباح الطبيب</span>
-                  <span class="font-bold text-accent"
-                    >{{ appointment()?.doctorEarnings | number: '1.2-2' }} ج</span
+                @if (!facade.isReception()) {
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-main-bg px-3 py-2.5 text-sm"
                   >
-                </div>
+                    <span class="text-text-muted">أرباح الطبيب</span>
+                    <span class="font-bold text-accent"
+                      >{{ appointment()?.doctorEarnings | number: '1.2-2' }} ج.م</span
+                    >
+                  </div>
 
-                <div
-                  class="flex items-center justify-between rounded-xl bg-main-bg px-3 py-2.5 text-sm"
-                >
-                  <span class="text-text-muted">أرباح المركز</span>
-                  <span class="font-bold text-warning"
-                    >{{ appointment()?.centerEarnings | number: '1.2-2' }} ج</span
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-main-bg px-3 py-2.5 text-sm"
                   >
-                </div>
+                    <span class="text-text-muted">أرباح المركز</span>
+                    <span class="font-bold text-warning"
+                      >{{ appointment()?.centerEarnings | number: '1.2-2' }} ج.م</span
+                    >
+                  </div>
+                }
               </div>
             </section>
 

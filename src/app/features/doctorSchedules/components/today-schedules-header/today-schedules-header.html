@@ -21,27 +21,25 @@
         </div>
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <h1 class="text-2xl font-bold tracking-tight md:text-3xl text-white">
+            <h1
+              class="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white"
+            >
               جدول أطباء ومواعيد اليوم
             </h1>
-            <span
-              class="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-0.5 text-xs font-semibold text-sidebar-text border border-white/25"
-            >
-              {{ currentDate | date: 'yyyy-MM-dd' }}
-            </span>
+            
           </div>
-          <p class="text-sm md:text-base text-white/80 font-medium">
+          <p class="text-xs sm:text-sm md:text-base text-white/80 font-medium">
             استعراض الأطباء المتاحين للاستقبال اليوم، مراجعة العيادات وعدد الحجوزات المسجلة
           </p>
         </div>
       </div>
 
       <!-- Controls: Search Input & Refresh Button -->
-      <div class="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+      <div class="flex items-center gap-1.5 self-start lg:self-auto">
         <!-- Search Input -->
         <div class="relative w-full sm:w-64">
           <div
-            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-white/60"
+            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-white/60"
           >
             <fa-icon [icon]="faSearch" class="text-xs"></fa-icon>
           </div>
@@ -50,7 +48,7 @@
             [value]="facade.todaySearchQuery()"
             (input)="onSearchInput($event)"
             placeholder="ابحث باسم الطبيب أو العيادة..."
-            class="w-full rounded-xl border border-white/25 bg-white/10 px-3.5 py-2.5 pr-9 text-xs sm:text-sm font-semibold text-white placeholder-white/60 transition focus:border-white focus:bg-white/20 focus:outline-none"
+            class="w-full rounded-xl border border-white/25 bg-white/10 px-3 py-2.5 pr-9 text-xs sm:text-sm font-semibold text-white placeholder-white/60 transition focus:border-white focus:bg-white/20 focus:outline-none"
           />
         </div>
 
@@ -118,9 +116,7 @@
           {{ facade.todayTotalAppointmentsCount() }} حجز
         </div>
       </div>
-      <div
-        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent"
-      >
+      <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
         <fa-icon [icon]="faReceipt" class="text-xl"></fa-icon>
       </div>
     </div>

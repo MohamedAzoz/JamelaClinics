@@ -247,7 +247,7 @@
     <!-- Fee and Payment Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
       <!-- Consultation Fee Input -->
-      <div>
+      <div class="box-border">
         <label for="consultationFee" class="block text-sm font-semibold text-text mb-1.5">
           مبلغ الحجز (رسوم الزيارة) <span class="text-danger">*</span>
         </label>
@@ -282,7 +282,7 @@
         }
       </div>
 
-      <div>
+      <div class="box-border">
         <label for="booking-discount" class="mb-1.5 block text-sm font-semibold text-text"
           >قيمة الخصم (ج.م)</label
         >
@@ -300,15 +300,10 @@
           "
           class="w-full rounded-xl border border-primary/20 bg-main-bg px-4 py-2.5 text-sm font-semibold text-text focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
         />
-        <p id="booking-discount-help" class="mt-2 text-xs text-text">
-          الخصم من حصة الطبيب فقط. أدخل 0 للحجز دون خصم.
-          @if (maxDiscount() !== null) {
-            <span class="block mt-1"
-              >الحد الأقصى للخصم من حصة الطبيب: {{ maxDiscount() | number: '1.2-2' }} ج.م
-            </span>
-          }
-        </p>
-        @if (bookingForm.discountAmount().invalid()) {
+        @if (
+          bookingForm.discountAmount().invalid() ||
+          bookingForm.discountAmount().value() > maxDiscount()!
+        ) {
           <div
             id="booking-discount-error"
             role="alert"
@@ -335,9 +330,6 @@
             <span class="text-sm font-semibold text-text flex items-center gap-2">
               <fa-icon [icon]="faCreditCard" class="text-primary"></fa-icon>
               تم استلام المبلغ (حالة الدفع: مدفوع)
-            </span>
-            <span class="text-xs text-text-muted">
-              قم بالتحديد إذا قام المريض بسداد رسوم الحجز نقدياً أو بالبطاقة الآن
             </span>
           </div>
         </label>

@@ -30,7 +30,7 @@ import {
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { CreateAppointments } from '../../models/CreateAppointments';
 import { VisitType } from '../../models/VisitType';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { getDiscountError, getDoctorShare, isValidMoney } from '../../utils/appointment-pricing';
 import { AppointmentFeeBreakdownComponent } from '../appointment-fee-breakdown/appointment-fee-breakdown';
 import { DoctorPercentageInfoComponent } from '../doctor-percentage-info/doctor-percentage-info';
@@ -54,7 +54,6 @@ export interface BookingFormModel {
     FormRoot,
     FontAwesomeModule,
     DatePipe,
-    DecimalPipe,
     AppointmentFeeBreakdownComponent,
     DoctorPercentageInfoComponent,
   ],
@@ -101,7 +100,7 @@ export class BookingFormComponent implements OnInit {
     },
     {
       value: VisitType.Sessions,
-      label: 'جلسات علاجية',
+      label: 'جلسات',
       icon: 'faUserCheck',
       desc: 'جلسات متابعة مستمرة',
     },

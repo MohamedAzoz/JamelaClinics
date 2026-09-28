@@ -35,7 +35,7 @@ export class TreasuryApiService {
       params.push(`FromDate=${report.FromDate}`);
     }
     if (report.ToDate) {
-      params.push(`ToDate=${report.ToDate}`);
+      params.push(`DateTo=${report.ToDate}`);
     }
     if (report.PageNumber) {
       params.push(`PageNumber=${report.PageNumber}`);
@@ -65,7 +65,7 @@ export class TreasuryApiService {
       params.push(`FromDate=${summary.FromDate}`);
     }
     if (summary.ToDate) {
-      params.push(`ToDate=${summary.ToDate}`);
+      params.push(`DateTo=${summary.ToDate}`);
     }
     if (summary.PageNumber) {
       params.push(`PageNumber=${summary.PageNumber}`);
