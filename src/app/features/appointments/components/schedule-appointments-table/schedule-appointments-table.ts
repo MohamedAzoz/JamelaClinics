@@ -18,12 +18,12 @@ import {
   faEdit,
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { Appointments } from '../../models/Appointments';
 import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
-import { AppointmentDetailsModalComponent } from '../appointment-details-modal/appointment-details-modal';
 
 @Component({
   selector: 'app-schedule-appointments-table',
@@ -31,17 +31,16 @@ import { AppointmentDetailsModalComponent } from '../appointment-details-modal/a
     FontAwesomeModule,
     DatePipe,
     EditAppointmentModalComponent,
-    AppointmentDetailsModalComponent,
   ],
   templateUrl: './schedule-appointments-table.html',
 })
 export class ScheduleAppointmentsTableComponent {
   readonly facade = inject(AppointmentFacade);
+  private readonly _router = inject(Router);
 
   readonly Number = Number;
 
   readonly editingAppointment = signal<Appointments | null>(null);
-  readonly detailsAppointmentId = signal<number | null>(null);
 
   // Icons
   readonly faUser = faUser;
@@ -71,11 +70,7 @@ export class ScheduleAppointmentsTableComponent {
   }
 
   openDetailsModal(app: Appointments): void {
-    this.detailsAppointmentId.set(app.id);
-  }
-
-  closeDetailsModal(): void {
-    this.detailsAppointmentId.set(null);
+    this._router.navigate(['/main/appointment-details', app.id]);
   }
 
   getVisitTypeName(type: VisitType | number): string {

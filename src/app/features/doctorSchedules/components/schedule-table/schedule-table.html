@@ -100,34 +100,46 @@
                   title="عرض كافة الحجوزات لهذا اليوم"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs border border-primary/20 transition-all cursor-pointer no-underline group"
                 >
-                  <fa-icon [icon]="faUsersViewfinder" class="text-primary group-hover:scale-110 transition-transform"></fa-icon>
+                  <fa-icon
+                    [icon]="faUsersViewfinder"
+                    class="text-primary group-hover:scale-110 transition-transform"
+                  ></fa-icon>
                   <span>{{ schedule.appointmentsCount ?? 0 }} حجز</span>
-                  <span class="text-[10px] opacity-70 group-hover:translate-x-0.5 transition-transform">←</span>
+                  <span
+                    class="text-[10px] opacity-70 group-hover:translate-x-0.5 transition-transform"
+                    >←</span
+                  >
                 </a>
               </td>
 
               <!-- Status Switch/Badge -->
               <td class="px-6 py-4 text-center">
-                <button
-                  type="button"
-                  (click)="facade.toggleScheduleStatus(schedule)"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer select-none"
-                  [class.bg-emerald-500\/10]="schedule.isActive"
-                  [class.text-emerald-600]="schedule.isActive"
-                  [class.dark:text-emerald-400]="schedule.isActive"
-                  [class.bg-rose-500\/10]="!schedule.isActive"
-                  [class.text-rose-600]="!schedule.isActive"
-                  [class.dark:text-rose-400]="!schedule.isActive"
-                  [title]="
-                    schedule.isActive ? 'تعطيل الاستقبال لهذا اليوم' : 'تفعيل الاستقبال لهذا اليوم'
-                  "
-                >
-                  <fa-icon
-                    [icon]="schedule.isActive ? faToggleOn : faToggleOff"
-                    class="text-base"
-                  ></fa-icon>
-                  <span>{{ schedule.isActive ? 'مُفعل للاستقبال' : 'مُعطل مؤقتاً' }}</span>
-                </button>
+                @if (schedule.appointmentsCount === 0) {
+                  <button
+                    type="button"
+                    (click)="facade.toggleScheduleStatus(schedule)"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer select-none"
+                    [class.bg-emerald-500\/10]="schedule.isActive"
+                    [class.text-emerald-600]="schedule.isActive"
+                    [class.dark:text-emerald-400]="schedule.isActive"
+                    [class.bg-rose-500\/10]="!schedule.isActive"
+                    [class.text-rose-600]="!schedule.isActive"
+                    [class.dark:text-rose-400]="!schedule.isActive"
+                    [title]="
+                      schedule.isActive
+                        ? 'تعطيل الاستقبال لهذا اليوم'
+                        : 'تفعيل الاستقبال لهذا اليوم'
+                    "
+                  >
+                    <fa-icon
+                      [icon]="schedule.isActive ? faToggleOn : faToggleOff"
+                      class="text-base"
+                    ></fa-icon>
+                    <span>{{ schedule.isActive ? 'مُفعل للاستقبال' : 'مُعطل مؤقتاً' }}</span>
+                  </button>
+                } @else {
+                  <span class="text-emerald-600 font-bold">لا يمكن تعطيل المواعيد</span>
+                }
               </td>
 
               <!-- Action Buttons (Edit, Delete) -->
@@ -145,15 +157,17 @@
                   </button>
 
                   <!-- Delete Schedule Button -->
-                  <button
-                    type="button"
-                    (click)="facade.openDeleteModal(schedule)"
-                    class="p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
-                    title="حذف الموعد المتاح"
-                    aria-label="حذف الموعد المتاح"
-                  >
-                    <fa-icon [icon]="faTrashCan" size="lg"></fa-icon>
-                  </button>
+                  @if (schedule.appointmentsCount === 0) {
+                    <button
+                      type="button"
+                      (click)="facade.openDeleteModal(schedule)"
+                      class="p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                      title="حذف الموعد المتاح"
+                      aria-label="حذف الموعد المتاح"
+                    >
+                      <fa-icon [icon]="faTrashCan" size="lg"></fa-icon>
+                    </button>
+                  }
                 </div>
               </td>
             </tr>

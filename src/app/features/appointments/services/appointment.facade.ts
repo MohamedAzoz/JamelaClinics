@@ -3,6 +3,7 @@ import { DoctorApiService } from '@features/doctors/services/doctor-api.service'
 import { EmployeeApiService } from '@features/employees/services/employee-api.service';
 import { DoctorScheduleApiService } from '@features/doctorSchedules/services/doctor-schedule-api.service';
 import { AppointmentApiService } from './appointment-api.service';
+import { MaterialsApiService } from '@features/materials/services/materials-api.service';
 import { Doctor } from '@features/doctors/models/Doctor';
 import { Employee } from '@features/employees/models/Employee';
 import { DoctorSchedule } from '@features/doctorSchedules/models/DoctorSchedule';
@@ -18,6 +19,8 @@ import { Period } from '../models/Period';
 import { AppointmentStatus } from '../models/AppointmentStatus';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
 import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
+import { AddMaterialToAppointment } from '../models/AddMaterialToAppointment';
+import { Material } from '@features/materials/models/Material';
 import { AppMessageService } from '@core/services/app-message-service';
 import { IdentityService } from '@core/services/identity-service';
 
@@ -28,6 +31,7 @@ export class AppointmentFacade {
   private readonly _identityService = inject(IdentityService);
   private readonly _scheduleApiService = inject(DoctorScheduleApiService);
   private readonly _appointmentApiService = inject(AppointmentApiService);
+  private readonly _materialsApiService = inject(MaterialsApiService);
   private readonly _toast = inject(AppMessageService);
 
   // ==========================================
@@ -86,6 +90,12 @@ export class AppointmentFacade {
 
   readonly appointmentDetails = signal<AppointmentsMaterial | null>(null);
   readonly isLoadingAppointmentDetails = signal<boolean>(false);
+
+  // Materials State for Appointment Details
+  readonly availableMaterials = signal<Material[]>([]);
+  readonly isLoadingMaterials = signal<boolean>(false);
+  readonly isAddingMaterial = signal<boolean>(false);
+  readonly removingMaterialId = signal<number | null>(null);
 
   // Computed metrics for schedule appointments
   readonly scheduleTotalCount = computed(() => this.scheduleAppointments().length);
@@ -490,6 +500,84 @@ export class AppointmentFacade {
   clearAppointmentDetails(): void {
     this.appointmentDetails.set(null);
     this.isLoadingAppointmentDetails.set(false);
+  }
+
+  /**
+   * Load active materials for appointment details selection
+   */
+  async loadActiveMaterials(): Promise<void> {
+    this.isLoadingMaterials.set(true);
+    this._materialsApiService.getAllMaterials(1, 100, true).subscribe({
+      next: (res) => {
+        this.isLoadingMaterials.set(false);
+        if (res.isSuccess && res.data) {
+          this.availableMaterials.set(res.data.items || []);
+        } else {
+          this.availableMaterials.set([]);
+        }
+      },
+      error: () => {
+        this.isLoadingMaterials.set(false);
+        this.availableMaterials.set([]);
+      },
+    });
+  }
+
+  /**
+   * Add material to appointment
+   */
+  async addMaterialToAppointment(data: AddMaterialToAppointment): Promise<boolean> {
+    this.isAddingMaterial.set(true);
+    return new Promise<boolean>((resolve) => {
+      this._appointmentApiService.addMaterialToAppointment(data).subscribe({
+        next: (res) => {
+          this.isAddingMaterial.set(false);
+          if (res.isSuccess) {
+            this._toast.addSuccessMessage(res.message || 'تمت إضافة المادة إلى الحجز بنجاح');
+            this.loadAppointmentDetails(data.appointmentId);
+            resolve(true);
+          } else {
+            this._toast.addErrorMessage(res.message || 'فشل في إضافة المادة إلى الحجز');
+            resolve(false);
+          }
+        },
+        error: () => {
+          this.isAddingMaterial.set(false);
+          this._toast.addErrorMessage('حدث خطأ أثناء إضافة المادة إلى الحجز');
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  /**
+   * Remove material from appointment
+   */
+  async removeMaterialFromAppointment(
+    appointmentMaterialId: number,
+    appointmentId: number,
+  ): Promise<boolean> {
+    this.removingMaterialId.set(appointmentMaterialId);
+    return new Promise<boolean>((resolve) => {
+      this._appointmentApiService.removeMaterialFromAppointment(appointmentMaterialId).subscribe({
+        next: (res) => {
+          this.removingMaterialId.set(null);
+          if (res.isSuccess) {
+            this._toast.addSuccessMessage(res.message || 'تم حذف المادة من الحجز بنجاح');
+            this.loadAppointmentDetails(appointmentId);
+            resolve(true);
+          } else {
+            this._toast.addErrorMessage(res.message || 'فشل في حذف المادة من الحجز');
+            resolve(false);
+          }
+        },
+        error: () => {
+          this.removingMaterialId.set(null);
+          this._toast.addErrorMessage('حدث خطأ أثناء حذف المادة من الحجز');
+          resolve(false);
+        },
+      });
+    });
   }
 
   /**

@@ -13,6 +13,7 @@ import {
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
 import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
+import { AddMaterialToAppointment } from '../models/AddMaterialToAppointment';
 
 @Service()
 export class AppointmentApiService {
@@ -141,6 +142,26 @@ export class AppointmentApiService {
   getAppointmentDetailsWithMaterials(appointmentId: number) {
     return this._http.get<Result<AppointmentsMaterial>>(
       `${this._baseUrl}/details-with-materials/${appointmentId}`,
+    );
+  }
+
+  //************************************ */
+  // AppointmentMaterials
+
+  //   POST
+  // /api/AppointmentMaterials/add-material
+  addMaterialToAppointment(data: AddMaterialToAppointment) {
+    return this._http.post<Result<boolean>>(
+      `${environment.appBaseUrl}/AppointmentMaterials/add-material`,
+      data,
+    );
+  }
+
+  // DELETE
+  // /api/AppointmentMaterials/remove-material/{appointmentMaterialId}
+  removeMaterialFromAppointment(appointmentMaterialId: number) {
+    return this._http.delete<Result<boolean>>(
+      `${environment.appBaseUrl}/AppointmentMaterials/remove-material/${appointmentMaterialId}`,
     );
   }
 }

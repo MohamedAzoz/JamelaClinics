@@ -1,60 +1,35 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCalendarDay,
-  faCheckCircle,
   faClipboardList,
-  faExclamationTriangle,
   faMapMarkerAlt,
   faPhone,
-  faReceipt,
-  faSpinner,
-  faTimes,
   faUser,
   faUserMd,
-  faWallet,
 } from '@fortawesome/free-solid-svg-icons';
-import { AppointmentFacade } from '../../services/appointment.facade';
-import { AppointmentStatus } from '../../models/AppointmentStatus';
+import { AppointmentsMaterial } from '../../models/AppointmentsMaterial';
 import { VisitType } from '../../models/VisitType';
+import { AppointmentStatus } from '../../models/AppointmentStatus';
 
 @Component({
-  selector: 'app-appointment-details-modal',
-  imports: [FontAwesomeModule, DecimalPipe, DatePipe],
-  templateUrl: './appointment-details-modal.html',
+  selector: 'app-appointment-patient-info',
+  imports: [FontAwesomeModule, DatePipe],
+  templateUrl: './appointment-patient-info.html',
 })
-export class AppointmentDetailsModalComponent {
-  readonly facade = inject(AppointmentFacade);
-  readonly appointmentId = input.required<number>();
-  readonly closed = output<void>();
+export class AppointmentPatientInfoComponent {
+  readonly appointment = input.required<AppointmentsMaterial>();
 
-  readonly faTimes = faTimes;
   readonly faUser = faUser;
   readonly faPhone = faPhone;
   readonly faMapMarkerAlt = faMapMarkerAlt;
   readonly faUserMd = faUserMd;
   readonly faCalendarDay = faCalendarDay;
-  readonly faReceipt = faReceipt;
-  readonly faWallet = faWallet;
   readonly faClipboardList = faClipboardList;
-  readonly faCheckCircle = faCheckCircle;
-  readonly faExclamationTriangle = faExclamationTriangle;
-  readonly faSpinner = faSpinner;
-
-  readonly hasMaterials = computed(
-    () => (this.facade.appointmentDetails()?.materials?.length ?? 0) > 0,
-  );
-
-  readonly totalMaterialsCost = computed(
-    () => this.facade.appointmentDetails()?.totalMaterialsCost ?? 0,
-  );
-
-  readonly appointment = computed(() => this.facade.appointmentDetails());
 
   readonly statusBadgeClass = computed(() => {
     const status = Number(this.appointment()?.status ?? 1);
-
     switch (status) {
       case AppointmentStatus.Unpaid:
         return 'bg-warning/10 text-warning border border-warning/20';
@@ -68,20 +43,6 @@ export class AppointmentDetailsModalComponent {
         return 'bg-warning/10 text-warning border border-warning/20';
     }
   });
-
-  constructor() {
-    effect(() => {
-      const id = this.appointmentId();
-      if (id && id > 0) {
-        this.facade.loadAppointmentDetails(id);
-      }
-    });
-  }
-
-  close(): void {
-    this.facade.clearAppointmentDetails();
-    this.closed.emit();
-  }
 
   getVisitTypeName(type: VisitType | number | string | null | undefined): string {
     switch (Number(type)) {

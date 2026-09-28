@@ -144,6 +144,13 @@ export const routes: Routes = [
             (m) => m.ScheduleAppointmentsPage,
           ),
       },
+      {
+        path: RoutesManagement.APPOINTMENT_DETAILS.path,
+        loadComponent: () =>
+          import('./features/appointments/pages/appointment-details/appointment-details').then(
+            (m) => m.AppointmentDetailsPage,
+          ),
+      },
     ],
   },
 

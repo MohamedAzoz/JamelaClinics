@@ -153,6 +153,7 @@
                   {{ getStatusName(app.status) }}
                 </span>
               </td>
+              
               <td class="px-4 py-4 text-center">
                 <button
                   type="button"
@@ -187,13 +188,6 @@
     </div>
   }
 </div>
-
-@if (detailsAppointmentId() !== null) {
-  <app-appointment-details-modal
-    [appointmentId]="detailsAppointmentId()!"
-    (closed)="closeDetailsModal()"
-  />
-}
 
 <!-- Edit Appointment Modal -->
 @if (editingAppointment()) {

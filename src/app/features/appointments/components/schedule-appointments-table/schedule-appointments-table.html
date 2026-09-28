@@ -36,9 +36,11 @@
             <th scope="col" class="px-4 py-3.5">نوع الزيارة</th>
             <th scope="col" class="px-4 py-3.5">الحجز والخصم والأرباح</th>
             <th scope="col" class="px-4 py-3.5 text-center">حالة الموعد</th>
-            <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
+            @if (!facade.isAdminOrAccountant()) {
+              <th scope="col" class="px-4 py-3.5 text-center">الإجراءات</th>
+            }
             <th scope="col" class="px-4 py-3.5 text-center">تفاصيل</th>
-            @if (!facade.isDoctorOrAdmin()) {
+            @if (!facade.isAdminOrAccountant() && !facade.isDoctor()) {
               <th scope="col" class="px-4 py-3.5 text-center">تعديل</th>
             }
           </tr>
@@ -165,68 +167,63 @@
               </td>
 
               <!-- Quick Action Buttons -->
-              <td class="px-4 py-4 text-center">
-                <div class="flex items-center justify-center gap-1.5">
-                  <!-- Pay Button if Unpaid -->
-                  @if (!facade.isDoctorOrAdmin() && Number(app.status) === 1) {
-                    <button
-                      type="button"
-                      (click)="facade.payAppointment(app.id)"
-                      [disabled]="facade.actionLoadingId() === app.id"
-                      title="سداد الكشفية (دفع)"
-                      class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
-                    >
-                      @if (facade.actionLoadingId() === app.id) {
-                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
-                      } @else {
-                        <fa-icon [icon]="faCoins" class="text-xs"></fa-icon>
-                        <span>دفع</span>
-                      }
-                    </button>
-                  }
-
-                  <!-- Complete Button if InProgress or Unpaid -->
-                  @if (Number(app.status) === 2) {
-                    <button
-                      type="button"
-                      (click)="facade.completeAppointment(app.id)"
-                      [disabled]="facade.actionLoadingId() === app.id"
-                      title="إنهاء الموعد واكتمال الكشف"
-                      class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
-                    >
-                      @if (facade.actionLoadingId() === app.id) {
-                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
-                      } @else {
-                        <fa-icon [icon]="faCheck" class="text-xs"></fa-icon>
-                        <span>إنهاء</span>
-                      }
-                    </button>
-                  }
-
-                  <!-- Cancel Button if not Cancelled -->
-                  @if (
-                    !facade.isDoctorOrAdmin() &&
-                    Number(app.status) !== 4 &&
-                    Number(app.status) !== 3
-                  ) {
-                    <button
-                      type="button"
-                      (click)="facade.cancelAppointment(app.id)"
-                      [disabled]="facade.actionLoadingId() === app.id"
-                      title="إلغاء الحجز"
-                      class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
-                    >
-                      @if (facade.actionLoadingId() === app.id) {
-                        <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
-                      } @else {
-                        <fa-icon [icon]="faBan" class="text-xs"></fa-icon>
-                        <span>إلغاء</span>
-                      }
-                    </button>
-                  }
-                </div>
-              </td>
-
+              @if (!facade.isAdminOrAccountant()) {
+                <td class="px-4 py-4 text-center">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <!-- Pay Button if Unpaid -->
+                    @if (!facade.isDoctor() && Number(app.status) === 1) {
+                      <button
+                        type="button"
+                        (click)="facade.payAppointment(app.id)"
+                        [disabled]="facade.actionLoadingId() === app.id"
+                        title="سداد الكشفية (دفع)"
+                        class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                      >
+                        @if (facade.actionLoadingId() === app.id) {
+                          <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                        } @else {
+                          <fa-icon [icon]="faCoins" class="text-xs"></fa-icon>
+                          <span>دفع</span>
+                        }
+                      </button>
+                    } @else if (!facade.isDoctor() && Number(app.status) === 2) {
+                      <button
+                        type="button"
+                        (click)="facade.completeAppointment(app.id)"
+                        [disabled]="facade.actionLoadingId() === app.id"
+                        title="إنهاء الموعد واكتمال الكشف"
+                        class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                      >
+                        @if (facade.actionLoadingId() === app.id) {
+                          <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                        } @else {
+                          <fa-icon [icon]="faCheck" class="text-xs"></fa-icon>
+                          <span>إنهاء</span>
+                        }
+                      </button>
+                    } @else if (
+                      !facade.isDoctor() && Number(app.status) !== 4 && Number(app.status) !== 3
+                    ) {
+                      <button
+                        type="button"
+                        (click)="facade.cancelAppointment(app.id)"
+                        [disabled]="facade.actionLoadingId() === app.id"
+                        title="إلغاء الحجز"
+                        class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                      >
+                        @if (facade.actionLoadingId() === app.id) {
+                          <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
+                        } @else {
+                          <fa-icon [icon]="faBan" class="text-xs"></fa-icon>
+                          <span>إلغاء</span>
+                        }
+                      </button>
+                    } @else {
+                      <span>--</span>
+                    }
+                  </div>
+                </td>
+              }
               <!-- Details Button -->
               <td class="px-4 py-4 text-center">
                 <button
@@ -240,7 +237,7 @@
                 </button>
               </td>
               <!-- Action Buttons -->
-              @if (!facade.isDoctorOrAdmin()) {
+              @if (!facade.isAdminOrAccountant() && !facade.isDoctor()) {
                 <td class="px-4 py-4 text-center">
                   <button
                     type="button"
@@ -260,13 +257,6 @@
     </div>
   }
 </div>
-
-@if (detailsAppointmentId() !== null) {
-  <app-appointment-details-modal
-    [appointmentId]="detailsAppointmentId()!"
-    (closed)="closeDetailsModal()"
-  />
-}
 
 <!-- Edit Appointment Modal -->
 @if (editingAppointment()) {
