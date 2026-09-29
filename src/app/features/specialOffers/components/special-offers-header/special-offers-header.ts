@@ -1,0 +1,50 @@
+import { Component, inject } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faGift, faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
+import { SpecialOffersFacade } from '../../services/special-offers.facade';
+
+@Component({
+  selector: 'app-special-offers-header',
+  imports: [FontAwesomeModule],
+  template: `
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary"
+        >
+          <fa-icon [icon]="faGift" class="text-xl" />
+        </span>
+        <div>
+          <h1 class="text-xl font-bold sm:text-2xl">إدارة الخصومات والعروض</h1>
+          <p class="mt-1 text-sm text-text-muted">متابعة العروض وحجوزاتها وحالتها</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          (click)="facade.loadOffers()"
+          [disabled]="facade.isLoading()"
+          class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-primary/20 bg-surface px-3.5 py-2 text-sm font-semibold transition hover:bg-primary/5 disabled:opacity-50"
+        >
+          <fa-icon [icon]="faRotate" [class.animate-spin]="facade.isLoading()" /> تحديث
+        </button>
+        @if (facade.isManager()) {
+          <button
+            type="button"
+            (click)="facade.openCreateForm()"
+            class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <fa-icon [icon]="faPlus" /> إضافة خصم
+          </button>
+        }
+      </div>
+    </header>
+  `,
+})
+export class SpecialOffersHeaderComponent {
+  readonly facade = inject(SpecialOffersFacade);
+  readonly faGift = faGift;
+  readonly faPlus = faPlus;
+  readonly faRotate = faRotate;
+}

@@ -57,6 +57,24 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.SPECIAL_OFFERS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant, ROLES.Reception] },
+        loadComponent: () =>
+          import('./features/specialOffers/pages/special-offers-management/special-offers-management').then(
+            (m) => m.SpecialOffersManagementPage,
+          ),
+      },
+      {
+        path: RoutesManagement.SPECIAL_OFFER_DETAILS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant, ROLES.Reception] },
+        loadComponent: () =>
+          import('./features/specialOffers/pages/special-offer-details/special-offer-details').then(
+            (m) => m.SpecialOfferDetailsPage,
+          ),
+      },
+      {
         path: RoutesManagement.DOCTOR_WALLET.path,
         canActivate: [roleGuard],
         data: { roles: [ROLES.Admin, ROLES.Accountant, ROLES.Doctor] },
