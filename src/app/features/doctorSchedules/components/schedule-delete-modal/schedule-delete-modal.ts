@@ -1,26 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  faTriangleExclamation,
-  faXmark,
-  faTrashCan,
-  faSpinner,
-} from '@fortawesome/free-solid-svg-icons';
+import { ConfirmModalComponent } from '@shared/components/confirm-modal';
 import { DoctorScheduleFacade } from '../../services/doctor-schedule.facade';
 
 @Component({
   selector: 'app-schedule-delete-modal',
-  imports: [FontAwesomeModule, DatePipe],
+  imports: [ConfirmModalComponent],
   templateUrl: './schedule-delete-modal.html',
 })
 export class ScheduleDeleteModalComponent {
   public facade = inject(DoctorScheduleFacade);
-
-  readonly faTriangleExclamation = faTriangleExclamation;
-  readonly faXmark = faXmark;
-  readonly faTrashCan = faTrashCan;
-  readonly faSpinner = faSpinner;
 
   confirm(): void {
     this.facade.confirmDelete();

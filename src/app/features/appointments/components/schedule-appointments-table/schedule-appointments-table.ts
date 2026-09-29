@@ -25,6 +25,8 @@ import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { Appointments } from '../../models/Appointments';
 import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
 
+import { ConfirmDialogService } from '@shared/components/confirm-modal';
+
 @Component({
   selector: 'app-schedule-appointments-table',
   imports: [
@@ -37,10 +39,55 @@ import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-ap
 export class ScheduleAppointmentsTableComponent {
   readonly facade = inject(AppointmentFacade);
   private readonly _router = inject(Router);
+  private readonly _confirmService = inject(ConfirmDialogService);
 
   readonly Number = Number;
 
   readonly editingAppointment = signal<Appointments | null>(null);
+
+  async payAppointment(app: Appointments): Promise<void> {
+    const confirmed = await this._confirmService.pay(
+      `${app.finalPaidAmount || app.consultationFee || 0} ج.م`,
+      `هل أنت تأكد من رغبتك في سداد الكشف للحجز رقم #${app.id} للمريض "${app.patientName}"؟`,
+      'تأكيد سداد الكشفية',
+      [
+        { label: 'اسم المريض', value: app.patientName },
+        { label: 'نوع الزيارة', value: this.getVisitTypeName(app.visitType) },
+      ]
+    );
+    if (confirmed) {
+      this.facade.payAppointment(app.id);
+    }
+  }
+
+  async completeAppointment(app: Appointments): Promise<void> {
+    const confirmed = await this._confirmService.complete(
+      'تأكيد إنهاء الكشف',
+      `هل أنت تأكد من إتمام المعاينة وإنهاء الكشف للحجز رقم #${app.id} للمريض "${app.patientName}"؟`,
+      [
+        { label: 'اسم المريض', value: app.patientName },
+        { label: 'الطبيب', value: app.doctorName || 'غير حدد' },
+      ]
+    );
+    if (confirmed) {
+      this.facade.completeAppointment(app.id);
+    }
+  }
+
+  async cancelAppointment(app: Appointments): Promise<void> {
+    const confirmed = await this._confirmService.confirm({
+      variant: 'danger',
+      title: 'تأكيد إلغاء الحجز',
+      itemName: `حجز #${app.id} - ${app.patientName}`,
+      message: `هل أنت تأكد من رغبتك في إلغاء الحجز للمريض "${app.patientName}"؟`,
+      warningMessage: 'تحذير: هذا الإجراء سيؤدي إلى تغيير حالة الحجز إلى ملغى ولا يمكن التراجع عنه.',
+      confirmText: 'نعم، إلغاء الحجز',
+      cancelText: 'تراجع',
+    });
+    if (confirmed) {
+      this.facade.cancelAppointment(app.id);
+    }
+  }
 
   // Icons
   readonly faUser = faUser;

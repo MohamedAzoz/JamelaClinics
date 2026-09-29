@@ -1,3 +1,4 @@
+import { AppointmentStatus } from './AppointmentStatus';
 import { MaterialItem } from './MaterialItem';
 
 export interface AppointmentsMaterial {

@@ -174,7 +174,7 @@
                     @if (!facade.isDoctor() && Number(app.status) === 1) {
                       <button
                         type="button"
-                        (click)="facade.payAppointment(app.id)"
+                        (click)="payAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="سداد الكشفية (دفع)"
                         class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
@@ -189,7 +189,7 @@
                     } @else if (!facade.isDoctor() && Number(app.status) === 2) {
                       <button
                         type="button"
-                        (click)="facade.completeAppointment(app.id)"
+                        (click)="completeAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="إنهاء الموعد واكتمال الكشف"
                         class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
@@ -206,7 +206,7 @@
                     ) {
                       <button
                         type="button"
-                        (click)="facade.cancelAppointment(app.id)"
+                        (click)="cancelAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="إلغاء الحجز"
                         class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"

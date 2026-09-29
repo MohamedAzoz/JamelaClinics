@@ -259,43 +259,18 @@
       </div>
     }
 
-    @if (facade.bookingToDelete(); as booking) {
-      <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-booking-title"
-      >
-        <section
-          class="w-full max-w-md rounded-2xl border border-danger/20 bg-surface p-6 shadow-2xl"
-        >
-          <h3 id="delete-booking-title" class="text-lg font-bold">تأكيد حذف الحجز</h3>
-          <p class="mt-2 text-sm leading-6 text-text-muted">
-            حذف حجز {{ booking.patientName }} من عرض «{{ offer()?.title }}»؟
-          </p>
-          <div class="mt-6 flex justify-end gap-2">
-            <button
-              type="button"
-              (click)="facade.cancelDeleteBooking()"
-              [disabled]="facade.isDeletingBooking()"
-              class="min-h-10 rounded-xl border border-primary/20 px-4 text-sm font-semibold"
-            >
-              إلغاء
-            </button>
-            <button
-              type="button"
-              (click)="facade.deleteBooking()"
-              [disabled]="facade.isDeletingBooking()"
-              class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-danger px-4 text-sm font-bold text-white disabled:opacity-50"
-            >
-              @if (facade.isDeletingBooking()) {
-                <fa-icon [icon]="faSpinner" class="animate-spin" />
-              }
-              حذف الحجز
-            </button>
-          </div>
-        </section>
-      </div>
-    }
+    <app-confirm-modal
+      [isOpen]="!!facade.bookingToDelete()"
+      variant="danger"
+      title="تأكيد حذف حجز العرض"
+      [itemName]="facade.bookingToDelete()?.patientName"
+      message="هل أنت أصلًا متأكد من رغبتك في حذف هذا الحجز الخاص بالعرض المحدد؟"
+      warningMessage="تحذير: سيم تدمير وحذف سجل هذا الحجز بشكل دائم."
+      confirmText="حذف الحجز"
+      cancelText="إلغاء"
+      [isLoading]="facade.isDeletingBooking()"
+      (confirmed)="facade.deleteBooking()"
+      (cancelled)="facade.cancelDeleteBooking()"
+    />
   </section>
 </div>

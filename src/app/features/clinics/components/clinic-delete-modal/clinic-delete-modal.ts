@@ -1,25 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  faTriangleExclamation,
-  faXmark,
-  faTrashCan,
-  faSpinner,
-} from '@fortawesome/free-solid-svg-icons';
+import { ConfirmModalComponent } from '@shared/components/confirm-modal';
 import { ClinicFacade } from '../../services/clinic.facade';
 
 @Component({
   selector: 'app-clinic-delete-modal',
-  imports: [FontAwesomeModule],
+  imports: [ConfirmModalComponent],
   templateUrl: './clinic-delete-modal.html',
 })
 export class ClinicDeleteModalComponent {
   public facade = inject(ClinicFacade);
-
-  readonly faTriangleExclamation = faTriangleExclamation;
-  readonly faXmark = faXmark;
-  readonly faTrashCan = faTrashCan;
-  readonly faSpinner = faSpinner;
 
   confirm(): void {
     this.facade.confirmDelete();

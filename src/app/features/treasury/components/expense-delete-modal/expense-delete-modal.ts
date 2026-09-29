@@ -1,26 +1,23 @@
 import { Component, inject } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  faSpinner,
-  faTrashCan,
-  faTriangleExclamation,
-  faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { ConfirmModalComponent } from '@shared/components/confirm-modal';
 import { TreasuryFacade } from '../../services/treasury.facade';
+
 @Component({
   selector: 'app-expense-delete-modal',
-  imports: [FontAwesomeModule],
+  imports: [ConfirmModalComponent],
   templateUrl: './expense-delete-modal.html',
 })
 export class ExpenseDeleteModalComponent {
   readonly facade = inject(TreasuryFacade);
-  readonly faSpinner = faSpinner;
-  readonly faTrashCan = faTrashCan;
-  readonly faTriangleExclamation = faTriangleExclamation;
-  readonly faXmark = faXmark;
+
   confirm(): void {
     const expense = this.facade.expenseToDelete();
-    if (expense && confirm(`هل تريد حذف المصروف "${expense.description}"؟`))
+    if (expense) {
       this.facade.deleteExpense(expense.id);
+    }
+  }
+
+  close(): void {
+    this.facade.closeDeleteModal();
   }
 }

@@ -201,7 +201,7 @@ export class ClinicFacade {
 
   confirmDelete(): void {
     const clinic = this.clinicToDelete();
-    if (clinic && confirm('هل انت متاكد من حذف العيادة: ' + clinic?.name + '?')) {
+    if (clinic) {
       this.deleteClinic(clinic.id);
     }
   }

@@ -85,7 +85,7 @@
                   </button>
                   <button
                     type="button"
-                    (click)="facade.toggleMaterialStatus(material)"
+                    (click)="toggleMaterialStatus(material)"
                     [disabled]="facade.actionLoading()"
                     [attr.aria-label]="(material.isActive ? 'تعطيل ' : 'تفعيل ') + material.name"
                     class="rounded-lg border border-primary/20 px-3 py-2.5 font-semibold hover:bg-primary/10 disabled:opacity-50"

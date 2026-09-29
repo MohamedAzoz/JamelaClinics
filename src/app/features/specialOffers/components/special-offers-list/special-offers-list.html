@@ -104,7 +104,7 @@
                     </button>
                     <button
                       type="button"
-                      (click)="facade.toggleStatus(offer)"
+                      (click)="toggleStatus(offer)"
                       class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-warning/20 bg-warning/5 px-2.5 text-xs font-bold text-warning hover:bg-warning/10"
                       aria-label="{{ offer.isActive ? 'إيقاف' : 'تفعيل' }} {{ offer.title }}"
                     >
@@ -128,42 +128,17 @@
     </div>
   }
 
-  @if (facade.offerToDelete(); as offer) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="delete-offer-title"
-    >
-      <section
-        class="w-full max-w-md rounded-2xl border border-danger/20 bg-surface p-6 shadow-2xl"
-      >
-        <h2 id="delete-offer-title" class="text-lg font-bold">تأكيد حذف الخصم</h2>
-        <p class="mt-2 text-sm leading-6 text-text-muted">
-          هل تريد حذف «{{ offer.title }}»؟ لا يمكن التراجع عن هذا الإجراء.
-        </p>
-        <div class="mt-6 flex justify-end gap-2">
-          <button
-            type="button"
-            (click)="facade.cancelDelete()"
-            [disabled]="facade.isDeleting()"
-            class="min-h-10 rounded-xl border border-primary/20 px-4 text-sm font-semibold"
-          >
-            إلغاء
-          </button>
-          <button
-            type="button"
-            (click)="facade.deleteOffer()"
-            [disabled]="facade.isDeleting()"
-            class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-danger px-4 text-sm font-bold text-white disabled:opacity-50"
-          >
-            @if (facade.isDeleting()) {
-              <fa-icon [icon]="faSpinner" class="animate-spin" />
-            }
-            حذف الخصم
-          </button>
-        </div>
-      </section>
-    </div>
-  }
+  <app-confirm-modal
+    [isOpen]="!!facade.offerToDelete()"
+    variant="danger"
+    title="تأكيد حذف الخصم"
+    [itemName]="facade.offerToDelete()?.title"
+    message="هل أنت أصلًا متأكد من رغبتك في حذف هذا العرض/الخصم الخاص؟"
+    warningMessage="تحذير: لا يمكن التراجع عن هذا الإجراء لاحقاً."
+    confirmText="حذف الخصم"
+    cancelText="إلغاء"
+    [isLoading]="facade.isDeleting()"
+    (confirmed)="facade.deleteOffer()"
+    (cancelled)="facade.cancelDelete()"
+  />
 </section>

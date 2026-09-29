@@ -243,7 +243,7 @@ export class DoctorFacade {
 
   confirmDelete(): void {
     const doctor = this.doctorToDelete();
-    if (doctor && confirm('هل انت متاكد من حذف حساب الطبيب ' + doctor?.fullName + '?')) {
+    if (doctor) {
       this.deleteDoctor(doctor.userId);
     }
   }

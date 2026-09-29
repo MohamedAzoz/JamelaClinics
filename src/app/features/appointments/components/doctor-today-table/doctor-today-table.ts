@@ -18,6 +18,8 @@ import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { VisitType } from '../../models/VisitType';
 import { TodayAppointment } from '../../models/AppointmentsMaterial';
 
+import { ConfirmDialogService } from '@shared/components/confirm-modal';
+
 @Component({
   selector: 'app-doctor-today-table',
   imports: [FontAwesomeModule, DatePipe],
@@ -26,6 +28,7 @@ import { TodayAppointment } from '../../models/AppointmentsMaterial';
 export class DoctorTodayTableComponent {
   readonly facade = inject(AppointmentFacade);
   private readonly _router = inject(Router);
+  private readonly _confirmService = inject(ConfirmDialogService);
 
   readonly Number = Number;
   readonly AppointmentStatusEnum = AppointmentStatus;
@@ -70,8 +73,18 @@ export class DoctorTodayTableComponent {
     this.statusFilter.set(val ? Number(val) : null);
   }
 
-  complete(id: number): void {
-    this.facade.completeAppointment(id);
+  async complete(app: TodayAppointment): Promise<void> {
+    const confirmed = await this._confirmService.complete(
+      'تأكيد إنهاء الكشف',
+      `هل أنت تأكد من إتمام المعاينة وإنهاء الكشف للحجز رقم #${app.id} للمريض "${app.patientName}"؟`,
+      [
+        { label: 'اسم المريض', value: app.patientName },
+        { label: 'رقم الدور', value: `#${app.queueNumber}` },
+      ]
+    );
+    if (confirmed) {
+      this.facade.completeAppointment(app.id);
+    }
   }
 
   viewDetails(id: number): void {

@@ -225,7 +225,7 @@ export class EmployeeFacade {
 
   confirmDelete(): void {
     const emp = this.employeeToDelete();
-    if (emp && confirm('هل انت متاكد من حذف حساب الموظف ' + emp?.fullName + '?')) {
+    if (emp) {
       this.deleteEmployee(emp.userId);
     }
   }

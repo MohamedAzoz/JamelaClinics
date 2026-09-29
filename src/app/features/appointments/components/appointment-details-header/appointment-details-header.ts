@@ -35,30 +35,31 @@ export class AppointmentDetailsHeaderComponent {
   readonly faSpinner = faSpinner;
 
   readonly statusBadgeClass = computed(() => {
-    const status = Number(this.appointment()?.status ?? 1);
+    const status = this.appointment()?.status;
     switch (status) {
-      case AppointmentStatus.Unpaid:
+      case 'Unpaid':
         return 'bg-warning/10 text-warning border border-warning/20';
-      case AppointmentStatus.InProgress:
+      case 'InProgress':
         return 'bg-accent/10 text-accent border border-accent/20';
-      case AppointmentStatus.Completed:
+      case 'Completed':
         return 'bg-success/10 text-success border border-success/20';
-      case AppointmentStatus.Cancelleted:
+      case 'Cancelled':
         return 'bg-danger/10 text-danger border border-danger/20';
       default:
         return 'bg-warning/10 text-warning border border-warning/20';
     }
   });
 
-  getStatusName(status: AppointmentStatus | number | string | null | undefined): string {
-    switch (Number(status)) {
-      case AppointmentStatus.Unpaid:
+  //"status": "Cancelled", //
+  getStatusName(status: string | null | undefined): string {
+    switch (status) {
+      case 'Unpaid':
         return 'غير مدفوع';
-      case AppointmentStatus.InProgress:
+      case 'InProgress':
         return 'قيد المعاينة';
-      case AppointmentStatus.Completed:
+      case 'Completed':
         return 'مكتمل';
-      case AppointmentStatus.Cancelleted:
+      case 'Cancelled':
         return 'ملغى';
       default:
         return 'غير مدفوع';

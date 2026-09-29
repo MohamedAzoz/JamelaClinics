@@ -18,9 +18,11 @@ import {
 import { CreateSpecialOfferResponse } from '../../models/CreateSpecialOfferResponse';
 import { SpecialOffersFacade } from '../../services/special-offers.facade';
 
+import { ConfirmModalComponent } from '@shared/components/confirm-modal';
+
 @Component({
   selector: 'app-special-offer-details-view',
-  imports: [DatePipe, DecimalPipe, FontAwesomeModule],
+  imports: [DatePipe, DecimalPipe, FontAwesomeModule, ConfirmModalComponent],
   templateUrl: './special-offer-details-view.html',
 })
 export class SpecialOfferDetailsViewComponent {
