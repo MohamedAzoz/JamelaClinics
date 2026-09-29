@@ -36,7 +36,6 @@ import { VisitType } from '../../models/VisitType';
 import { Doctor } from '@features/doctors/models/Doctor';
 import { getDiscountError, getDoctorShare, isValidMoney } from '../../utils/appointment-pricing';
 import { AppointmentFeeBreakdownComponent } from '../appointment-fee-breakdown/appointment-fee-breakdown';
-import { DoctorPercentageInfoComponent } from '../doctor-percentage-info/doctor-percentage-info';
 
 export interface EditAppointmentFormModel {
   doctorId: string;
@@ -51,14 +50,7 @@ export interface EditAppointmentFormModel {
 
 @Component({
   selector: 'app-edit-appointment-modal',
-  imports: [
-    FormField,
-    FormRoot,
-    FontAwesomeModule,
-    DecimalPipe,
-    AppointmentFeeBreakdownComponent,
-    DoctorPercentageInfoComponent,
-  ],
+  imports: [FormField, FormRoot, FontAwesomeModule, DecimalPipe, AppointmentFeeBreakdownComponent],
   templateUrl: './edit-appointment-modal.html',
 })
 export class EditAppointmentModalComponent implements OnInit {

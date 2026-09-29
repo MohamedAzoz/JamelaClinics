@@ -276,7 +276,6 @@ export class DoctorWalletFacade {
           ? 'تمت إضافة الرصيد بنجاح'
           : 'تم سحب الرصيد بنجاح',
       );
-      this.actionTarget.set(null);
       this.pageNumber.set(1);
       this.refreshData();
     } catch (error: any) {
@@ -284,6 +283,7 @@ export class DoctorWalletFacade {
       if (this.destroyRef.destroyed) return;
     } finally {
       if (!this.destroyRef.destroyed) this.actionLoading.set(false);
+      this.actionTarget.set(null);
     }
   }
 

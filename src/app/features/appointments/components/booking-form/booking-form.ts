@@ -33,7 +33,6 @@ import { VisitType } from '../../models/VisitType';
 import { DatePipe } from '@angular/common';
 import { getDiscountError, getDoctorShare, isValidMoney } from '../../utils/appointment-pricing';
 import { AppointmentFeeBreakdownComponent } from '../appointment-fee-breakdown/appointment-fee-breakdown';
-import { DoctorPercentageInfoComponent } from '../doctor-percentage-info/doctor-percentage-info';
 
 export interface BookingFormModel {
   doctorId: string;
@@ -49,14 +48,7 @@ export interface BookingFormModel {
 
 @Component({
   selector: 'app-booking-form',
-  imports: [
-    FormField,
-    FormRoot,
-    FontAwesomeModule,
-    DatePipe,
-    AppointmentFeeBreakdownComponent,
-    DoctorPercentageInfoComponent,
-  ],
+  imports: [FormField, FormRoot, FontAwesomeModule, DatePipe, AppointmentFeeBreakdownComponent],
   templateUrl: './booking-form.html',
 })
 export class BookingFormComponent implements OnInit {

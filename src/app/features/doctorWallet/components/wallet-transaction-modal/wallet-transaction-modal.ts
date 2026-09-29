@@ -25,7 +25,6 @@ import { WalletTransactionType } from '@features/doctorWallet/models/WalletTrans
 export class WalletTransactionModalComponent implements OnDestroy {
   readonly facade = inject(DoctorWalletFacade);
   private readonly document = inject(DOCUMENT);
-  private readonly _confirmService = inject(ConfirmDialogService);
 
   readonly target = input.required<WalletActionTarget>();
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
@@ -68,36 +67,7 @@ export class WalletTransactionModalComponent implements OnDestroy {
       return;
     }
 
-    const isDep = this.isDeposit();
-    const amountText = `${this.model().amount} ج.م`;
-    const docName = this.target().doctorName || 'الطبيب';
-
-    const confirmed = isDep
-      ? await this._confirmService.pay(
-          amountText,
-          `هل أنت تأكد من رغبتك في إيداع وتسديد مبلغ ${amountText} لحساب ${docName}؟`,
-          'تأكيد إيداع الرصيد',
-          [
-            { label: 'الطبيب', value: docName },
-            { label: 'البيان', value: this.model().description },
-          ]
-        )
-      : await this._confirmService.confirm({
-          variant: 'warning',
-          title: 'تأكيد سحب الرصيد',
-          itemName: amountText,
-          message: `هل أنت تأكد من سحب مبلغ ${amountText} من رصيد محفظة ${docName}؟`,
-          confirmText: 'تأكيد السحب',
-          cancelText: 'تراجع',
-          details: [
-            { label: 'الطبيب', value: docName },
-            { label: 'البيان', value: this.model().description },
-          ],
-        });
-
-    if (confirmed) {
-      void this.facade.submitTransaction(this.model());
-    }
+    await this.facade.submitTransaction(this.model());
   }
 
   ngOnDestroy(): void {
