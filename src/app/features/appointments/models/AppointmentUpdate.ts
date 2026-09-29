@@ -9,5 +9,4 @@ export interface AppointmentUpdate {
   doctorScheduleId: number;
   consultationFee: number;
   discountAmount?: number;
-  isPaid: boolean;
 }

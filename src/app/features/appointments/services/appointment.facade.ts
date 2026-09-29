@@ -18,7 +18,7 @@ import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { Period } from '../models/Period';
 import { AppointmentStatus } from '../models/AppointmentStatus';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
-import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
+import { AppointmentsMaterial, TodayAppointment } from '../models/AppointmentsMaterial';
 import { AddMaterialToAppointment } from '../models/AddMaterialToAppointment';
 import { Material } from '@features/materials/models/Material';
 import { AppMessageService } from '@core/services/app-message-service';
@@ -97,6 +97,10 @@ export class AppointmentFacade {
   readonly isAddingMaterial = signal<boolean>(false);
   readonly removingMaterialId = signal<number | null>(null);
 
+  // Doctor Today Appointments Summary State
+  readonly todayAppointments = signal<TodayAppointment[]>([]);
+  readonly isLoadingTodayAppointments = signal<boolean>(false);
+
   // Computed metrics for schedule appointments
   readonly scheduleTotalCount = computed(() => this.scheduleAppointments().length);
   readonly scheduleTotalFeeSum = computed(() =>
@@ -119,6 +123,21 @@ export class AppointmentFacade {
   );
   readonly scheduleCancelledCount = computed(
     () => this.scheduleAppointments().filter((a) => Number(a.status) === 4).length,
+  );
+
+  // Computed metrics for Doctor Today Appointments Summary
+  readonly todayTotalCount = computed(() => this.todayAppointments().length);
+  readonly todayCompletedCount = computed(
+    () => this.todayAppointments().filter((a) => Number(a.status) === 3).length,
+  );
+  readonly todayInProgressCount = computed(
+    () => this.todayAppointments().filter((a) => Number(a.status) === 2).length,
+  );
+  readonly todayUnpaidCount = computed(
+    () => this.todayAppointments().filter((a) => Number(a.status) === 1).length,
+  );
+  readonly todayCancelledCount = computed(
+    () => this.todayAppointments().filter((a) => Number(a.status) === 4).length,
   );
 
   // ==========================================
@@ -645,6 +664,9 @@ export class AppointmentFacade {
           } else {
             this.refreshData();
           }
+          if (this.todayAppointments().length > 0) {
+            this.loadMyTodayAppointments();
+          }
         } else {
           this._toast.addErrorMessage(res.message || 'فشل في إنهاء الموعد');
         }
@@ -652,6 +674,29 @@ export class AppointmentFacade {
       error: () => {
         this.actionLoadingId.set(null);
         this._toast.addErrorMessage('حدث خطأ أثناء تحديث حالة الموعد');
+      },
+    });
+  }
+
+  /**
+   * Fetch doctor's today appointments summary via AppointmentApiService.getMyTodayAppointmentsSummary
+   */
+  async loadMyTodayAppointments(): Promise<void> {
+    this.isLoadingTodayAppointments.set(true);
+    this._appointmentApiService.getMyTodayAppointmentsSummary().subscribe({
+      next: (res) => {
+        this.isLoadingTodayAppointments.set(false);
+        if (res.isSuccess && res.data) {
+          this.todayAppointments.set(res.data);
+        } else {
+          this.todayAppointments.set([]);
+          this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة مواعيد اليوم الخاصة بك');
+        }
+      },
+      error: () => {
+        this.isLoadingTodayAppointments.set(false);
+        this.todayAppointments.set([]);
+        this._toast.addErrorMessage('حدث خطأ أثناء تحميل مواعيد اليوم الخاصة بك');
       },
     });
   }

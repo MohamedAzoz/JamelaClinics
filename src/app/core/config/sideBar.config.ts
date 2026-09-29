@@ -18,6 +18,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
 
 export const DOCTOR_NAV_ITEMS: readonly NavItem[] = [
   { icon: 'dashboard', label: 'الرئيسية', route: '/main/dashboard' },
+  { icon: 'schedule', label: 'مواعيد اليوم', route: '/main/doctor-today-appointments' },
   { icon: 'payment', label: 'حسابي المالي', route: '/main/doctor-wallet' },
   { icon: 'schedule', label: 'مواعيدي المتاحة', route: '/main/doctor-schedules' },
   { icon: 'settings', label: 'الإعدادات', route: '/main/change-password' },

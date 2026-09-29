@@ -151,6 +151,15 @@ export const routes: Routes = [
             (m) => m.AppointmentDetailsPage,
           ),
       },
+      {
+        path: RoutesManagement.DOCTOR_TODAY_APPOINTMENTS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Doctor] },
+        loadComponent: () =>
+          import('./features/appointments/pages/doctor-today-appointments/doctor-today-appointments').then(
+            (m) => m.DoctorTodayAppointmentsPage,
+          ),
+      },
     ],
   },
 

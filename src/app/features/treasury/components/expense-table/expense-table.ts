@@ -22,6 +22,8 @@ export class ExpenseTableComponent {
   readonly faPen = faPen;
   readonly faTrashCan = faTrashCan;
 
+ readonly treasuryType = TreasuryType;
+
   formatType(value: TreasuryType): string {
     switch (value) {
       case TreasuryType.Expense:

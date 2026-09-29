@@ -92,14 +92,13 @@
               <td class="px-4 py-4 font-mono">{{ transaction.appointmentId || '—' }}</td>
               <td class="min-w-32 px-4 py-4">{{ transaction.employeeName || '—' }}</td>
               <td
-                class="min-w-48 max-w-xs whitespace-normal break-words px-4 py-4 text-xs leading-6"
+                class="min-w-48 max-w-xs whitespace-normal wrap-break-word px-4 py-4 text-xs leading-6"
               >
                 {{ transaction.description || '—' }}
               </td>
               <td class="whitespace-nowrap px-4 py-4 text-xs">
-                <div>{{ transaction.createdAt | date: 'yyyy-MM-dd' }}</div>
                 <div class="mt-1 text-text-muted">
-                  {{ transaction.createdAt | date: 'yyyy-MM-dd (HH:mm a)' }}
+                  {{ transaction.createdAt | date: 'yyyy-MM-dd (hh:mm a)' }}
                 </div>
               </td>
             </tr>

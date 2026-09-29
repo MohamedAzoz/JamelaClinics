@@ -51,23 +51,27 @@
                 <div class="mt-1">{{ expense.userName }}</div>
               </td>
               <td class="px-4 py-4 text-center">
-                <div class="inline-flex gap-1">
-                  <button
-                    type="button"
-                    (click)="edit(expense)"
-                    class="rounded-xl p-2 text-primary transition hover:bg-primary/10"
-                    title="تعديل المصروف"
-                  >
-                    <fa-icon [icon]="faPen"></fa-icon></button
-                  ><button
-                    type="button"
-                    (click)="remove(expense)"
-                    class="rounded-xl p-2 text-danger transition hover:bg-danger/10"
-                    title="حذف المصروف"
-                  >
-                    <fa-icon [icon]="faTrashCan"></fa-icon>
-                  </button>
-                </div>
+                @if (expense.type === treasuryType.Expense) {
+                  <div class="inline-flex gap-1">
+                    <button
+                      type="button"
+                      (click)="edit(expense)"
+                      class="rounded-xl p-2 text-primary transition hover:bg-primary/10"
+                      title="تعديل المصروف"
+                    >
+                      <fa-icon [icon]="faPen"></fa-icon></button
+                    ><button
+                      type="button"
+                      (click)="remove(expense)"
+                      class="rounded-xl p-2 text-danger transition hover:bg-danger/10"
+                      title="حذف المصروف"
+                    >
+                      <fa-icon [icon]="faTrashCan"></fa-icon>
+                    </button>
+                  </div>
+                } @else {
+                  --
+                }
               </td>
             </tr>
           }

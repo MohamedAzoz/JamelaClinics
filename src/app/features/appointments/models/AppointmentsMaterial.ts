@@ -20,3 +20,12 @@ export interface AppointmentsMaterial {
   centerEarnings: number;
   materials: MaterialItem[];
 }
+
+export interface TodayAppointment {
+  id: number;
+  patientName: string;
+  visitType: number;
+  queueNumber: number;
+  status: number;
+  appointmentDate: string;
+}

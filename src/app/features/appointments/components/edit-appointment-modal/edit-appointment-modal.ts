@@ -47,7 +47,6 @@ export interface EditAppointmentFormModel {
   visitType: number;
   consultationFee: number;
   discountAmount: number;
-  isPaid: boolean;
 }
 
 @Component({
@@ -104,7 +103,6 @@ export class EditAppointmentModalComponent implements OnInit {
     visitType: VisitType.NewConsultation,
     consultationFee: 0,
     discountAmount: 0,
-    isPaid: false,
   });
 
   readonly model = this._model.asReadonly();
@@ -206,7 +204,6 @@ export class EditAppointmentModalComponent implements OnInit {
       visitType: Number(app.visitType),
       consultationFee: app.consultationFee ?? 0,
       discountAmount: app.discountAmount ?? 0,
-      isPaid: Number(app.status) !== 1,
     });
 
     if (doctorId) {
@@ -248,11 +245,6 @@ export class EditAppointmentModalComponent implements OnInit {
     this._model.update((m) => ({ ...m, visitType: type }));
   }
 
-  onPaidToggle(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this._model.update((m) => ({ ...m, isPaid: input.checked }));
-  }
-
   async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
 
@@ -273,7 +265,7 @@ export class EditAppointmentModalComponent implements OnInit {
       doctorScheduleId: Number(val.doctorScheduleId),
       consultationFee: Number(val.consultationFee),
       discountAmount: val.discountAmount,
-      isPaid: Boolean(val.isPaid),
+      // isPaid: Boolean(val.isPaid),
     };
 
     const ok = await this.facade.updateAppointment(payload);
