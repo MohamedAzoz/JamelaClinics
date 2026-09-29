@@ -6,11 +6,13 @@ import { ReportExpense, TreasuryPeriod, TreasuryType } from '../models/ReportExp
 import { TreasuryApiService } from './treasury-api.service';
 import { firstValueFrom, finalize } from 'rxjs';
 import { TreasurySummary } from '../models/TreasurySummary';
+import { IdentityService } from '@core/services/identity-service';
 
 @Service()
 export class TreasuryFacade {
   private readonly _api = inject(TreasuryApiService);
   private readonly _messages = inject(AppMessageService);
+  private readonly _identity = inject(IdentityService);
   private readonly _initialized = signal(false);
   private reportRequestId = 0;
   private summaryRequestId = 0;
@@ -19,6 +21,10 @@ export class TreasuryFacade {
   readonly summary = signal<TreasurySummary | null>(null);
   readonly isLoadingReport = signal(false);
   readonly isLoadingSummary = signal(false);
+  readonly isExportingExcel = signal(false);
+  readonly canExportExcel = computed(
+    () => this._identity.isAdmin() || this._identity.isAccountant(),
+  );
   readonly loading = computed(() => this.isLoadingReport() || this.isLoadingSummary());
   readonly actionLoading = signal(false);
   readonly typeFilter = signal<TreasuryType | null>(null);
@@ -63,7 +69,6 @@ export class TreasuryFacade {
       const response = await firstValueFrom(this._api.getReport(filters));
       if (requestId !== this.reportRequestId) return;
       const report = response?.data;
-      console.log(report);
 
       this.expenses.set(report?.items ?? []);
       this.totalCount.set(report?.totalCount ?? 0);
@@ -84,12 +89,31 @@ export class TreasuryFacade {
       const response = await firstValueFrom(this._api.getSummary(filters));
       if (requestId !== this.summaryRequestId) return;
       this.summary.set(response?.data ?? null);
-      console.log(response?.data);
     } catch (error) {
       if (requestId !== this.summaryRequestId) return;
       this._messages.showHttpError(error, 'تعذر تحميل ملخص الخزينة');
     } finally {
       if (requestId === this.summaryRequestId) this.isLoadingSummary.set(false);
+    }
+  }
+
+  async exportExcel(): Promise<void> {
+    if (!this.canExportExcel() || this.isExportingExcel()) return;
+
+    this.isExportingExcel.set(true);
+    try {
+      const blob = await firstValueFrom(this._api.exportExcel(this.filters()));
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `تقرير_الخزينة_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      this._messages.addSuccessMessage('تم تصدير تقرير الخزينة بنجاح');
+    } catch (error) {
+      this._messages.showHttpError(error, 'تعذر تصدير تقرير الخزينة');
+    } finally {
+      this.isExportingExcel.set(false);
     }
   }
 

@@ -92,4 +92,22 @@ export class TreasuryApiService {
   deleteExpense(id: number) {
     return this._httpClient.delete<Result<boolean>>(`${this._baseUrl}/expense/${id}`);
   }
+
+  //   GET
+  // /api/Treasury/export-excel
+  exportExcel(report: ReportExpense) {
+    const params: string[] = [];
+    if (report.Type) params.push(`Type=${report.Type}`);
+    if (report.Period) params.push(`Period=${report.Period}`);
+    if (report.FromDate) params.push(`FromDate=${report.FromDate}`);
+    if (report.ToDate) params.push(`DateTo=${report.ToDate}`);
+    if (report.PageNumber) params.push(`PageNumber=${report.PageNumber}`);
+    if (report.PageSize) params.push(`PageSize=${report.PageSize}`);
+    if (params.length > 0) {
+      return this._httpClient.get(`${this._baseUrl}/export-excel?${params.join('&')}`, {
+        responseType: 'blob',
+      });
+    }
+    return this._httpClient.get(`${this._baseUrl}/export-excel`, { responseType: 'blob' });
+  }
 }

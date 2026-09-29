@@ -28,6 +28,7 @@ export class DoctorWalletFacade {
   private readonly destroyRef = inject(DestroyRef);
   private reportRequestId = 0;
   private summaryRequestId = 0;
+  private transactionDetailsRequestId = 0;
 
   readonly canManage = computed(() => this.identity.isAdmin() || this.identity.isAccountant());
   readonly isDoctor = computed(() => this.identity.isDoctor());
@@ -40,6 +41,9 @@ export class DoctorWalletFacade {
       : this.summary()?.doctorName || 'جميع الأطباء',
   );
   readonly transactions = signal<DoctorWalletReport[]>([]);
+  readonly transactionDetails = signal<DoctorWalletReport | null>(null);
+  readonly loadingTransactionDetails = signal(false);
+  readonly transactionDetailsError = signal('');
   readonly summary = signal<DoctorWalletSummary | null>(null);
   readonly doctors = signal<Doctor[]>([]);
   readonly loadingReport = signal(false);
@@ -118,6 +122,33 @@ export class DoctorWalletFacade {
     } finally {
       if (requestId === this.reportRequestId && !this.destroyRef.destroyed)
         this.loadingReport.set(false);
+    }
+  }
+
+  async loadTransactionDetails(id: number): Promise<void> {
+    const requestId = ++this.transactionDetailsRequestId;
+    this.transactionDetails.set(null);
+    this.transactionDetailsError.set('');
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      this.transactionDetailsError.set('رقم الحركة غير صحيح.');
+      this.loadingTransactionDetails.set(false);
+      return;
+    }
+
+    this.loadingTransactionDetails.set(true);
+    try {
+      const response = await firstValueFrom(this.api.getTransactionById(id));
+      if (requestId !== this.transactionDetailsRequestId || this.destroyRef.destroyed) return;
+      if (!response.isSuccess || !response.data) throw new Error(response.message);
+      this.transactionDetails.set(response.data);
+    } catch {
+      if (requestId !== this.transactionDetailsRequestId || this.destroyRef.destroyed) return;
+      this.transactionDetailsError.set('تعذر تحميل تفاصيل الحركة. تحقق من الرقم وحاول مرة أخرى.');
+    } finally {
+      if (requestId === this.transactionDetailsRequestId && !this.destroyRef.destroyed) {
+        this.loadingTransactionDetails.set(false);
+      }
     }
   }
 
@@ -249,9 +280,8 @@ export class DoctorWalletFacade {
       this.pageNumber.set(1);
       this.refreshData();
     } catch (error: any) {
-      if (this.destroyRef.destroyed) return;
-      this.actionError.set('تعذر تنفيذ العملية. راجع رسالة الخطأ قبل إعادة المحاولة.');
       this.messages.addErrorMessage(error.error?.message || 'تعذر تنفيذ الحركة المالية');
+      if (this.destroyRef.destroyed) return;
     } finally {
       if (!this.destroyRef.destroyed) this.actionLoading.set(false);
     }
@@ -260,5 +290,28 @@ export class DoctorWalletFacade {
   private applyFilters(): void {
     this.pageNumber.set(1);
     this.refreshData();
+  }
+
+  deleteTransaction(id: number): void {
+    if (this.actionLoading()) return;
+    this.actionLoading.set(true);
+    this.api.deleteTransaction(id).subscribe({
+      next: (response) => {
+        if (!response.isSuccess) {
+          this.messages.addErrorMessage(response.message || 'تعذر حذف الحركة المالية');
+          return;
+        }
+        this.messages.addSuccessMessage('تم حذف الحركة المالية بنجاح');
+        this.refreshData();
+      },
+      error: (error: any) => {
+        {
+          this.messages.addErrorMessage(error.error?.message || 'تعذر حذف الحركة المالية');
+        }
+      },
+      complete: () => {
+        if (!this.destroyRef.destroyed) this.actionLoading.set(false);
+      },
+    });
   }
 }

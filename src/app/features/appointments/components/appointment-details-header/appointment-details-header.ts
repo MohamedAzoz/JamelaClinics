@@ -1,6 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { Location } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowRight,

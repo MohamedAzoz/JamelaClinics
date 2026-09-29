@@ -2,13 +2,16 @@ import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCalendar,
+  faEye,
   faFileInvoiceDollar,
   faPen,
+  faReceipt,
   faTrashCan,
 } from '@fortawesome/free-solid-svg-icons';
 import { Expense } from '../../models/Expense';
 import { TreasuryFacade } from '../../services/treasury.facade';
 import { TreasuryType } from '@features/treasury/models/ReportExpense';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-expense-table',
@@ -17,13 +20,23 @@ import { TreasuryType } from '@features/treasury/models/ReportExpense';
 })
 export class ExpenseTableComponent {
   readonly facade = inject(TreasuryFacade);
+  private readonly _router = inject(Router);
   readonly faFileInvoiceDollar = faFileInvoiceDollar;
   readonly faCalendar = faCalendar;
   readonly faPen = faPen;
   readonly faTrashCan = faTrashCan;
+  readonly faReceipt = faReceipt;
+  readonly faEye = faEye;
 
- readonly treasuryType = TreasuryType;
+  readonly treasuryType = TreasuryType;
 
+  openTransactionDetails(doctorWalletTransactionId: number): void {
+    this._router.navigate(['/main/doctor-wallet/transactions', doctorWalletTransactionId]);
+  }
+
+  openAppointmentDetails(appointmentId: number): void {
+    this._router.navigate(['/main/appointment-details', appointmentId]);
+  }
   formatType(value: TreasuryType): string {
     switch (value) {
       case TreasuryType.Expense:

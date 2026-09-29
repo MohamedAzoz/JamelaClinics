@@ -63,4 +63,18 @@ export class DoctorWalletApiService {
   withdraw(transaction: DoctorWalletTransaction) {
     return this._http.post<Result<boolean>>(`${this._baseUrl}withdraw`, transaction);
   }
+
+  //xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  //   GET
+  // /api/DoctorWallet/transactions/{id}
+  getTransactionById(id: number) {
+    return this._http.get<Result<DoctorWalletReport>>(`${this._baseUrl}transactions/${id}`);
+  }
+  //xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  // DELETE
+  // /api/DoctorWallet/transactions/{id}
+  deleteTransaction(id: number) {
+    return this._http.delete<Result<boolean>>(`${this._baseUrl}transactions/${id}`);
+  }
 }

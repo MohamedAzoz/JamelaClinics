@@ -7,7 +7,7 @@ export interface DoctorWalletReport {
   type: WalletTransactionType;
   typeName: string;
   amount: number;
-  appointmentId: number;
+  appointmentId?: number;
   employeeName: string;
   description: string;
   createdAt: Date;

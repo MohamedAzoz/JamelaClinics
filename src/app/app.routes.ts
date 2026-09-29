@@ -66,6 +66,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.DOCTOR_WALLET_TRANSACTION_DETAILS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant, ROLES.Doctor] },
+        loadComponent: () =>
+          import('./features/doctorWallet/pages/wallet-transaction-details/wallet-transaction-details').then(
+            (m) => m.WalletTransactionDetailsPage,
+          ),
+      },
+      {
         path: RoutesManagement.MATERIALS.path,
         canActivate: [roleGuard],
         data: { roles: [ROLES.Admin] },

@@ -6,7 +6,8 @@ export interface Expense {
   typeName: string;
   amount: number;
   description: string;
-  appointmentId: number;
+  appointmentId: number | null;
+  doctorWalletTransactionId: number | null;
   userName: string;
   createdAt: string;
 }
