@@ -8,7 +8,9 @@ import { WalletTransactionType } from '@features/doctorWallet/models/WalletTrans
   selector: 'app-wallet-header',
   imports: [FontAwesomeModule],
   template: `
-    <header class="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+    <header
+      class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-primary/20 bg-surface p-6 shadow-sm "
+    >
       <div class="flex items-center gap-3">
         <div
           class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-xl text-primary"

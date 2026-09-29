@@ -1,23 +1,21 @@
 <main class="min-h-screen p-4 text-text sm:p-6 lg:p-8" dir="rtl">
   <div class="mx-auto max-w-6xl space-y-6">
     <div
-  class="rounded-3xl border border-primary/20 bg-surface p-6 shadow-sm mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
-  dir="rtl"
->
-  <div class="flex items-center gap-4">
-    <button
-      type="button"
-      (click)="goBack()"
-      class="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-main-bg text-text hover:bg-primary/10 transition cursor-pointer"
-      title="الرجوع للخلف"
+      class="rounded-3xl border border-primary/20 bg-surface p-6 shadow-sm mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+      dir="rtl"
     >
-      <fa-icon [icon]="faArrowRight" class="text-base"></fa-icon>
-    </button>
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          (click)="goBack()"
+          class="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-main-bg text-text hover:bg-primary/10 transition cursor-pointer"
+          title="الرجوع للخلف"
+        >
+          <fa-icon [icon]="faArrowRight" class="text-base"></fa-icon>
+        </button>
         <p class="text-xs font-bold text-primary">العروض والخصومات</p>
         <h1 class="mt-1 text-2xl font-bold">تفاصيل الخصم والحجوزات</h1>
       </div>
-
-
     </div>
 
     @if (facade.isLoadingDetails()) {
@@ -42,3 +40,11 @@
     }
   </div>
 </main>
+
+@if (facade.isBookingFormOpen()) {
+  <app-special-offer-booking-form />
+}
+
+@if (facade.bookingToConvert(); as booking) {
+  <app-special-offer-convert-booking [booking]="booking" />
+}

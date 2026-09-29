@@ -6,11 +6,18 @@ import { faArrowRight, faCircleExclamation, faSpinner } from '@fortawesome/free-
 import { SpecialOffersFacade } from '../../services/special-offers.facade';
 import { SpecialOfferDetailsViewComponent } from '../../components/special-offer-details-view/special-offer-details-view';
 import { Location } from '@angular/common';
+import { SpecialOfferBookingFormComponent } from '@features/specialOffers/components/special-offer-booking-form/special-offer-booking-form';
+import { SpecialOfferConvertBookingComponent } from '@features/specialOffers/components/special-offer-convert-booking/special-offer-convert-booking';
 
 @Component({
   selector: 'app-special-offer-details',
   providers: [SpecialOffersFacade],
-  imports: [FontAwesomeModule, SpecialOfferDetailsViewComponent],
+  imports: [
+    FontAwesomeModule,
+    SpecialOfferDetailsViewComponent,
+    SpecialOfferBookingFormComponent,
+    SpecialOfferConvertBookingComponent,
+  ],
   templateUrl: './special-offer-details.html',
 })
 export class SpecialOfferDetailsPage implements OnInit {

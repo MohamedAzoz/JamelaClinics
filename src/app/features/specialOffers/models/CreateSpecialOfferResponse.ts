@@ -1,5 +1,3 @@
-import { SpecialOfferAppointment } from './SpecialOfferAppointment';
-
 export interface CreateSpecialOfferResponse {
   id: number;
   title: string;
@@ -8,5 +6,4 @@ export interface CreateSpecialOfferResponse {
   isActive: boolean;
   startDate: Date;
   endDate: Date;
-  appointments?: SpecialOfferAppointment[];
 }

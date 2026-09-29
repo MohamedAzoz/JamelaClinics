@@ -58,7 +58,7 @@ export class UpdateService {
 
   private async confirmUpdate() {
     const isServiceWorkerEnabled = await this.isEnabled();
-    if (!isServiceWorkerEnabled || !window.confirm('تحديث جديد متاح')) return;
+    if (!isServiceWorkerEnabled || !confirm('تحديث جديد متاح')) return;
 
     (await this.swUpdate()).activateUpdate().then(() => window.location.reload());
   }

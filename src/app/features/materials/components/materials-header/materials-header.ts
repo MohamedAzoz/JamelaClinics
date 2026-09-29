@@ -7,7 +7,9 @@ import { MaterialsFacade } from '../../services/materials.facade';
   selector: 'app-materials-header',
   imports: [FontAwesomeModule],
   template: `
-    <header class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+    <header
+      class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-primary/20 bg-surface p-6 shadow-sm"
+    >
       <div class="flex items-center gap-3">
         <span
           class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary"

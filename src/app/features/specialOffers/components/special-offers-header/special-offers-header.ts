@@ -7,7 +7,9 @@ import { SpecialOffersFacade } from '../../services/special-offers.facade';
   selector: 'app-special-offers-header',
   imports: [FontAwesomeModule],
   template: `
-    <header class="flex flex-wrap items-center justify-between gap-4">
+    <header
+      class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-primary/20 bg-surface p-6 shadow-sm mb-6"
+    >
       <div class="flex items-center gap-3">
         <span
           class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary"
