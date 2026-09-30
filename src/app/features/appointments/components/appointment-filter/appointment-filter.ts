@@ -19,9 +19,11 @@ import { AppointmentFacade } from '../../services/appointment.facade';
 import { Period } from '../../models/Period';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 
+import { DecimalPipe } from '@angular/common';
+
 @Component({
   selector: 'app-appointment-filter',
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, DecimalPipe],
   templateUrl: './appointment-filter.html',
 })
 export class AppointmentFilterComponent {

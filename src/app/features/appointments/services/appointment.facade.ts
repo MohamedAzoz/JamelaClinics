@@ -94,6 +94,14 @@ export class AppointmentFacade {
   // Materials State for Appointment Details
   readonly availableMaterials = signal<Material[]>([]);
   readonly isLoadingMaterials = signal<boolean>(false);
+  readonly isLoadingMoreMaterials = signal<boolean>(false);
+  readonly materialsPageNumber = signal<number>(1);
+  readonly materialsPageSize = signal<number>(10);
+  readonly materialsTotalPages = signal<number>(1);
+  readonly materialsTotalCount = signal<number>(0);
+  readonly hasMoreMaterials = computed(
+    () => this.materialsPageNumber() < this.materialsTotalPages(),
+  );
   readonly isAddingMaterial = signal<boolean>(false);
   readonly removingMaterialId = signal<number | null>(null);
 
@@ -522,24 +530,63 @@ export class AppointmentFacade {
   }
 
   /**
-   * Load active materials for appointment details selection
+   * Load active materials for appointment details selection with pagination support
    */
-  async loadActiveMaterials(): Promise<void> {
-    this.isLoadingMaterials.set(true);
-    this._materialsApiService.getAllMaterials(1, 100, true).subscribe({
+  async loadActiveMaterials(reset = true): Promise<void> {
+    if (reset) {
+      this.materialsPageNumber.set(1);
+      this.isLoadingMaterials.set(true);
+    } else {
+      this.isLoadingMoreMaterials.set(true);
+    }
+
+    const page = reset ? 1 : this.materialsPageNumber();
+    const size = this.materialsPageSize();
+
+    this._materialsApiService.getAllMaterials(page, size, true).subscribe({
       next: (res) => {
         this.isLoadingMaterials.set(false);
+        this.isLoadingMoreMaterials.set(false);
         if (res.isSuccess && res.data) {
-          this.availableMaterials.set(res.data.items || []);
+          const items = res.data.items || [];
+          this.materialsTotalPages.set(res.data.totalPages || 1);
+          this.materialsTotalCount.set(res.data.totalCount || 0);
+
+          if (reset) {
+            this.availableMaterials.set(items);
+          } else {
+            this.availableMaterials.update((prev) => {
+              const existingIds = new Set(prev.map((m) => m.id));
+              const newItems = items.filter((m) => !existingIds.has(m.id));
+              return [...prev, ...newItems];
+            });
+          }
         } else {
-          this.availableMaterials.set([]);
+          if (reset) this.availableMaterials.set([]);
         }
       },
       error: () => {
         this.isLoadingMaterials.set(false);
-        this.availableMaterials.set([]);
+        this.isLoadingMoreMaterials.set(false);
+        if (reset) this.availableMaterials.set([]);
       },
     });
+  }
+
+  /**
+   * Fetch next page of materials on scroll
+   */
+  async loadMoreMaterials(): Promise<void> {
+    if (
+      this.isLoadingMaterials() ||
+      this.isLoadingMoreMaterials() ||
+      !this.hasMoreMaterials()
+    ) {
+      return;
+    }
+
+    this.materialsPageNumber.update((p) => p + 1);
+    await this.loadActiveMaterials(false);
   }
 
   /**

@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { PaginatedResult } from '@core/models/PaginatedResult';
 import { Result } from '@core/models/Result';
 import { environment } from 'environments/environment';
 import { CreateMaterial, Material } from '../models/Material';
+import { SkipLoading } from '@core/interceptors/loading-interceptor';
 
 @Service()
 export class MaterialsApiService {
@@ -30,7 +31,9 @@ isActive */
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
-    return this._httpClient.get<Result<PaginatedResult<Material[]>>>(url);
+    return this._httpClient.get<Result<PaginatedResult<Material[]>>>(url, {
+      context: new HttpContext().set(SkipLoading, true),
+    });
   }
   // GET
   // /api/Materials/get-material-by-id/{id}

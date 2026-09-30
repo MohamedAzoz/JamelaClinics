@@ -7,18 +7,26 @@
         <h3 class="text-sm font-bold text-text">إحصائيات المواعيد المفلترة</h3>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3">
         <!-- Total Appointments -->
         <div class="rounded-xl bg-main-bg/70 p-3 border border-primary/10">
           <div class="text-[11px] font-bold text-text-muted">إجمالي المواعيد</div>
-          <div class="text-lg font-extrabold text-primary mt-1">{{ stats.totalAppointments }}</div>
+          <div class="text-lg font-extrabold text-primary mt-1 font-mono">{{ stats.totalAppointments }}</div>
         </div>
 
-        <!-- Consultation Fees -->
+        <!-- Net Consultation Fees -->
         <div class="rounded-xl bg-main-bg/70 p-3 border border-success/20">
-          <div class="text-[11px] font-bold text-text-muted">رسوم الكشف</div>
+          <div class="text-[11px] font-bold text-text-muted">صافي رسوم الكشف</div>
           <div class="text-base font-extrabold text-success mt-1 font-mono">
-            {{ stats.totalConsultationFees }} <span class="text-[10px]">ج.م</span>
+            {{ stats.totalNetConsultationFees | number: '1.2-2' }} <span class="text-[10px]">ج.م</span>
+          </div>
+        </div>
+
+        <!-- Materials Cost -->
+        <div class="rounded-xl bg-main-bg/70 p-3 border border-warning/20">
+          <div class="text-[11px] font-bold text-text-muted">تكلفة المواد والخدمات</div>
+          <div class="text-base font-extrabold text-warning mt-1 font-mono">
+            {{ stats.totalMaterialsCost | number: '1.2-2' }} <span class="text-[10px]">ج.م</span>
           </div>
         </div>
 
@@ -26,7 +34,7 @@
         <div class="rounded-xl bg-main-bg/70 p-3 border border-accent/20">
           <div class="text-[11px] font-bold text-text-muted">مستحقات الطبيب</div>
           <div class="text-base font-extrabold text-accent mt-1 font-mono">
-            {{ stats.totalDoctorEarnings }} <span class="text-[10px]">ج.م</span>
+            {{ stats.totalDoctorEarnings | number: '1.2-2' }} <span class="text-[10px]">ج.م</span>
           </div>
         </div>
 
@@ -34,32 +42,32 @@
         <div class="rounded-xl bg-main-bg/70 p-3 border border-primary/20">
           <div class="text-[11px] font-bold text-text-muted">مستحقات المركز</div>
           <div class="text-base font-extrabold text-primary mt-1 font-mono">
-            {{ stats.totalCenterEarnings }} <span class="text-[10px]">ج.م</span>
+            {{ stats.totalCenterEarnings | number: '1.2-2' }} <span class="text-[10px]">ج.م</span>
           </div>
         </div>
 
         <!-- Unpaid Count -->
-        <div class="rounded-xl bg-main-bg/70 p-3 border border-warning/20">
+        <div class="rounded-xl bg-main-bg/70 p-3 border border-danger/20">
           <div class="text-[11px] font-bold text-text-muted">غير مدفوع</div>
-          <div class="text-lg font-extrabold text-warning mt-1">{{ stats.unpaidCount }}</div>
+          <div class="text-lg font-extrabold text-danger mt-1 font-mono">{{ stats.unpaidCount }}</div>
         </div>
 
         <!-- InProgress Count -->
         <div class="rounded-xl bg-main-bg/70 p-3 border border-accent/20">
           <div class="text-[11px] font-bold text-text-muted">قيد الكشف</div>
-          <div class="text-lg font-extrabold text-accent mt-1">{{ stats.inProgressCount }}</div>
+          <div class="text-lg font-extrabold text-accent mt-1 font-mono">{{ stats.inProgressCount }}</div>
         </div>
 
         <!-- Completed Count -->
         <div class="rounded-xl bg-main-bg/70 p-3 border border-success/20">
           <div class="text-[11px] font-bold text-text-muted">مكتمل</div>
-          <div class="text-lg font-extrabold text-success mt-1">{{ stats.completedCount }}</div>
+          <div class="text-lg font-extrabold text-success mt-1 font-mono">{{ stats.completedCount }}</div>
         </div>
 
         <!-- Cancelled Count -->
         <div class="rounded-xl bg-main-bg/70 p-3 border border-danger/20">
           <div class="text-[11px] font-bold text-text-muted">ملغى</div>
-          <div class="text-lg font-extrabold text-danger mt-1">{{ stats.cancelledCount }}</div>
+          <div class="text-lg font-extrabold text-danger mt-1 font-mono">{{ stats.cancelledCount }}</div>
         </div>
       </div>
     </div>
