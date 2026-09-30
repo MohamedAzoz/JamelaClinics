@@ -37,6 +37,10 @@ export class ExpenseTableComponent {
   openAppointmentDetails(appointmentId: number): void {
     this._router.navigate(['/main/appointment-details', appointmentId]);
   }
+
+  openOfferOrderDetails(offerOrderId: number): void {
+    this._router.navigate(['/main/offer-orders', offerOrderId]);
+  }
   formatType(value: TreasuryType): string {
     switch (value) {
       case TreasuryType.Expense:

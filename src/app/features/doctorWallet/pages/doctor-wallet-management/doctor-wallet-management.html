@@ -5,7 +5,15 @@
       <app-wallet-filters />
       <app-wallet-summary />
       <app-wallet-table />
-      <app-wallet-pagination />
+      <app-pagination
+        [pageNumber]="facade.pageNumber()"
+        [pageSize]="facade.pageSize()"
+        [totalCount]="facade.totalCount()"
+        [totalPages]="facade.totalPages()"
+        [disabled]="facade.loading()"
+        (pageChange)="facade.setPage($event)"
+        (pageSizeChange)="facade.setPageSize($event)"
+      />
     </div>
     @if (facade.canManage()) {
       @if (facade.actionTarget(); as target) {

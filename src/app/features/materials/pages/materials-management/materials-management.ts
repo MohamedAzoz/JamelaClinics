@@ -3,7 +3,7 @@ import { MaterialsFacade } from '../../services/materials.facade';
 import { MaterialsHeaderComponent } from '../../components/materials-header/materials-header';
 import { MaterialsFiltersComponent } from '../../components/materials-filters/materials-filters';
 import { MaterialsTableComponent } from '../../components/materials-table/materials-table';
-import { MaterialsPaginationComponent } from '../../components/materials-pagination/materials-pagination';
+import { PaginationComponent } from '@shared/components/pagination';
 import { MaterialFormModalComponent } from '../../components/material-form-modal/material-form-modal';
 import { MaterialDeleteModalComponent } from '../../components/material-delete-modal/material-delete-modal';
 
@@ -13,7 +13,7 @@ import { MaterialDeleteModalComponent } from '../../components/material-delete-m
     MaterialsHeaderComponent,
     MaterialsFiltersComponent,
     MaterialsTableComponent,
-    MaterialsPaginationComponent,
+    PaginationComponent,
     MaterialFormModalComponent,
     MaterialDeleteModalComponent,
   ],
@@ -25,7 +25,15 @@ import { MaterialDeleteModalComponent } from '../../components/material-delete-m
           <app-materials-header />
           <app-materials-filters />
           <app-materials-table />
-          <app-materials-pagination />
+          <app-pagination
+            [pageNumber]="facade.pageNumber()"
+            [pageSize]="facade.pageSize()"
+            [totalCount]="facade.totalCount()"
+            [totalPages]="facade.totalPages()"
+            [disabled]="facade.loading()"
+            (pageChange)="facade.setPage($event)"
+            (pageSizeChange)="facade.setPageSize($event)"
+          />
         </div>
         @if (facade.editor()) {
           <app-material-form-modal />

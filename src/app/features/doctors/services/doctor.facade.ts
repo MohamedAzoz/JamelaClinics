@@ -77,7 +77,7 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل قائمة الأطباء');
+          this._messageService.addErrorMessage(err.error.message || 'تعذر تحميل قائمة الأطباء');
         },
       });
   }
@@ -110,7 +110,7 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل بيانات الطبيب');
+          this._messageService.addErrorMessage(err.error.message || 'تعذر تحميل بيانات الطبيب');
         },
       });
   }
@@ -134,7 +134,7 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية إضافة الطبيب');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية إضافة الطبيب');
         },
       });
   }
@@ -160,7 +160,9 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية تعديل بيانات الطبيب');
+          this._messageService.addErrorMessage(
+            err.error.message || 'فشلت عملية تعديل بيانات الطبيب',
+          );
         },
       });
   }
@@ -186,7 +188,7 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية حذف الطبيب');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية حذف الطبيب');
         },
       });
   }
@@ -209,7 +211,7 @@ export class DoctorFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشل تغيير حالة الطبيب');
+          this._messageService.addErrorMessage(err.error.message || 'فشل تغيير حالة الطبيب');
         },
       });
   }

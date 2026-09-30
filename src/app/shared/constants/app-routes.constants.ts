@@ -23,6 +23,9 @@ export const RoutesManagement = {
   SCHEDULE_APPOINTMENTS: { path: 'schedule-appointments/:scheduleId' },
   APPOINTMENT_DETAILS: { path: 'appointment-details/:id' },
   DOCTOR_TODAY_APPOINTMENTS: { path: 'doctor-today-appointments' },
+  COMPANIES: { path: 'companies' },
+  COMPANY_ORDERS: { path: 'companies/:id/orders' },
+  OFFER_ORDER_DETAILS: { path: 'offer-orders/:id' },
 } as const;
 
 export const HospitalName = 'جميلة' as const;

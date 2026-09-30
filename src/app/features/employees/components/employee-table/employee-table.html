@@ -86,17 +86,19 @@
                 <button
                   type="button"
                   (click)="toggleStatus(employee)"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
-                  [class.bg-success\/10]="employee.isActive"
-                  [class.text-success]="employee.isActive"
+                  class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-bold transition-all cursor-pointer"
                   [class.border-success\/20]="employee.isActive"
-                  [class.bg-danger\/10]="!employee.isActive"
-                  [class.text-danger]="!employee.isActive"
+                  [class.bg-success\/5]="employee.isActive"
+                  [class.text-success]="employee.isActive"
+                  [class.hover:bg-success\/10]="employee.isActive"
                   [class.border-danger\/20]="!employee.isActive"
+                  [class.bg-danger\/5]="!employee.isActive"
+                  [class.text-danger]="!employee.isActive"
+                  [class.hover:bg-danger\/10]="!employee.isActive"
+                  [title]="employee.isActive ? 'تعطيل حساب الموظف' : 'تفعيل حساب الموظف'"
                 >
                   <fa-icon
                     [icon]="employee.isActive ? faCircleCheck : faCircleXmark"
-                    class="text-[11px]"
                   ></fa-icon>
                   <span>{{ employee.isActive ? 'نشط' : 'معطل' }}</span>
                 </button>
@@ -104,25 +106,27 @@
 
               <!-- Actions (Edit & Delete) -->
               <td class="px-4 sm:px-6 py-4 text-center">
-                <div class="inline-flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
                   <!-- Edit Button -->
                   <button
                     type="button"
                     (click)="facade.openEditModal(employee)"
-                    class="p-2 rounded-xl text-primary hover:bg-primary/10 hover:text-primary-dark transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
                     title="تعديل بيانات الموظف"
                   >
                     <fa-icon [icon]="faPen"></fa-icon>
+                    <span>تعديل</span>
                   </button>
 
                   <!-- Delete Button -->
                   <button
                     type="button"
                     (click)="facade.openDeleteModal(employee)"
-                    class="p-2 rounded-xl text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
                     title="حذف حساب الموظف"
                   >
                     <fa-icon [icon]="faTrashCan"></fa-icon>
+                    <span>حذف</span>
                   </button>
                 </div>
               </td>

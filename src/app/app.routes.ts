@@ -187,6 +187,33 @@ export const routes: Routes = [
             (m) => m.DoctorTodayAppointmentsPage,
           ),
       },
+      {
+        path: RoutesManagement.COMPANIES.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant] },
+        loadComponent: () =>
+          import('./features/companies/pages/companies-management/companies-management').then(
+            (m) => m.CompaniesManagementComponent,
+          ),
+      },
+      {
+        path: RoutesManagement.COMPANY_ORDERS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant] },
+        loadComponent: () =>
+          import('./features/offerOrders/pages/company-orders/company-orders').then(
+            (m) => m.CompanyOrdersPage,
+          ),
+      },
+      {
+        path: RoutesManagement.OFFER_ORDER_DETAILS.path,
+        canActivate: [roleGuard],
+        data: { roles: [ROLES.Admin, ROLES.Accountant] },
+        loadComponent: () =>
+          import('./features/offerOrders/pages/offer-order-details/offer-order-details').then(
+            (m) => m.OfferOrderDetailsPage,
+          ),
+      },
     ],
   },
 

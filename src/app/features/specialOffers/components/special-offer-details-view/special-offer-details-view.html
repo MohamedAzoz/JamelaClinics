@@ -232,23 +232,27 @@
                         >
                           <fa-icon [icon]="faCheck" /> تحويل لموعد
                         </button>
+                        <button
+                          type="button"
+                          (click)="facade.openEditBooking(booking)"
+                          class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10"
+                          aria-label="تعديل الحجز رقم {{ booking.bookingId }}"
+                        >
+                          <fa-icon [icon]="faPen" /> تعديل
+                        </button>
+                        <button
+                          type="button"
+                          (click)="facade.requestDeleteBooking(booking)"
+                          class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10"
+                          aria-label="حذف الحجز رقم {{ booking.bookingId }}"
+                        >
+                          <fa-icon [icon]="faTrash" /> حذف
+                        </button>
+                      } @else {
+                        <span class="text-xs md:text-sm font-semibold text-success"
+                          >تم الحجز بالفعل</span
+                        >
                       }
-                      <button
-                        type="button"
-                        (click)="facade.openEditBooking(booking)"
-                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10"
-                        aria-label="تعديل الحجز رقم {{ booking.bookingId }}"
-                      >
-                        <fa-icon [icon]="faPen" /> تعديل
-                      </button>
-                      <button
-                        type="button"
-                        (click)="facade.requestDeleteBooking(booking)"
-                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10"
-                        aria-label="حذف الحجز رقم {{ booking.bookingId }}"
-                      >
-                        <fa-icon [icon]="faTrash" /> حذف
-                      </button>
                     </div>
                   </td>
                 }

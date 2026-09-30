@@ -72,7 +72,9 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل قائمة موظفي الاستقبال');
+          this._messageService.addErrorMessage(
+            err.error.message || 'تعذر تحميل قائمة موظفي الاستقبال',
+          );
         },
       });
   }
@@ -92,7 +94,7 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل بيانات الموظف');
+          this._messageService.addErrorMessage(err.error.message || 'تعذر تحميل بيانات الموظف');
         },
       });
   }
@@ -116,7 +118,7 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية إضافة الموظف');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية إضافة الموظف');
         },
       });
   }
@@ -142,7 +144,9 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية تعديل بيانات الموظف');
+          this._messageService.addErrorMessage(
+            err.error.message || 'فشلت عملية تعديل بيانات الموظف',
+          );
         },
       });
   }
@@ -168,7 +172,7 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية حذف الموظف');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية حذف الموظف');
         },
       });
   }
@@ -191,7 +195,7 @@ export class EmployeeFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشل تغيير حالة الموظف');
+          this._messageService.addErrorMessage(err.error.message || 'فشل تغيير حالة الموظف');
         },
       });
   }

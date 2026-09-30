@@ -25,7 +25,7 @@
           [class]="typeClass()"
           class="mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-bold"
         >
-          {{ transaction().typeName || transactionLabel() }}
+          {{ transactionLabel() }}
         </span>
       </div>
     </div>
@@ -53,7 +53,7 @@
             تاريخ ووقت التنفيذ
           </dt>
           <dd class="mt-2 text-sm font-bold text-text">
-            {{ transaction().createdAt | date: 'yyyy-MM-dd, hh:mm a' }}
+            {{ transaction().createdAt | date: 'yyyy-MM-dd, (hh:mm a)' }}
           </dd>
         </div>
 
@@ -83,7 +83,7 @@
             <fa-icon [icon]="faWallet" class="text-primary"></fa-icon>
             بيان الحركة
           </dt>
-          <dd class="mt-2 whitespace-pre-wrap break-words text-sm leading-7 text-text">
+          <dd class="mt-2 whitespace-pre-wrap wrap-break-word text-sm leading-7 text-text">
             {{ transaction().description || 'لا يوجد وصف لهذه الحركة.' }}
           </dd>
         </div>

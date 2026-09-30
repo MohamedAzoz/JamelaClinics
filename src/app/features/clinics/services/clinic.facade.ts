@@ -60,7 +60,7 @@ export class ClinicFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل قائمة العيادات');
+          this._messageService.addErrorMessage(err.error.message || 'تعذر تحميل قائمة العيادات');
         },
       });
   }
@@ -80,7 +80,9 @@ export class ClinicFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'تعذر تحميل بيانات العيادة المطلوب عرضها');
+          this._messageService.addErrorMessage(
+            err.error.message || 'تعذر تحميل بيانات العيادة المطلوب عرضها',
+          );
         },
       });
   }
@@ -110,7 +112,7 @@ export class ClinicFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية إضافة العيادة');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية إضافة العيادة');
         },
       });
   }
@@ -141,7 +143,7 @@ export class ClinicFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية تعديل العيادة');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية تعديل العيادة');
         },
       });
   }
@@ -167,7 +169,7 @@ export class ClinicFacade {
           }
         },
         error: (err) => {
-          this._messageService.showHttpError(err, 'فشلت عملية حذف العيادة');
+          this._messageService.addErrorMessage(err.error.message || 'فشلت عملية حذف العيادة');
         },
       });
   }

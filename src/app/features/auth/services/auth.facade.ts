@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthApiService } from './auth-api.service';
 import { IdentityService } from '../../../core/services/identity-service';
 import { AppMessageService } from '../../../core/services/app-message-service';
-import { RoutesManagement } from '../../../shared/constants/app-routes.constants';
+import { RoutesManagement } from '@shared/constants/app-routes.constants';
 import { LoginRequest } from '../models/LoginRequest';
 import { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import { AdminChangePasswordRequest } from '../models/AdminChangePasswordRequest';

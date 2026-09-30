@@ -140,18 +140,19 @@
                 <button
                   type="button"
                   (click)="toggleStatus(doctor)"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer hover:scale-105 active:scale-95"
-                  [class.bg-success\/10]="doctor.isActive"
-                  [class.text-success]="doctor.isActive"
+                  class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-bold transition-all cursor-pointer"
                   [class.border-success\/20]="doctor.isActive"
-                  [class.bg-danger\/10]="!doctor.isActive"
-                  [class.text-danger]="!doctor.isActive"
+                  [class.bg-success\/5]="doctor.isActive"
+                  [class.text-success]="doctor.isActive"
+                  [class.hover:bg-success\/10]="doctor.isActive"
                   [class.border-danger\/20]="!doctor.isActive"
+                  [class.bg-danger\/5]="!doctor.isActive"
+                  [class.text-danger]="!doctor.isActive"
+                  [class.hover:bg-danger\/10]="!doctor.isActive"
                   [title]="doctor.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'"
                 >
                   <fa-icon
                     [icon]="doctor.isActive ? faCircleCheck : faCircleXmark"
-                    class="text-[11px]"
                   ></fa-icon>
                   <span>{{ doctor.isActive ? 'نشط' : 'معطل' }}</span>
                 </button>
@@ -159,25 +160,27 @@
 
               <!-- Actions (Edit & Delete) -->
               <td class="px-4 sm:px-6 py-4 text-center">
-                <div class="inline-flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
                   <!-- Edit Button -->
                   <button
                     type="button"
                     (click)="facade.openEditModal(doctor)"
-                    class="p-2 rounded-xl text-primary hover:bg-primary/10 hover:text-primary-dark transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
                     title="تعديل بيانات الطبيب"
                   >
                     <fa-icon [icon]="faPen"></fa-icon>
+                    <span>تعديل</span>
                   </button>
 
                   <!-- Delete Button -->
                   <button
                     type="button"
                     (click)="facade.openDeleteModal(doctor)"
-                    class="p-2 rounded-xl text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
                     title="حذف حساب الطبيب"
                   >
                     <fa-icon [icon]="faTrashCan"></fa-icon>
+                    <span>حذف</span>
                   </button>
                 </div>
               </td>

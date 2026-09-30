@@ -169,7 +169,7 @@
               <!-- Quick Action Buttons -->
               @if (!facade.isAdminOrAccountant()) {
                 <td class="px-4 py-4 text-center">
-                  <div class="flex items-center justify-center gap-1.5">
+                  <div class="flex flex-wrap items-center justify-center gap-1.5">
                     <!-- Pay Button if Unpaid -->
                     @if (!facade.isDoctor() && Number(app.status) === 1) {
                       <button
@@ -177,7 +177,7 @@
                         (click)="payAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="سداد الكشفية (دفع)"
-                        class="flex items-center gap-1 rounded-xl bg-success/10 hover:bg-success/20 text-success border border-success/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-success/20 bg-success/5 px-2.5 text-xs font-bold text-success hover:bg-success/10 transition-all cursor-pointer disabled:opacity-50"
                       >
                         @if (facade.actionLoadingId() === app.id) {
                           <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -192,7 +192,7 @@
                         (click)="completeAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="إنهاء الموعد واكتمال الكشف"
-                        class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 text-xs font-bold text-primary hover:bg-primary/10 transition-all cursor-pointer disabled:opacity-50"
                       >
                         @if (facade.actionLoadingId() === app.id) {
                           <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -209,7 +209,7 @@
                         (click)="cancelAppointment(app)"
                         [disabled]="facade.actionLoadingId() === app.id"
                         title="إلغاء الحجز"
-                        class="flex items-center gap-1 rounded-xl bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 px-2.5 py-1 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
+                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer disabled:opacity-50"
                       >
                         @if (facade.actionLoadingId() === app.id) {
                           <fa-icon [icon]="faSpinner" class="animate-spin text-xs"></fa-icon>
@@ -230,7 +230,7 @@
                   type="button"
                   (click)="openDetailsModal(app)"
                   title="عرض تفاصيل الحجز"
-                  class="flex items-center gap-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
+                  class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 text-xs font-bold text-primary hover:bg-primary/10 transition-all cursor-pointer"
                 >
                   <fa-icon [icon]="faEye" class="text-xs"></fa-icon>
                   <span>تفاصيل</span>
@@ -239,15 +239,17 @@
               <!-- Action Buttons -->
               @if (!facade.isAdminOrAccountant() && !facade.isDoctor()) {
                 <td class="px-4 py-4 text-center">
-                  <button
-                    type="button"
-                    (click)="openEditModal(app)"
-                    title="تعديل بيانات الحجز"
-                    class="flex items-center gap-1 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer"
-                  >
-                    <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
-                    <span>تعديل</span>
-                  </button>
+                  <div class="flex flex-wrap items-center justify-center gap-1.5">
+                    <button
+                      type="button"
+                      (click)="openEditModal(app)"
+                      title="تعديل بيانات الحجز"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
+                    >
+                      <fa-icon [icon]="faEdit" class="text-xs"></fa-icon>
+                      <span>تعديل</span>
+                    </button>
+                  </div>
                 </td>
               }
             </tr>

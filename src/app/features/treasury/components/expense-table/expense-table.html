@@ -51,31 +51,36 @@
                 <div class="mt-1">{{ expense.userName }}</div>
               </td>
               <td class="px-4 py-4 text-center">
-                <div class="flex flex-wrap items-center justify-center gap-2">
-                  @if (!expense.appointmentId && !expense.doctorWalletTransactionId) {
-                    <div class="inline-flex gap-1">
-                      <button
-                        type="button"
-                        (click)="edit(expense)"
-                        class="rounded-xl p-2 text-primary transition hover:bg-primary/10"
-                        title="تعديل المصروف"
-                      >
-                        <fa-icon [icon]="faPen"></fa-icon></button
-                      ><button
-                        type="button"
-                        (click)="remove(expense)"
-                        class="rounded-xl p-2 text-danger transition hover:bg-danger/10"
-                        title="حذف المصروف"
-                      >
-                        <fa-icon [icon]="faTrashCan"></fa-icon>
-                      </button>
-                    </div>
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
+                  @if (
+                    !expense.appointmentId &&
+                    !expense.doctorWalletTransactionId &&
+                    !expense.offerOrderId
+                  ) {
+                    <button
+                      type="button"
+                      (click)="edit(expense)"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
+                      title="تعديل المصروف"
+                    >
+                      <fa-icon [icon]="faPen"></fa-icon>
+                      <span>تعديل</span>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="remove(expense)"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
+                      title="حذف المصروف"
+                    >
+                      <fa-icon [icon]="faTrashCan"></fa-icon>
+                      <span>حذف</span>
+                    </button>
                   } @else if (expense.doctorWalletTransactionId) {
                     <button
                       type="button"
                       (click)="openTransactionDetails(expense.doctorWalletTransactionId)"
                       title="عرض تفاصيل الحركة المالية"
-                      class="inline-flex min-h-9 items-center gap-1 rounded-xl border border-primary/20 bg-primary/10 px-2.5 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary/20"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 text-xs font-bold text-primary hover:bg-primary/10 transition-all cursor-pointer"
                     >
                       <fa-icon [icon]="faEye" />
                       <span>متابعة</span>
@@ -85,10 +90,20 @@
                       type="button"
                       (click)="openAppointmentDetails(expense.appointmentId)"
                       title="عرض تفاصيل الحجز المرتبط"
-                      class="inline-flex min-h-9 items-center gap-1 rounded-xl border border-accent/20 bg-accent/10 px-2.5 py-1.5 text-xs font-semibold text-accent transition hover:bg-accent/20"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
                     >
                       <fa-icon [icon]="faReceipt" />
                       <span>الحجز</span>
+                    </button>
+                  } @else if (expense.offerOrderId) {
+                    <button
+                      type="button"
+                      (click)="openOfferOrderDetails(expense.offerOrderId)"
+                      title="عرض تفاصيل طلب العروض/المشتريات"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 text-xs font-bold text-primary hover:bg-primary/10 transition-all cursor-pointer"
+                    >
+                      <fa-icon [icon]="faEye" />
+                      <span>الطلب</span>
                     </button>
                   } @else {
                     ---

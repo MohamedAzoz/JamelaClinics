@@ -10,6 +10,14 @@
     <app-appointment-table></app-appointment-table>
 
     <!-- Pagination Controls -->
-    <app-appointment-pagination></app-appointment-pagination>
+    <app-pagination
+      [pageNumber]="facade.pageNumber()"
+      [pageSize]="facade.pageSize()"
+      [totalCount]="facade.totalCount()"
+      [totalPages]="facade.totalPages()"
+      [disabled]="facade.isLoadingAppointments()"
+      (pageChange)="facade.setPageNumber($event)"
+      (pageSizeChange)="facade.setPageSize($event)"
+    />
   </div>
 </div>

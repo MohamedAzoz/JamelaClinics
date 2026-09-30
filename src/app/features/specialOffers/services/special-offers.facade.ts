@@ -70,12 +70,21 @@ export class SpecialOffersFacade {
       this.identity.userRole() === ROLES.Reception,
   );
 
+  readonly activeStatusFilter = signal<boolean | undefined>(
+    this.isReception() ? true : undefined,
+  );
+
+  setActiveStatusFilter(status: boolean | undefined): void {
+    this.activeStatusFilter.set(status);
+    void this.loadOffers();
+  }
+
   async loadOffers(): Promise<void> {
     this.isLoading.set(true);
     this.error.set('');
     try {
       const response = await firstValueFrom(
-        this.api.getAllSpecialOffers(this.isReception() ? true : undefined),
+        this.api.getAllSpecialOffers(this.activeStatusFilter()),
       );
       if (!response.isSuccess) throw new Error(response.message);
       this.offers.set(response.data ?? []);

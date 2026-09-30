@@ -52,11 +52,11 @@
         <tbody class="divide-y divide-primary/10 text-text">
           @for (material of facade.materials(); track material.id) {
             <tr class="hover:bg-primary/5">
-              <th scope="row" class="min-w-40 max-w-64 break-words px-5 py-5 font-semibold">
+              <th scope="row" class="min-w-40 max-w-64 wrap-break-word px-5 py-5 font-semibold">
                 {{ material.name }}
               </th>
               <td
-                class="min-w-48 max-w-80 whitespace-pre-wrap break-words px-5 py-5 text-text-muted"
+                class="min-w-48 max-w-80 whitespace-pre-wrap wrap-break-word px-5 py-5 text-text-muted"
               >
                 {{ material.description || '—' }}
               </td>
@@ -73,39 +73,48 @@
                 >
               </td>
               <td class="px-5 py-5">
-                <div class="flex items-center gap-2 whitespace-nowrap">
+                <div class="flex flex-wrap items-center gap-1.5 whitespace-nowrap">
                   <button
                     type="button"
                     (click)="facade.openEdit(material)"
                     [disabled]="facade.actionLoading()"
                     [attr.aria-label]="'تعديل ' + material.name"
-                    class="rounded-lg border border-primary/20 px-3 py-2.5 font-semibold hover:bg-primary/10 disabled:opacity-50"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer disabled:opacity-50"
                   >
-                    <fa-icon [icon]="icons.edit" class="me-1" />تعديل
+                    <fa-icon [icon]="icons.edit" /><span>تعديل</span>
                   </button>
                   <button
                     type="button"
                     (click)="toggleMaterialStatus(material)"
                     [disabled]="facade.actionLoading()"
                     [attr.aria-label]="(material.isActive ? 'تعطيل ' : 'تفعيل ') + material.name"
-                    class="rounded-lg border border-primary/20 px-3 py-2.5 font-semibold hover:bg-primary/10 disabled:opacity-50"
+                    [class.border-warning\/20]="material.isActive"
+                    [class.bg-warning\/5]="material.isActive"
+                    [class.text-warning]="material.isActive"
+                    [class.hover:bg-warning\/10]="material.isActive"
+                    [class.border-success\/20]="!material.isActive"
+                    [class.bg-success\/5]="!material.isActive"
+                    [class.text-success]="!material.isActive"
+                    [class.hover:bg-success\/10]="!material.isActive"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
                   >
-                    <fa-icon [icon]="icons.power" class="me-1" />{{
+                    <fa-icon [icon]="icons.power" />
+                    <span>{{
                       facade.togglingId() === material.id
                         ? 'جارٍ التحديث…'
                         : material.isActive
                           ? 'تعطيل'
                           : 'تفعيل'
-                    }}
+                    }}</span>
                   </button>
                   <button
                     type="button"
                     (click)="facade.requestDelete(material)"
                     [disabled]="facade.actionLoading()"
                     [attr.aria-label]="'حذف ' + material.name"
-                    class="rounded-lg border border-red-500/25 bg-red-500/5 px-3 py-2.5 font-semibold hover:bg-red-500/15 disabled:opacity-50"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer disabled:opacity-50"
                   >
-                    <fa-icon [icon]="icons.delete" class="me-1" />حذف
+                    <fa-icon [icon]="icons.delete" /><span>حذف</span>
                   </button>
                 </div>
               </td>

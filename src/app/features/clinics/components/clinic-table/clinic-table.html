@@ -73,25 +73,27 @@
 
               <!-- Actions (Edit & Delete) -->
               <td class="px-4 sm:px-6 py-4 text-center">
-                <div class="inline-flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
                   <!-- Edit Button -->
                   <button
                     type="button"
                     (click)="facade.openEditModal(clinic)"
-                    class="p-2 rounded-xl text-primary hover:bg-primary/10 hover:text-primary-dark transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
                     title="تعديل العيادة"
                   >
                     <fa-icon [icon]="faPen"></fa-icon>
+                    <span>تعديل</span>
                   </button>
 
                   <!-- Delete Button -->
                   <button
                     type="button"
                     (click)="facade.openDeleteModal(clinic)"
-                    class="p-2 rounded-xl text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
                     title="حذف العيادة"
                   >
                     <fa-icon [icon]="faTrashCan"></fa-icon>
+                    <span>حذف</span>
                   </button>
                 </div>
               </td>

@@ -8,6 +8,7 @@ export interface Expense {
   description: string;
   appointmentId: number | null;
   doctorWalletTransactionId: number | null;
+  offerOrderId: number | null;
   userName: string;
   createdAt: string;
 }

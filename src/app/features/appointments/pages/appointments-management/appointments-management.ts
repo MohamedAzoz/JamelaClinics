@@ -3,7 +3,7 @@ import { AppointmentFacade } from '../../services/appointment.facade';
 import { AppointmentListHeaderComponent } from '../../components/appointment-list-header/appointment-list-header';
 import { AppointmentFilterComponent } from '../../components/appointment-filter/appointment-filter';
 import { AppointmentTableComponent } from '../../components/appointment-table/appointment-table';
-import { AppointmentPaginationComponent } from '../../components/appointment-pagination/appointment-pagination';
+import { PaginationComponent } from '@shared/components/pagination';
 
 @Component({
   selector: 'app-appointments-management',
@@ -12,7 +12,7 @@ import { AppointmentPaginationComponent } from '../../components/appointment-pag
     AppointmentListHeaderComponent,
     AppointmentFilterComponent,
     AppointmentTableComponent,
-    AppointmentPaginationComponent,
+    PaginationComponent,
   ],
   templateUrl: './appointments-management.html',
 })

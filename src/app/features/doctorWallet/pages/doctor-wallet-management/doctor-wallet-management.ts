@@ -4,7 +4,7 @@ import { WalletHeaderComponent } from '../../components/wallet-header/wallet-hea
 import { WalletSummaryComponent } from '../../components/wallet-summary/wallet-summary';
 import { WalletFiltersComponent } from '../../components/wallet-filters/wallet-filters';
 import { WalletTableComponent } from '../../components/wallet-table/wallet-table';
-import { WalletPaginationComponent } from '../../components/wallet-pagination/wallet-pagination';
+import { PaginationComponent } from '@shared/components/pagination';
 import { WalletTransactionModalComponent } from '../../components/wallet-transaction-modal/wallet-transaction-modal';
 
 @Component({
@@ -15,7 +15,7 @@ import { WalletTransactionModalComponent } from '../../components/wallet-transac
     WalletSummaryComponent,
     WalletFiltersComponent,
     WalletTableComponent,
-    WalletPaginationComponent,
+    PaginationComponent,
     WalletTransactionModalComponent,
   ],
   templateUrl: './doctor-wallet-management.html',

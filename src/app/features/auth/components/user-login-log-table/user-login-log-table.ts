@@ -14,10 +14,11 @@ import {
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthFacade } from '../../services/auth.facade';
+import { PaginationComponent } from '@shared/components/pagination';
 
 @Component({
   selector: 'app-user-login-log-table',
-  imports: [DatePipe, FontAwesomeModule],
+  imports: [DatePipe, FontAwesomeModule, PaginationComponent],
   templateUrl: './user-login-log-table.html',
 })
 export class UserLoginLogTableComponent {

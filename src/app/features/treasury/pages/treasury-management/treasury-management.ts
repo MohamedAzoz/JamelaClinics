@@ -6,7 +6,7 @@ import { TreasurySummaryComponent } from '../../components/treasury-summary/trea
 import { ExpenseTableComponent } from '../../components/expense-table/expense-table';
 import { ExpenseFormModalComponent } from '../../components/expense-form-modal/expense-form-modal';
 import { ExpenseDeleteModalComponent } from '../../components/expense-delete-modal/expense-delete-modal';
-import { TreasuryPaginationComponent } from '../../components/treasury-pagination/treasury-pagination';
+import { PaginationComponent } from '@shared/components/pagination';
 
 @Component({
   selector: 'app-treasury-management',
@@ -17,12 +17,12 @@ import { TreasuryPaginationComponent } from '../../components/treasury-paginatio
     ExpenseTableComponent,
     ExpenseFormModalComponent,
     ExpenseDeleteModalComponent,
-    TreasuryPaginationComponent,
+    PaginationComponent,
   ],
   templateUrl: './treasury-management.html',
 })
 export class TreasuryManagementPage implements OnInit {
-  private readonly facade = inject(TreasuryFacade);
+  public readonly facade = inject(TreasuryFacade);
   ngOnInit(): void {
     this.facade.initialize();
   }

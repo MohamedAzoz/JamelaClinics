@@ -118,13 +118,15 @@
                   <button
                     type="button"
                     (click)="facade.toggleScheduleStatus(schedule)"
-                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer select-none"
-                    [class.bg-emerald-500\/10]="schedule.isActive"
-                    [class.text-emerald-600]="schedule.isActive"
-                    [class.dark:text-emerald-400]="schedule.isActive"
-                    [class.bg-rose-500\/10]="!schedule.isActive"
-                    [class.text-rose-600]="!schedule.isActive"
-                    [class.dark:text-rose-400]="!schedule.isActive"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-bold transition-all cursor-pointer"
+                    [class.border-success\/20]="schedule.isActive"
+                    [class.bg-success\/5]="schedule.isActive"
+                    [class.text-success]="schedule.isActive"
+                    [class.hover:bg-success\/10]="schedule.isActive"
+                    [class.border-warning\/20]="!schedule.isActive"
+                    [class.bg-warning\/5]="!schedule.isActive"
+                    [class.text-warning]="!schedule.isActive"
+                    [class.hover:bg-warning\/10]="!schedule.isActive"
                     [title]="
                       schedule.isActive
                         ? 'تعطيل الاستقبال لهذا اليوم'
@@ -133,27 +135,29 @@
                   >
                     <fa-icon
                       [icon]="schedule.isActive ? faToggleOn : faToggleOff"
-                      class="text-base"
                     ></fa-icon>
                     <span>{{ schedule.isActive ? 'مُفعل للاستقبال' : 'مُعطل مؤقتاً' }}</span>
                   </button>
                 } @else {
-                  <span class="text-emerald-600 font-bold">لا يمكن تعطيل المواعيد</span>
+                  <span class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-success/20 bg-success/5 px-2.5 text-xs font-bold text-success">
+                    مُفعل للاستقبال (يوجد حجوزات)
+                  </span>
                 }
               </td>
 
               <!-- Action Buttons (Edit, Delete) -->
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
                   <!-- Edit Schedule Button -->
                   <button
                     type="button"
                     (click)="facade.openEditModal(schedule)"
-                    class="p-2 rounded-xl text-text-muted hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/5 px-2.5 text-xs font-bold text-accent hover:bg-accent/10 transition-all cursor-pointer"
                     title="تعديل تاريخ الموعد"
                     aria-label="تعديل تاريخ الموعد"
                   >
-                    <fa-icon [icon]="faPenToSquare" size="lg"></fa-icon>
+                    <fa-icon [icon]="faPenToSquare"></fa-icon>
+                    <span>تعديل</span>
                   </button>
 
                   <!-- Delete Schedule Button -->
@@ -161,11 +165,12 @@
                     <button
                       type="button"
                       (click)="facade.openDeleteModal(schedule)"
-                      class="p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
                       title="حذف الموعد المتاح"
                       aria-label="حذف الموعد المتاح"
                     >
-                      <fa-icon [icon]="faTrashCan" size="lg"></fa-icon>
+                      <fa-icon [icon]="faTrashCan"></fa-icon>
+                      <span>حذف</span>
                     </button>
                   }
                 </div>

@@ -1,31 +1,30 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
-  faBedPulse,
   faBookMedical,
   faBox,
   faCalendar,
   faCalendarCheck,
-  faCoins,
   faFileMedical,
-  faFlask,
   faGear,
   faHospital,
-  faMedkit,
-  faPeopleGroup,
+  faMoneyBillTrendUp,
   faTableCellsLarge,
   faTram,
   faUserDoctor,
   faUsers,
-  faUserTie,
+  faGift,
   faWheelchair,
-  faXRay,
+  faBuilding,
+  faWallet,
+  faFlask,
+  faKey,
+  faClockRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-svg-icon',
   templateUrl: './svg-icon.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block w-full h-full',
   },
@@ -34,24 +33,23 @@ import {
 export class SvgIconComponent {
   icon = input.required<string>();
 
+  faLab = faFlask;
   faSchedule = faCalendar;
   faDashboard = faTableCellsLarge;
-  faPatients = faBedPulse;
   faDoctors = faUserDoctor;
   faClinics = faHospital;
   faAppointments = faBookMedical;
-  faQueue = faPeopleGroup;
+  faLogs = faClockRotateLeft;
+  // faQueue = faPeopleGroup;
   faVisits = faWheelchair;
-  faLab = faFlask;
-  faRadiology = faXRay;
-  faPharmacy = faMedkit;
-  faPayment = faCoins;
+  faPayment = faMoneyBillTrendUp;
   faUsers = faUsers;
-  faReports = faFileMedical;
   faSettings = faGear;
   faRequests = faCalendarCheck;
-  faAssistant = faUserTie;
   faInventory = faBox;
-  // حاجة للاجويه التالف
+  faDiscount = faGift;
   faInventoryDamaged = faTram;
+  faWallet = faWallet;
+  faCompany = faBuilding;
+  faManagePassword = faKey;
 }
