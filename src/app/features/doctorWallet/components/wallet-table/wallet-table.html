@@ -123,15 +123,17 @@
                       <span>الحجز</span>
                     </button>
                   } @else {
-                    <button
-                      type="button"
-                      (click)="onDelete(transaction.id)"
-                      title="حذف الحركة"
-                      class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
-                    >
-                      <fa-icon [icon]="faTrash" />
-                      <span>حذف</span>
-                    </button>
+                    @if (facade.canManage()) {
+                      <button
+                        type="button"
+                        (click)="onDelete(transaction.id)"
+                        title="حذف الحركة"
+                        class="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-danger/20 bg-danger/5 px-2.5 text-xs font-bold text-danger hover:bg-danger/10 transition-all cursor-pointer"
+                      >
+                        <fa-icon [icon]="faTrash" />
+                        <span>حذف</span>
+                      </button>
+                    }
                   }
                 </div>
               </td>
