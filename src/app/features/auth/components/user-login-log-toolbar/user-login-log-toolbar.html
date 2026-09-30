@@ -36,30 +36,7 @@
         />
       </div>
 
-      <!-- Page Size Selector -->
-      <div
-        class="flex min-h-11 items-center gap-2 rounded-xl border border-primary/15 bg-main-bg p-1.5 shadow-xs"
-      >
-        <label
-          for="login-log-page-size"
-          class="flex shrink-0 items-center gap-1.5 px-2 text-xs font-bold text-text-muted"
-        >
-          <fa-icon [icon]="faUsers" aria-hidden="true"></fa-icon>
-          <span>عرض</span>
-        </label>
-        <select
-          id="login-log-page-size"
-          [value]="facade.loginLogsPageSize()"
-          (change)="onPageSizeChange($event)"
-          aria-label="عدد سجلات الدخول في الصفحة"
-          class="min-h-9 min-w-32 cursor-pointer rounded-lg border border-primary/15 bg-surface px-3 text-xs font-bold text-text transition-colors hover:border-primary/35 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:text-sm"
-        >
-          <option [value]="10">10 سجلات</option>
-          <option [value]="25">25 سجلًا</option>
-          <option [value]="50">50 سجلًا</option>
-          <option [value]="100">100 سجل</option>
-        </select>
-      </div>
+      
 
       <!-- Refresh Button -->
       <button

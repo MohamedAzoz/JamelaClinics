@@ -30,13 +30,7 @@ export class UserLoginLogToolbarComponent {
     this.facade.setLoginLogsSearchQuery(input.value);
   }
 
-  onPageSizeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newSize = Number(select.value);
-    if (newSize) {
-      this.facade.changeLoginLogsPageSize(newSize);
-    }
-  }
+ 
 
   refresh(): void {
     void this.facade.loadUserLoginLogs();
