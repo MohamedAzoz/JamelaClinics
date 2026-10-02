@@ -220,7 +220,7 @@
                     >{{ booking.isRedeemed ? 'تم استخدامه' : 'قيد الانتظار' }}</span
                   >
                 </td>
-                @if (facade.isBookingOperator()) {
+                @if (facade.isBookingOperator() && !facade.isAccountant()) {
                   <td class="px-4 py-3">
                     <div class="flex flex-wrap justify-center gap-2">
                       @if (!booking.isRedeemed) {
@@ -255,6 +255,8 @@
                       }
                     </div>
                   </td>
+                } @else if (facade.isAccountant()) {
+                  <td class="text-xs md:text-sm font-semibold text-text-muted">---</td>
                 }
               </tr>
             }

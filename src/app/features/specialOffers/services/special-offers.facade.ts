@@ -34,6 +34,7 @@ export class SpecialOffersFacade {
     () => this.identity.userRole() === ROLES.Admin || this.identity.userRole() === ROLES.Accountant,
   );
   readonly isReception = computed(() => this.identity.userRole() === ROLES.Reception);
+  readonly isAccountant = computed(() => this.identity.userRole() === ROLES.Accountant);
   readonly offers = signal<CreateSpecialOfferResponse[]>([]);
   readonly selectedOffer = signal<CreateSpecialOfferResponse | null>(null);
   readonly offerToDelete = signal<CreateSpecialOfferResponse | null>(null);
