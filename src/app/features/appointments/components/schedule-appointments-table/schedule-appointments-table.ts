@@ -127,7 +127,12 @@ export class ScheduleAppointmentsTableComponent {
         return 'غير مدفوع';
     }
   }
-
+  chackStatus(appointment: Appointments): boolean {
+    return (
+      appointment.status === AppointmentStatus.Completed ||
+      appointment.status === AppointmentStatus.Cancelleted
+    );
+  }
   getStatusBadgeClass(status: AppointmentStatus | number): string {
     const num = Number(status);
     switch (num) {

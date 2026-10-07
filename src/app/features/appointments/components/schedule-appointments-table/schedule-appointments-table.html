@@ -237,7 +237,7 @@
                 </button>
               </td>
               <!-- Action Buttons -->
-              @if (!facade.isAdminOrAccountant() && !facade.isDoctor()) {
+              @if (!facade.isAdminOrAccountant() && !facade.isDoctor() && !chackStatus(app)) {
                 <td class="px-4 py-4 text-center">
                   <div class="flex flex-wrap items-center justify-center gap-1.5">
                     <button
@@ -251,6 +251,9 @@
                     </button>
                   </div>
                 </td>
+              }
+              @if (chackStatus(app)) {
+                <td class="px-4 py-4 text-center">--</td>
               }
             </tr>
           }
