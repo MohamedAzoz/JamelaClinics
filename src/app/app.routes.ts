@@ -43,6 +43,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: RoutesManagement.DOCTOR_CLINICS.path,
+        loadComponent: () =>
+          import('./features/doctors/pages/doctor-clinics/doctor-clinics').then(
+            (m) => m.DoctorClinicsPage,
+          ),
+      },
+      {
         path: RoutesManagement.EMPLOYEES.path,
         loadComponent: () =>
           import('./features/employees/pages/employees-management/employees-management').then(
@@ -92,15 +99,7 @@ export const routes: Routes = [
             (m) => m.WalletTransactionDetailsPage,
           ),
       },
-      {
-        path: RoutesManagement.MATERIALS.path,
-        canActivate: [roleGuard],
-        data: { roles: [ROLES.Admin] },
-        loadComponent: () =>
-          import('./features/materials/pages/materials-management/materials-management').then(
-            (m) => m.MaterialsManagementPage,
-          ),
-      },
+
       {
         path: RoutesManagement.DOCTOR_SCHEDULES.path,
         loadComponent: () =>

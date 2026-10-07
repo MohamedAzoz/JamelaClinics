@@ -18,18 +18,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentFacade } from '../../services/appointment.facade';
 import { Router } from '@angular/router';
-import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { Appointments } from '../../models/Appointments';
 import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
 
 @Component({
   selector: 'app-appointment-table',
-  imports: [
-    FontAwesomeModule,
-    DatePipe,
-    EditAppointmentModalComponent,
-  ],
+  imports: [FontAwesomeModule, DatePipe, EditAppointmentModalComponent],
   templateUrl: './appointment-table.html',
 })
 export class AppointmentTableComponent {
@@ -67,23 +62,6 @@ export class AppointmentTableComponent {
 
   openDetailsModal(app: Appointments): void {
     this._router.navigate(['/main/appointment-details', app.id]);
-  }
-
-  getVisitTypeName(type: VisitType | number): string {
-    switch (Number(type)) {
-      case VisitType.NewConsultation:
-        return 'كشف جديد';
-      case VisitType.FollowUp:
-        return 'إعادة';
-      case VisitType.Sessions:
-        return 'جلسات';
-      case VisitType.Laser:
-        return 'ليزر';
-      case VisitType.Fractional:
-        return 'فراكشنال';
-      default:
-        return 'كشف';
-    }
   }
 
   getStatusName(status: AppointmentStatus | number): string {

@@ -8,6 +8,8 @@ import {
   faSpinner,
   faLock,
   faUser,
+  faEyeSlash,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { EmployeeFacade } from '../../services/employee.facade';
 import { UpdateEmployee } from '../../models/UpdateEmployee';
@@ -30,6 +32,9 @@ interface EmployeeFormModel {
 export class EmployeeFormModalComponent {
   public facade = inject(EmployeeFacade);
 
+  readonly showPassword = signal(false);
+  readonly faEye = faEye;
+  readonly faEyeSlash = faEyeSlash;
   readonly faUserTie = faUserTie;
   readonly faXmark = faXmark;
   readonly faCheck = faCheck;
@@ -58,9 +63,9 @@ export class EmployeeFormModalComponent {
       when: () => !this.facade.selectedEmployee(),
       message: 'اسم المستخدم مطلوب',
     });
-    minLength(path.username, 3, {
+    minLength(path.username, 6, {
       when: () => !this.facade.selectedEmployee(),
-      message: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل',
+      message: 'اسم المستخدم يجب أن يكون 6 أحرف على الأقل',
     });
 
     required(path.password, {

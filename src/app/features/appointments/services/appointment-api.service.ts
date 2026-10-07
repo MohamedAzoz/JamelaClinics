@@ -5,15 +5,12 @@ import { CreateAppointments } from '../models/CreateAppointments';
 import { Appointments } from '../models/Appointments';
 import { Result } from '@core/models/Result';
 import { PaginatedResult } from '@core/models/PaginatedResult';
-import {
-  FilterAppointment,
-  FilterAppointments,
-  FilterAppointmentsForExcel,
-} from '../models/FilterAppointment';
+import { FilterAppointment, FilterAppointments } from '../models/FilterAppointment';
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
-import { AppointmentsMaterial, TodayAppointment } from '../models/AppointmentsMaterial';
-import { AddMaterialToAppointment } from '../models/AddMaterialToAppointment';
+import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
+import { TodayAppointment } from '../models/TodayAppointment';
+import { UpdateAppointmentMaterial } from '../models/UpdateAppointmentMaterial';
 
 @Service()
 export class AppointmentApiService {
@@ -46,6 +43,9 @@ export class AppointmentApiService {
     if (filter.EmployeeId !== undefined) {
       params.push(`EmployeeId=${filter.EmployeeId}`);
     }
+    if (filter.ClinicId !== undefined) {
+      params.push(`ClinicId=${filter.ClinicId}`);
+    }
     if (filter.PageNumber !== undefined) {
       params.push(`PageNumber=${filter.PageNumber}`);
     }
@@ -60,7 +60,7 @@ export class AppointmentApiService {
 
   // GET
   // /api/Appointments/export-excel
-  getExportAppointments(filter: FilterAppointmentsForExcel) {
+  getExportAppointments(filter: FilterAppointment) {
     let url = `${this._baseUrl}/export-excel`;
     const params: string[] = [];
     if (filter.Period !== null) {
@@ -71,6 +71,21 @@ export class AppointmentApiService {
     }
     if (filter.ToDate !== undefined) {
       params.push(`ToDate=${filter.ToDate}`);
+    }
+    if (filter.DoctorId !== undefined) {
+      params.push(`DoctorId=${filter.DoctorId}`);
+    }
+    if (filter.EmployeeId !== undefined) {
+      params.push(`EmployeeId=${filter.EmployeeId}`);
+    }
+    if (filter.ClinicId !== undefined) {
+      params.push(`ClinicId=${filter.ClinicId}`);
+    }
+    if (filter.PageNumber !== undefined) {
+      params.push(`PageNumber=${filter.PageNumber}`);
+    }
+    if (filter.PageSize !== undefined) {
+      params.push(`PageSize=${filter.PageSize}`);
     }
     if (params.length > 0) {
       url += `?${params.join('&')}`;
@@ -153,23 +168,13 @@ export class AppointmentApiService {
     );
   }
 
-  //************************************ */
-  // AppointmentMaterials
-
-  //   POST
-  // /api/AppointmentMaterials/add-material
-  addMaterialToAppointment(data: AddMaterialToAppointment) {
-    return this._http.post<Result<boolean>>(
-      `${environment.appBaseUrl}/AppointmentMaterials/add-material`,
-      data,
-    );
+  //  /api/Appointments/update-materials
+  updateMaterials(data: UpdateAppointmentMaterial) {
+    return this._http.put<Result<boolean>>(`${this._baseUrl}/update-materials`, data);
   }
-
-  // DELETE
-  // /api/AppointmentMaterials/remove-material/{appointmentMaterialId}
-  removeMaterialFromAppointment(appointmentMaterialId: number) {
-    return this._http.delete<Result<boolean>>(
-      `${environment.appBaseUrl}/AppointmentMaterials/remove-material/${appointmentMaterialId}`,
-    );
+  //   DELETE
+  // /api/Appointments/clear-materials/{appointmentId}
+  clearMaterials(appointmentId: number) {
+    return this._http.delete<Result<boolean>>(`${this._baseUrl}/clear-materials/${appointmentId}`);
   }
 }

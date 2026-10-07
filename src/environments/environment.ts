@@ -1,4 +1,4 @@
 export const environment = {
-  appBaseUrl: 'https://jamelaclinics.runasp.net/api',
+  appBaseUrl: 'https://test16122004.runasp.net/api',
   production: true,
 };

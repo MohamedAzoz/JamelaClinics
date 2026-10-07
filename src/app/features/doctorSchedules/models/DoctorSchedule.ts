@@ -7,3 +7,12 @@ export interface DoctorSchedule {
   isActive: boolean;
   appointmentsCount: number;
 }
+// {
+//     "id": 0,
+//     "doctorId": "string",
+//     "doctorName": "string",
+//     "date": "2026-10-07",
+//     "dayName": "string",
+//     "isActive": true,
+//     "appointmentsCount": 0
+//   }

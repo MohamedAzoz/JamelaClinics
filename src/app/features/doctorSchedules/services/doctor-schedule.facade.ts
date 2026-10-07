@@ -58,8 +58,7 @@ export class DoctorScheduleFacade {
     if (!query) return this.todaySchedules();
     return this.todaySchedules().filter(
       (s) =>
-        s.doctorName?.toLowerCase().includes(query) ||
-        s.clinicName?.toLowerCase().includes(query),
+        s.doctorName?.toLowerCase().includes(query) || s.clinicName?.toLowerCase().includes(query),
     );
   });
 
@@ -112,9 +111,9 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة الأطباء');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoading.set(false);
-        this._toast.addErrorMessage('حدث خطأ غير متوقع عند جلب قائمة الأطباء');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ غير متوقع عند جلب قائمة الأطباء');
       },
     });
   }
@@ -147,6 +146,34 @@ export class DoctorScheduleFacade {
     this.loadSchedules();
   }
 
+  readonly doctorClinics = signal<
+    import('@features/doctors/models/DoctorClinicsResponse').DoctorClinicsResponse[]
+  >([]);
+
+  /**
+   * Loads active assigned clinics for the selected doctor
+   */
+  loadDoctorClinics(doctorId?: string): void {
+    const targetId = doctorId ?? this.selectedDoctorId();
+    if (!targetId) {
+      this.doctorClinics.set([]);
+      return;
+    }
+    this._doctorApiService.getDoctorClinicsByDoctorId(targetId).subscribe({
+      next: (res) => {
+        if (res.isSuccess && Array.isArray(res.data)) {
+          this.doctorClinics.set(res.data.filter((c) => c.isActive));
+        } else {
+          this.doctorClinics.set([]);
+        }
+      },
+      error: (err) => {
+        this.doctorClinics.set([]);
+        this._toast.addErrorMessage(err.error.message || 'فشل في جلب قائمة العيادات');
+      },
+    });
+  }
+
   /**
    * Loads schedules for a specific doctorId with active filters.
    */
@@ -157,6 +184,8 @@ export class DoctorScheduleFacade {
       this.isLoading.set(false);
       return;
     }
+
+    this.loadDoctorClinics(targetId);
 
     const isActive = this.isActiveFilter();
     const onlyFuture = this.onlyFutureFilter();
@@ -172,10 +201,10 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب جدول المواعيد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoading.set(false);
         this.schedules.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء جلب جدول المواعيد للطبيب');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء جلب جدول المواعيد للطبيب');
       },
     });
   }
@@ -223,9 +252,9 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في إضافة الموعد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoading.set(false);
-        this._toast.addErrorMessage('حدث خطأ أثناء حفظ الموعد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء حفظ الموعد');
       },
     });
   }
@@ -238,7 +267,7 @@ export class DoctorScheduleFacade {
     if (!doctorId) return;
 
     this.actionLoading.set(true);
-    const request: DoctorScheduleUpdate = { id, date, doctorId };
+    const request: DoctorScheduleUpdate = { id, date };
 
     this._scheduleApiService.updateDoctorSchedule(request).subscribe({
       next: (res) => {
@@ -251,9 +280,9 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في تعديل الموعد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoading.set(false);
-        this._toast.addErrorMessage('حدث خطأ أثناء تعديل الموعد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تعديل الموعد');
       },
     });
   }
@@ -287,9 +316,9 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في حذف الموعد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoading.set(false);
-        this._toast.addErrorMessage('حدث خطأ أثناء حذف الموعد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء حذف الموعد');
       },
     });
   }
@@ -307,8 +336,8 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في تغيير حالة الموعد');
         }
       },
-      error: () => {
-        this._toast.addErrorMessage('حدث خطأ أثناء تغيير حالة الموعد');
+      error: (err) => {
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تغيير حالة الموعد');
       },
     });
   }
@@ -328,10 +357,10 @@ export class DoctorScheduleFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة مواعيد اليوم للأطباء');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingTodaySchedules.set(false);
         this.todaySchedules.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء جلب مواعيد اليوم للأطباء');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء جلب مواعيد اليوم للأطباء');
       },
     });
   }

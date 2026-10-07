@@ -29,7 +29,7 @@
           class="bg-primary/5 text-xs font-semibold text-text-muted border-b border-primary/10"
         >
           <tr>
-            <th scope="col" class="px-4 py-3.5 text-center">رقم الدور</th>
+            <th scope="col" class="px-4 py-2 text-center">رقم الدور</th>
             <th scope="col" class="px-4 py-3.5">بيانات المريض</th>
             <th scope="col" class="px-4 py-3.5">الطبيب والموظف</th>
             <th scope="col" class="px-4 py-3.5">تاريخ الحجز</th>
@@ -49,7 +49,7 @@
           @for (app of facade.scheduleAppointments(); track app.id) {
             <tr class="hover:bg-primary/5 transition">
               <!-- Queue Number -->
-              <td class="px-4 py-4 text-center">
+              <td class="px-2 py-0 text-center">
                 <span
                   class="inline-flex lg:h-9 lg:w-9 h-6 w-6 items-center justify-center rounded-xl bg-primary/10 font-semibold text-primary font-mono text-sm border border-primary/20"
                 >
@@ -112,12 +112,12 @@
                 </div>
               </td>
 
-              <!-- Visit Type -->
+              <!-- Clinic -->
               <td class="px-4 py-4">
                 <span
                   class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary border border-primary/15"
                 >
-                  {{ getVisitTypeName(app.visitType) }}
+                  {{ app.clinicName }}
                 </span>
               </td>
 
@@ -186,7 +186,7 @@
                           <span>دفع</span>
                         }
                       </button>
-                    } @else if (!facade.isDoctor() && Number(app.status) === 2) {
+                    } @else if (Number(app.status) === 2) {
                       <button
                         type="button"
                         (click)="completeAppointment(app)"

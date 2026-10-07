@@ -20,7 +20,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { AppointmentFacade } from '../../services/appointment.facade';
-import { VisitType } from '../../models/VisitType';
 import { AppointmentStatus } from '../../models/AppointmentStatus';
 import { Appointments } from '../../models/Appointments';
 import { EditAppointmentModalComponent } from '../edit-appointment-modal/edit-appointment-modal';
@@ -29,11 +28,7 @@ import { ConfirmDialogService } from '@shared/components/confirm-modal';
 
 @Component({
   selector: 'app-schedule-appointments-table',
-  imports: [
-    FontAwesomeModule,
-    DatePipe,
-    EditAppointmentModalComponent,
-  ],
+  imports: [FontAwesomeModule, DatePipe, EditAppointmentModalComponent],
   templateUrl: './schedule-appointments-table.html',
 })
 export class ScheduleAppointmentsTableComponent {
@@ -50,10 +45,7 @@ export class ScheduleAppointmentsTableComponent {
       `${app.finalPaidAmount || app.consultationFee || 0} ج.م`,
       `هل أنت تأكد من رغبتك في سداد الكشف للحجز رقم #${app.id} للمريض "${app.patientName}"؟`,
       'تأكيد سداد الكشفية',
-      [
-        { label: 'اسم المريض', value: app.patientName },
-        { label: 'نوع الزيارة', value: this.getVisitTypeName(app.visitType) },
-      ]
+      [{ label: 'اسم المريض', value: app.patientName }],
     );
     if (confirmed) {
       this.facade.payAppointment(app.id);
@@ -67,7 +59,7 @@ export class ScheduleAppointmentsTableComponent {
       [
         { label: 'اسم المريض', value: app.patientName },
         { label: 'الطبيب', value: app.doctorName || 'غير حدد' },
-      ]
+      ],
     );
     if (confirmed) {
       this.facade.completeAppointment(app.id);
@@ -80,7 +72,8 @@ export class ScheduleAppointmentsTableComponent {
       title: 'تأكيد إلغاء الحجز',
       itemName: `حجز #${app.id} - ${app.patientName}`,
       message: `هل أنت تأكد من رغبتك في إلغاء الحجز للمريض "${app.patientName}"؟`,
-      warningMessage: 'تحذير: هذا الإجراء سيؤدي إلى تغيير حالة الحجز إلى ملغى ولا يمكن التراجع عنه.',
+      warningMessage:
+        'تحذير: هذا الإجراء سيؤدي إلى تغيير حالة الحجز إلى ملغى ولا يمكن التراجع عنه.',
       confirmText: 'نعم، إلغاء الحجز',
       cancelText: 'تراجع',
     });
@@ -118,23 +111,6 @@ export class ScheduleAppointmentsTableComponent {
 
   openDetailsModal(app: Appointments): void {
     this._router.navigate(['/main/appointment-details', app.id]);
-  }
-
-  getVisitTypeName(type: VisitType | number): string {
-    switch (Number(type)) {
-      case VisitType.NewConsultation:
-        return 'كشف جديد';
-      case VisitType.FollowUp:
-        return 'إعادة';
-      case VisitType.Sessions:
-        return 'جلسات';
-      case VisitType.Laser:
-        return 'ليزر';
-      case VisitType.Fractional:
-        return 'فراكشنال';
-      default:
-        return 'كشف';
-    }
   }
 
   getStatusName(status: AppointmentStatus | number): string {

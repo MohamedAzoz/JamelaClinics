@@ -26,12 +26,6 @@
       </div>
       @if (selectedDoctor(); as doc) {
         <div class="font-bold text-white text-base">د. {{ doc.fullName }}</div>
-        @if (doc.clinicName) {
-          <div class="text-xs text-accent/80 flex items-center gap-1 mt-0.5">
-            <fa-icon [icon]="faClinicMedical" class="text-[10px]"></fa-icon>
-            {{ doc.clinicName }}
-          </div>
-        }
       } @else {
         <div class="text-xs text-white/50 italic">لم يتم اختيار طبيب بعد</div>
       }
@@ -85,11 +79,11 @@
     <!-- Visit Type & Fee Summary -->
     <div class="rounded-xl bg-primary/20 p-4 border border-primary/30 space-y-2.5">
       <div class="flex items-center justify-between text-xs text-white/80">
-        <span>نوع الزيارة:</span>
+        <span>العيادة:</span>
         <span
           class="font-bold text-accent bg-accent/20 px-2 py-0.5 rounded-md border border-accent/30"
         >
-          {{ visitTypeName() }}
+          {{ clinicName() }}
         </span>
       </div>
 

@@ -3,26 +3,22 @@ import { DoctorApiService } from '@features/doctors/services/doctor-api.service'
 import { EmployeeApiService } from '@features/employees/services/employee-api.service';
 import { DoctorScheduleApiService } from '@features/doctorSchedules/services/doctor-schedule-api.service';
 import { AppointmentApiService } from './appointment-api.service';
-import { MaterialsApiService } from '@features/materials/services/materials-api.service';
 import { Doctor } from '@features/doctors/models/Doctor';
 import { Employee } from '@features/employees/models/Employee';
 import { DoctorSchedule } from '@features/doctorSchedules/models/DoctorSchedule';
 import { Appointments } from '../models/Appointments';
-import {
-  FilterAppointment,
-  FilterAppointments,
-  FilterAppointmentsForExcel,
-} from '../models/FilterAppointment';
+import { FilterAppointment, FilterAppointments } from '../models/FilterAppointment';
 import { CreateAppointments } from '../models/CreateAppointments';
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { Period } from '../models/Period';
 import { AppointmentStatus } from '../models/AppointmentStatus';
 import { AppointmentsStatistics } from '../models/AppointmentsStatistics';
-import { AppointmentsMaterial, TodayAppointment } from '../models/AppointmentsMaterial';
-import { AddMaterialToAppointment } from '../models/AddMaterialToAppointment';
-import { Material } from '@features/materials/models/Material';
+import { AppointmentsMaterial } from '../models/AppointmentsMaterial';
+import { UpdateAppointmentMaterial } from '../models/UpdateAppointmentMaterial';
+import { TodayAppointment } from '../models/TodayAppointment';
 import { AppMessageService } from '@core/services/app-message-service';
 import { IdentityService } from '@core/services/identity-service';
+import { DoctorClinicsResponse } from '@features/doctors/models/DoctorClinicsResponse';
 
 @Service()
 export class AppointmentFacade {
@@ -31,17 +27,19 @@ export class AppointmentFacade {
   private readonly _identityService = inject(IdentityService);
   private readonly _scheduleApiService = inject(DoctorScheduleApiService);
   private readonly _appointmentApiService = inject(AppointmentApiService);
-  private readonly _materialsApiService = inject(MaterialsApiService);
   private readonly _toast = inject(AppMessageService);
 
   // ==========================================
   // Doctor & Schedule Selection State (Booking)
   // ==========================================
   readonly doctors = signal<Doctor[]>([]);
+  readonly doctorClinics = signal<DoctorClinicsResponse[]>([]);
   readonly selectedDoctorId = signal<string>('');
+  readonly selectedClinicId = signal<number | null>(null);
   readonly schedules = signal<DoctorSchedule[]>([]);
 
   readonly isLoadingDoctors = signal<boolean>(false);
+  readonly isLoadingDoctorClinics = signal<boolean>(false);
   readonly isLoadingSchedules = signal<boolean>(false);
   readonly isSubmitting = signal<boolean>(false);
   readonly bookingSuccess = signal<boolean>(false);
@@ -78,7 +76,14 @@ export class AppointmentFacade {
   readonly toDateFilter = signal<string>('');
   readonly doctorIdFilter = signal<string>('');
   readonly employeeIdFilter = signal<string>('');
+  readonly clinicIdFilter = signal<number | undefined>(undefined);
   readonly statusFilter = signal<AppointmentStatus | null>(null);
+
+  setClinicIdFilter(clinicId?: number): void {
+    this.clinicIdFilter.set(clinicId);
+    this.pageNumber.set(1);
+    this.loadAppointments();
+  }
 
   // ==========================================
   // Schedule Specific Appointments State
@@ -90,20 +95,8 @@ export class AppointmentFacade {
 
   readonly appointmentDetails = signal<AppointmentsMaterial | null>(null);
   readonly isLoadingAppointmentDetails = signal<boolean>(false);
-
-  // Materials State for Appointment Details
-  readonly availableMaterials = signal<Material[]>([]);
-  readonly isLoadingMaterials = signal<boolean>(false);
-  readonly isLoadingMoreMaterials = signal<boolean>(false);
-  readonly materialsPageNumber = signal<number>(1);
-  readonly materialsPageSize = signal<number>(10);
-  readonly materialsTotalPages = signal<number>(1);
-  readonly materialsTotalCount = signal<number>(0);
-  readonly hasMoreMaterials = computed(
-    () => this.materialsPageNumber() < this.materialsTotalPages(),
-  );
-  readonly isAddingMaterial = signal<boolean>(false);
-  readonly removingMaterialId = signal<number | null>(null);
+  readonly isUpdatingMaterials = signal<boolean>(false);
+  readonly isClearingMaterials = signal<boolean>(false);
 
   // Doctor Today Appointments Summary State
   readonly todayAppointments = signal<TodayAppointment[]>([]);
@@ -154,6 +147,10 @@ export class AppointmentFacade {
   readonly selectedDoctor = computed(
     () => this.doctors().find((d) => d.userId === this.selectedDoctorId()) ?? null,
   );
+  readonly clinics = computed(() => this.doctorClinics());
+  readonly selectedClinic = computed(
+    () => this.doctorClinics().find((c) => c.id === this.selectedClinicId()) ?? null,
+  );
 
   readonly isAdminOrAccountant = computed(
     () => this._identityService.isAdmin() || this._identityService.isAccountant(),
@@ -200,10 +197,12 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة الأطباء المتاحين');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingDoctors.set(false);
         this.doctors.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء الاتصال بالخادم لجلب الأطباء');
+        this._toast.addErrorMessage(
+          err.error.message || 'حدث خطأ أثناء الاتصال بالخادم لجلب الأطباء',
+        );
       },
     });
   }
@@ -219,19 +218,46 @@ export class AppointmentFacade {
           this.employees.set([]);
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingEmployees.set(false);
         this.employees.set([]);
+        this._toast.addErrorMessage(
+          err.error.message || 'حدث خطأ أثناء الاتصال بالخادم لجلب الموظفين',
+        );
       },
     });
   }
 
   selectDoctor(doctorId: string): void {
     this.selectedDoctorId.set(doctorId);
+    this.selectedClinicId.set(null);
     this.schedules.set([]);
+    this.doctorClinics.set([]);
     if (!doctorId) return;
 
     this.loadDoctorSchedules(doctorId);
+    this.loadDoctorClinics(doctorId);
+  }
+
+  loadDoctorClinics(doctorId: string): void {
+    this.isLoadingDoctorClinics.set(true);
+    this._doctorApiService.getDoctorClinicsByDoctorId(doctorId).subscribe({
+      next: (res) => {
+        this.isLoadingDoctorClinics.set(false);
+        if (res.isSuccess && res.data) {
+          this.doctorClinics.set(res.data);
+          if (res.data.length > 0) {
+            this.selectedClinicId.set(res.data[0].id);
+          }
+        } else {
+          this.doctorClinics.set([]);
+        }
+      },
+      error: (err) => {
+        this.isLoadingDoctorClinics.set(false);
+        this.doctorClinics.set([]);
+      },
+    });
   }
 
   loadDoctorSchedules(doctorId: string): void {
@@ -246,10 +272,12 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'لا توجد مواعيد متاحة لهذا الطبيب');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingSchedules.set(false);
         this.schedules.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء جلب مواعيد الطبيب');
+        this._toast.addErrorMessage(
+          err.error.message || 'حدث خطأ أثناء الاتصال بالخادم لجلب مواعيد الطبيب',
+        );
       },
     });
   }
@@ -271,9 +299,11 @@ export class AppointmentFacade {
             resolve(false);
           }
         },
-        error: () => {
+        error: (err) => {
           this.isSubmitting.set(false);
-          this._toast.addErrorMessage('حدث خطأ غير متوقع عند إجراء عملية الحجز');
+          this._toast.addErrorMessage(
+            err.error.message || 'حدث خطأ غير متوقع عند إجراء عملية الحجز',
+          );
           resolve(false);
         },
       });
@@ -306,9 +336,9 @@ export class AppointmentFacade {
             resolve(false);
           }
         },
-        error: () => {
+        error: (err) => {
           this.isUpdating.set(false);
-          this._toast.addErrorMessage('حدث خطأ غير متوقع أثناء تعديل الحجز');
+          this._toast.addErrorMessage(err.error.message || 'حدث خطأ غير متوقع أثناء تعديل الحجز');
           resolve(false);
         },
       });
@@ -352,9 +382,10 @@ export class AppointmentFacade {
           this.statistics.set(null);
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingStatistics.set(false);
         this.statistics.set(null);
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ غير متوقع أثناء جلب الإحصائيات');
       },
     });
   }
@@ -392,12 +423,12 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة الحجوزات');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingAppointments.set(false);
         this.appointments.set([]);
         this.totalCount.set(0);
         this.totalPages.set(1);
-        this._toast.addErrorMessage('حدث خطأ أثناء تحميل سجل الحجوزات');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تحميل سجل الحجوزات');
       },
     });
   }
@@ -408,10 +439,14 @@ export class AppointmentFacade {
   exportAppointmentsExcel(): void {
     this.isExportingExcel.set(true);
 
-    const filter: FilterAppointmentsForExcel = {
+    const filter: FilterAppointments = {
       Period: this.periodFilter(),
       FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
+      DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
+      EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
+      ClinicId: this.clinicIdFilter(),
+      Status: this.statusFilter(),
     };
 
     this._appointmentApiService.getExportAppointments(filter).subscribe({
@@ -425,9 +460,9 @@ export class AppointmentFacade {
         window.URL.revokeObjectURL(url);
         this._toast.addSuccessMessage('تم تصدير تقرير الحجوزات بنجاح');
       },
-      error: () => {
+      error: (err) => {
         this.isExportingExcel.set(false);
-        this._toast.addErrorMessage('حدث خطأ أثناء تصدير ملف الاكسل');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تصدير ملف الاكسل');
       },
     });
   }
@@ -516,10 +551,10 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب تفاصيل الحجز');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingAppointmentDetails.set(false);
         this.appointmentDetails.set(null);
-        this._toast.addErrorMessage('حدث خطأ أثناء تحميل تفاصيل الحجز');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تحميل تفاصيل الحجز');
       },
     });
   }
@@ -529,120 +564,41 @@ export class AppointmentFacade {
     this.isLoadingAppointmentDetails.set(false);
   }
 
-  /**
-   * Load active materials for appointment details selection with pagination support
-   */
-  async loadActiveMaterials(reset = true): Promise<void> {
-    if (reset) {
-      this.materialsPageNumber.set(1);
-      this.isLoadingMaterials.set(true);
-    } else {
-      this.isLoadingMoreMaterials.set(true);
-    }
-
-    const page = reset ? 1 : this.materialsPageNumber();
-    const size = this.materialsPageSize();
-
-    this._materialsApiService.getAllMaterials(page, size, true).subscribe({
+  updateMaterials(data: UpdateAppointmentMaterial): void {
+    this.isUpdatingMaterials.set(true);
+    this._appointmentApiService.updateMaterials(data).subscribe({
       next: (res) => {
-        this.isLoadingMaterials.set(false);
-        this.isLoadingMoreMaterials.set(false);
-        if (res.isSuccess && res.data) {
-          const items = res.data.items || [];
-          this.materialsTotalPages.set(res.data.totalPages || 1);
-          this.materialsTotalCount.set(res.data.totalCount || 0);
-
-          if (reset) {
-            this.availableMaterials.set(items);
-          } else {
-            this.availableMaterials.update((prev) => {
-              const existingIds = new Set(prev.map((m) => m.id));
-              const newItems = items.filter((m) => !existingIds.has(m.id));
-              return [...prev, ...newItems];
-            });
-          }
+        this.isUpdatingMaterials.set(false);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم تحديث المستلزمات بنجاح');
+          this.loadAppointmentDetails(data.appointmentId);
         } else {
-          if (reset) this.availableMaterials.set([]);
+          this._toast.addErrorMessage(res.message || 'فشل في تحديث المستلزمات');
         }
       },
-      error: () => {
-        this.isLoadingMaterials.set(false);
-        this.isLoadingMoreMaterials.set(false);
-        if (reset) this.availableMaterials.set([]);
+      error: (err) => {
+        this.isUpdatingMaterials.set(false);
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تحديث المستلزمات');
       },
     });
   }
 
-  /**
-   * Fetch next page of materials on scroll
-   */
-  async loadMoreMaterials(): Promise<void> {
-    if (
-      this.isLoadingMaterials() ||
-      this.isLoadingMoreMaterials() ||
-      !this.hasMoreMaterials()
-    ) {
-      return;
-    }
-
-    this.materialsPageNumber.update((p) => p + 1);
-    await this.loadActiveMaterials(false);
-  }
-
-  /**
-   * Add material to appointment
-   */
-  async addMaterialToAppointment(data: AddMaterialToAppointment): Promise<boolean> {
-    this.isAddingMaterial.set(true);
-    return new Promise<boolean>((resolve) => {
-      this._appointmentApiService.addMaterialToAppointment(data).subscribe({
-        next: (res) => {
-          this.isAddingMaterial.set(false);
-          if (res.isSuccess) {
-            this._toast.addSuccessMessage(res.message || 'تمت إضافة المادة إلى الحجز بنجاح');
-            this.loadAppointmentDetails(data.appointmentId);
-            resolve(true);
-          } else {
-            this._toast.addErrorMessage(res.message || 'فشل في إضافة المادة إلى الحجز');
-            resolve(false);
-          }
-        },
-        error: () => {
-          this.isAddingMaterial.set(false);
-          this._toast.addErrorMessage('حدث خطأ أثناء إضافة المادة إلى الحجز');
-          resolve(false);
-        },
-      });
-    });
-  }
-
-  /**
-   * Remove material from appointment
-   */
-  async removeMaterialFromAppointment(
-    appointmentMaterialId: number,
-    appointmentId: number,
-  ): Promise<boolean> {
-    this.removingMaterialId.set(appointmentMaterialId);
-    return new Promise<boolean>((resolve) => {
-      this._appointmentApiService.removeMaterialFromAppointment(appointmentMaterialId).subscribe({
-        next: (res) => {
-          this.removingMaterialId.set(null);
-          if (res.isSuccess) {
-            this._toast.addSuccessMessage(res.message || 'تم حذف المادة من الحجز بنجاح');
-            this.loadAppointmentDetails(appointmentId);
-            resolve(true);
-          } else {
-            this._toast.addErrorMessage(res.message || 'فشل في حذف المادة من الحجز');
-            resolve(false);
-          }
-        },
-        error: () => {
-          this.removingMaterialId.set(null);
-          this._toast.addErrorMessage('حدث خطأ أثناء حذف المادة من الحجز');
-          resolve(false);
-        },
-      });
+  clearMaterials(appointmentId: number): void {
+    this.isClearingMaterials.set(true);
+    this._appointmentApiService.clearMaterials(appointmentId).subscribe({
+      next: (res) => {
+        this.isClearingMaterials.set(false);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم مسح المستلزمات بنجاح');
+          this.loadAppointmentDetails(appointmentId);
+        } else {
+          this._toast.addErrorMessage(res.message || 'فشل في مسح المستلزمات');
+        }
+      },
+      error: (err) => {
+        this.isClearingMaterials.set(false);
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء مسح المستلزمات');
+      },
     });
   }
 
@@ -663,10 +619,10 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة الحجوزات للموعد المحدد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingScheduleAppointments.set(false);
         this.scheduleAppointments.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء جلب حجوزات الموعد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء جلب حجوزات الموعد');
       },
     });
   }
@@ -691,9 +647,9 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في تغيير حالة السداد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoadingId.set(null);
-        this._toast.addErrorMessage('حدث خطأ أثناء تغيير حالة السداد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تغيير حالة السداد');
       },
     });
   }
@@ -718,9 +674,9 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في إنهاء الموعد');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoadingId.set(null);
-        this._toast.addErrorMessage('حدث خطأ أثناء تحديث حالة الموعد');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء تحديث حالة الموعد');
       },
     });
   }
@@ -740,10 +696,12 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في جلب قائمة مواعيد اليوم الخاصة بك');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoadingTodayAppointments.set(false);
         this.todayAppointments.set([]);
-        this._toast.addErrorMessage('حدث خطأ أثناء تحميل مواعيد اليوم الخاصة بك');
+        this._toast.addErrorMessage(
+          err.error.message || 'حدث خطأ أثناء تحميل مواعيد اليوم الخاصة بك',
+        );
       },
     });
   }
@@ -765,9 +723,9 @@ export class AppointmentFacade {
           this._toast.addErrorMessage(res.message || 'فشل في إلغاء الحجز');
         }
       },
-      error: () => {
+      error: (err) => {
         this.actionLoadingId.set(null);
-        this._toast.addErrorMessage('حدث خطأ أثناء إلغاء الحجز');
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء إلغاء الحجز');
       },
     });
   }

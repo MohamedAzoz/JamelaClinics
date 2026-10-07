@@ -4,6 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCalendarPlus,
   faCalendarDays,
+  faHospital,
   faXmark,
   faCheck,
   faSpinner,
@@ -25,6 +26,7 @@ export class ScheduleFormModalComponent {
 
   readonly faCalendarPlus = faCalendarPlus;
   readonly faCalendarDays = faCalendarDays;
+  readonly faHospital = faHospital;
   readonly faXmark = faXmark;
   readonly faCheck = faCheck;
   readonly faSpinner = faSpinner;
@@ -42,11 +44,9 @@ export class ScheduleFormModalComponent {
     effect(() => {
       const selected = this.facade.selectedSchedule();
       if (selected) {
-        // Format ISO date or Date object to YYYY-MM-DD for date input
         const dateStr = this.formatDateForInput(selected.date);
         this._model.set({ date: dateStr });
       } else {
-        // Default to today's date in YYYY-MM-DD
         const today = new Date().toISOString().split('T')[0];
         this._model.set({ date: today });
       }

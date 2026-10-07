@@ -1,12 +1,29 @@
-import { AppointmentStatus } from './AppointmentStatus';
-import { MaterialItem } from './MaterialItem';
-
+/**{
+    "id": 0,
+    "patientName": "string",
+    "patientPhoneNumber": "string",
+    "patientAddress": "string",
+    "clinicName": "string",
+    "queueNumber": 0,
+    "appointmentDate": "string",
+    "status": "string",
+    "consultationFee": 0,
+    "discountAmount": 0,
+    "finalPaidAmount": 0,
+    "totalMaterialsCost": 0,
+    "materialsDescription": "string",
+    "netAppointmentAmount": 0,
+    "doctorPercentage": 0,
+    "centerPercentage": 0,
+    "doctorEarnings": 0,
+    "centerEarnings": 0
+  } */
 export interface AppointmentsMaterial {
   id: number;
   patientName: string;
   patientPhoneNumber: string;
   patientAddress: string;
-  visitType: string;
+  clinicName: string;
   queueNumber: number;
   appointmentDate: string;
   status: string;
@@ -14,19 +31,10 @@ export interface AppointmentsMaterial {
   discountAmount: number;
   finalPaidAmount: number;
   totalMaterialsCost: number;
+  materialsDescription: string;
   netAppointmentAmount: number;
   doctorPercentage: number;
   centerPercentage: number;
   doctorEarnings: number;
   centerEarnings: number;
-  materials: MaterialItem[];
-}
-
-export interface TodayAppointment {
-  id: number;
-  patientName: string;
-  visitType: number;
-  queueNumber: number;
-  status: number;
-  appointmentDate: string;
 }
