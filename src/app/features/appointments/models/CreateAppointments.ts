@@ -7,14 +7,6 @@ export interface CreateAppointments {
   consultationFee: number;
   discountAmount?: number;
   isPaid: boolean;
+  totalMaterialsCost?: number;
+  materialsDescription?: string;
 }
-// {
-//   "patientName": "string",
-//   "patientPhoneNumber": "string",
-//   "patientAddress": "string",
-//   "doctorClinicId": 0,
-//   "doctorScheduleId": 0,
-//   "consultationFee": 0,
-//   "discountAmount": 0,
-//   "isPaid": true
-// }

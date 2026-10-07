@@ -44,6 +44,8 @@ export interface BookingFormModel {
   consultationFee: number;
   discountAmount: number;
   isPaid: boolean;
+  totalMaterialsCost: number | null;
+  materialsDescription: string;
 }
 
 @Component({
@@ -60,6 +62,9 @@ export class BookingFormComponent implements OnInit {
 
   // Pending schedule selection from queryParams
   readonly pendingScheduleId = signal<string | null>(null);
+
+  /** Controls visibility of the optional materials/services section */
+  readonly showMaterialsSection = signal<boolean>(false);
 
   // FontAwesome Icons
   readonly faUser = faUser;
@@ -88,6 +93,8 @@ export class BookingFormComponent implements OnInit {
     consultationFee: 0,
     discountAmount: 0,
     isPaid: false,
+    totalMaterialsCost: null,
+    materialsDescription: '',
   });
 
   readonly model = this._model.asReadonly();
@@ -238,6 +245,8 @@ export class BookingFormComponent implements OnInit {
       return;
     }
 
+    const hasMaterials = this.showMaterialsSection();
+
     const payload: CreateAppointments = {
       patientName: val.patientName.trim(),
       patientPhoneNumber: val.patientPhoneNumber.trim(),
@@ -247,11 +256,28 @@ export class BookingFormComponent implements OnInit {
       consultationFee: Number(val.consultationFee),
       discountAmount: val.discountAmount,
       isPaid: Boolean(val.isPaid),
+      ...(hasMaterials && {
+        totalMaterialsCost: val.totalMaterialsCost ? Number(val.totalMaterialsCost) : undefined,
+        materialsDescription: val.materialsDescription?.trim() || undefined,
+      }),
     };
 
     const ok = await this.facade.createAppointment(payload);
     if (ok) {
       this.resetForm();
+    }
+  }
+
+  toggleMaterialsSection(): void {
+    const next = !this.showMaterialsSection();
+    this.showMaterialsSection.set(next);
+    // Clear values when hiding the section
+    if (!next) {
+      this._model.update((m) => ({
+        ...m,
+        totalMaterialsCost: null,
+        materialsDescription: '',
+      }));
     }
   }
 
@@ -266,7 +292,10 @@ export class BookingFormComponent implements OnInit {
       consultationFee: 0,
       discountAmount: 0,
       isPaid: false,
+      totalMaterialsCost: null,
+      materialsDescription: '',
     });
+    this.showMaterialsSection.set(false);
     this.facade.selectedDoctorId.set('');
     this.facade.selectedClinicId.set(null);
     this.facade.schedules.set([]);

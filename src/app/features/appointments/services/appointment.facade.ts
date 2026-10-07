@@ -7,7 +7,8 @@ import { Doctor } from '@features/doctors/models/Doctor';
 import { Employee } from '@features/employees/models/Employee';
 import { DoctorSchedule } from '@features/doctorSchedules/models/DoctorSchedule';
 import { Appointments } from '../models/Appointments';
-import { FilterAppointment, FilterAppointments } from '../models/FilterAppointment';
+import { FilterAppointment } from '../models/FilterAppointment';
+import { FilterAppointments } from '../models/FilterAppointments';
 import { CreateAppointments } from '../models/CreateAppointments';
 import { AppointmentUpdate } from '../models/AppointmentUpdate';
 import { Period } from '../models/Period';
@@ -77,12 +78,19 @@ export class AppointmentFacade {
   readonly doctorIdFilter = signal<string>('');
   readonly employeeIdFilter = signal<string>('');
   readonly clinicIdFilter = signal<number | undefined>(undefined);
+  readonly doctorScheduleIdFilter = signal<number | undefined>(undefined);
   readonly statusFilter = signal<AppointmentStatus | null>(null);
 
   setClinicIdFilter(clinicId?: number): void {
     this.clinicIdFilter.set(clinicId);
     this.pageNumber.set(1);
-    this.loadAppointments();
+    this.refreshData();
+  }
+
+  setDoctorScheduleIdFilter(scheduleId?: number): void {
+    this.doctorScheduleIdFilter.set(scheduleId);
+    this.pageNumber.set(1);
+    this.refreshData();
   }
 
   // ==========================================
@@ -155,6 +163,7 @@ export class AppointmentFacade {
   readonly isAdminOrAccountant = computed(
     () => this._identityService.isAdmin() || this._identityService.isAccountant(),
   );
+  readonly isAdmin = computed(() => this._identityService.isAdmin());
 
   readonly isDoctorOrAdmin = computed(
     () => this._identityService.isDoctor() || this._identityService.isAdmin(),
@@ -370,6 +379,7 @@ export class AppointmentFacade {
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
       DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
       EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
+      ClinicId: this.clinicIdFilter(),
       Status: this.statusFilter(),
     };
 
@@ -402,6 +412,8 @@ export class AppointmentFacade {
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
       DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
       EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
+      ClinicId: this.clinicIdFilter(),
+      DoctorScheduleId: this.doctorScheduleIdFilter(),
       PageNumber: this.pageNumber(),
       PageSize: this.pageSize(),
     };
@@ -439,14 +451,16 @@ export class AppointmentFacade {
   exportAppointmentsExcel(): void {
     this.isExportingExcel.set(true);
 
-    const filter: FilterAppointments = {
-      Period: this.periodFilter(),
+    const filter: FilterAppointment = {
+      Period: this.periodFilter() || null,
       FromDate: this.fromDateFilter() ? this.fromDateFilter() : undefined,
       ToDate: this.toDateFilter() ? this.toDateFilter() : undefined,
       DoctorId: this.doctorIdFilter() ? this.doctorIdFilter() : undefined,
       EmployeeId: this.employeeIdFilter() ? this.employeeIdFilter() : undefined,
       ClinicId: this.clinicIdFilter(),
-      Status: this.statusFilter(),
+      DoctorScheduleId: this.doctorScheduleIdFilter(),
+      PageNumber: this.pageNumber(),
+      PageSize: this.pageSize(),
     };
 
     this._appointmentApiService.getExportAppointments(filter).subscribe({
@@ -526,6 +540,8 @@ export class AppointmentFacade {
     this.toDateFilter.set('');
     this.doctorIdFilter.set('');
     this.employeeIdFilter.set('');
+    this.clinicIdFilter.set(undefined);
+    this.doctorScheduleIdFilter.set(undefined);
     this.statusFilter.set(null);
     this.pageNumber.set(1);
     this.refreshData();
@@ -726,6 +742,30 @@ export class AppointmentFacade {
       error: (err) => {
         this.actionLoadingId.set(null);
         this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء إلغاء الحجز');
+      },
+    });
+  }
+
+  hardDeleteAppointment(id: number): void {
+    this.actionLoadingId.set(id);
+    this._appointmentApiService.hardDeleteAppointment(id).subscribe({
+      next: (res) => {
+        this.actionLoadingId.set(null);
+        if (res.isSuccess) {
+          this._toast.addSuccessMessage(res.message || 'تم حذف الحجز نهائياً بنجاح');
+          const currSchedId = this.currentScheduleId();
+          if (currSchedId) {
+            this.loadAppointmentsByScheduleId(currSchedId);
+          } else {
+            this.refreshData();
+          }
+        } else {
+          this._toast.addErrorMessage(res.message || 'فشل في حذف الحجز نهائياً');
+        }
+      },
+      error: (err) => {
+        this.actionLoadingId.set(null);
+        this._toast.addErrorMessage(err.error.message || 'حدث خطأ أثناء الحذف النهائي للحجز');
       },
     });
   }

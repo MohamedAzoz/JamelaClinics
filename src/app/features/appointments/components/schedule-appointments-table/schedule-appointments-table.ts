@@ -17,6 +17,7 @@ import {
   faBan,
   faEdit,
   faEye,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { AppointmentFacade } from '../../services/appointment.facade';
@@ -98,6 +99,7 @@ export class ScheduleAppointmentsTableComponent {
   readonly faBan = faBan;
   readonly faEdit = faEdit;
   readonly faEye = faEye;
+  readonly faTrash = faTrash;
 
   openEditModal(app: Appointments): void {
     this.facade.selectedDoctorId.set('');
@@ -113,6 +115,21 @@ export class ScheduleAppointmentsTableComponent {
     this._router.navigate(['/main/appointment-details', app.id]);
   }
 
+  async hardDeleteAppointment(app: Appointments): Promise<void> {
+    const confirmed = await this._confirmService.confirm({
+      variant: 'danger',
+      title: 'حذف الحجز نهائياً',
+      itemName: `حجز #${app.id} - ${app.patientName}`,
+      message: `هل أنت متأكد من الحذف النهائي للحجز الملغى رقم #${app.id} للمريض "${app.patientName}"؟`,
+      warningMessage:
+        'تحذير: هذا الإجراء حذف نهائي لا يمكن التراجع عنه. سيتم مسح الحجز من قاعدة البيانات تماماً.',
+      confirmText: 'نعم، حذف نهائياً',
+      cancelText: 'تراجع',
+    });
+    if (confirmed) {
+      this.facade.hardDeleteAppointment(app.id);
+    }
+  }
   getStatusName(status: AppointmentStatus | number): string {
     switch (Number(status)) {
       case AppointmentStatus.Unpaid:
@@ -136,13 +153,13 @@ export class ScheduleAppointmentsTableComponent {
   getStatusBadgeClass(status: AppointmentStatus | number): string {
     const num = Number(status);
     switch (num) {
-      case 1: // Unpaid
+      case AppointmentStatus.Unpaid: // Unpaid
         return 'bg-warning/10 text-warning border border-warning/20';
-      case 2: // InProgress
+      case AppointmentStatus.InProgress: // InProgress
         return 'bg-accent/10 text-accent border border-accent/20';
-      case 3: // Completed
+      case AppointmentStatus.Completed: // Completed
         return 'bg-success/10 text-success border border-success/20';
-      case 4: // Cancelled
+      case AppointmentStatus.Cancelleted: // Cancelled
         return 'bg-danger/10 text-danger border border-danger/20';
       default:
         return 'bg-warning/10 text-warning border border-warning/20';
